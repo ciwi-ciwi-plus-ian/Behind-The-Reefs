@@ -11,7 +11,7 @@ import SwiftUI
 struct BehindTheReefsApp: App {
     var body: some Scene {
         WindowGroup {
-            MainMenuView()
+            NewGameAlertView()
         }
     }
 }

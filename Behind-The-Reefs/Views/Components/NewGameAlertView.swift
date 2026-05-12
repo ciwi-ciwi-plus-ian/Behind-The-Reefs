@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct NewGameAlertView: View {
-    @Binding var isPresented: Bool
     
     var body: some View {
         ZStack {
@@ -50,28 +49,60 @@ struct NewGameAlertView: View {
                 }
                 .padding(.horizontal, 30)
                 .padding(.bottom, 25)
+                
+                // Buttons
+                HStack(spacing: 20) {
+                    // NO
+                    Button(action: {}) {
+                        Text("NO, CANCEL")
+                            .font(.system(size: 14, weight: .black))
+                            .foregroundColor(.white)
+                            .padding(.vertical, 19)
+                            .padding(.horizontal, 20)
+                            .background(
+                                Capsule()
+                                    .fill(Color.red)
+                                    .overlay(Capsule().stroke(Color.white.opacity(0.8), lineWidth: 4))
+                            )
+                    }
+                    // YES
+                    Button(action: {}) {
+                        Text("YES, START\nNEW GAME")
+                            .font(.system(size: 14, weight: .black))
+                            .multilineTextAlignment(.center)
+                            .foregroundColor(.white)
+                            .padding(.vertical, 10)
+                            .padding(.horizontal, 40)
+                            .background(
+                                Capsule()
+                                    .fill(Color.green)
+                                    .overlay(Capsule().stroke(Color.white.opacity(0.8), lineWidth: 4))
+                            )
+                    }
+                }
+                .padding(.bottom, 30)
             }
             .frame(maxWidth: 500)
-                .background(
-                    RoundedRectangle(cornerRadius: 30)
-                        .fill(Color.brown)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 30)
-                                .stroke(Color.white.opacity(0.5), lineWidth: 8)
-                        )
-                )
-                .shadow(radius: 20)
-                .padding(.horizontal, 50)
+            .background(
+                RoundedRectangle(cornerRadius: 30)
+                    .fill(Color.brown)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 30)
+                            .stroke(Color.white.opacity(0.5), lineWidth: 8)
+                    )
+            )
+            .shadow(radius: 20)
+            .padding(.horizontal, 50)
         }
     }
 }
-    
-    // Preview Landscape
-    struct NewGameAlertView_Previews: PreviewProvider {
-        static var previews: some View {
-            NewGameAlertView(isPresented: .constant(true))
-                .previewInterfaceOrientation(.landscapeRight)
-        }
+
+// Preview Landscape
+struct NewGameAlertView_Previews: PreviewProvider {
+    static var previews: some View {
+        NewGameAlertView()
+            .previewInterfaceOrientation(.landscapeRight)
     }
+}
 
 
