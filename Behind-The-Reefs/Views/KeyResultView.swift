@@ -13,6 +13,24 @@ struct KeyResultView: View {
     var sortDescription: String  // contoh: "You've sorted the creatures by number of dots"
     var patternIndex: Int        // index pola yang baru selesai (0-4)
 
+    // MARK: - Key Asset Names
+    // Sesuaikan nama di sini kalau nama file aset berubah
+    private let keyAssetNames = [
+        "keyOne",   // index 0 — pola 1
+        "keyTwo",   // index 1 — pola 2
+        "keyThree", // index 2 — pola 3
+        "keyFour",  // index 3 — pola 4
+        "keyFive"   // index 4 — pola 5
+    ]
+
+    // Ambil nama aset kunci berdasarkan patternIndex dengan aman
+    private var currentKeyAsset: String {
+        guard patternIndex >= 0 && patternIndex < keyAssetNames.count else {
+            return "keyOne" // fallback kalau index di luar range
+        }
+        return keyAssetNames[patternIndex]
+    }
+
     var body: some View {
         ZStack {
 
@@ -22,7 +40,6 @@ struct KeyResultView: View {
                 .scaledToFill()
                 .ignoresSafeArea()
                 .overlay(
-                    // Overlay gelap di atas background
                     Color.black.opacity(0.55)
                 )
 
@@ -34,14 +51,15 @@ struct KeyResultView: View {
                     .fontWeight(.bold)
                     .foregroundStyle(.white)
                     .multilineTextAlignment(.center)
-                    .padding(.horizontal, 40)
+                    .padding(.horizontal, 70)
+                    .padding(.top, 50)
+                
 
                 // MARK: - Key Image
-                Image("key_\(patternIndex + 1)") // ← nama file kunci sesuai index, contoh: key_1, key_2, dst
+                Image(currentKeyAsset) // otomatis load keyOne/keyTwo/dst
                     .resizable()
                     .scaledToFit()
                     .frame(height: 180)
-                    // Animasi kunci muncul — scale up dari kecil
                     .scaleEffect(keyScale)
                     .opacity(keyOpacity)
                     .onAppear {
@@ -101,6 +119,6 @@ struct KeyResultView: View {
 #Preview (traits: .landscapeRight){
     KeyResultView(
         sortDescription: "You've sorted the creatures by number of dots",
-        patternIndex: 4  // index 4 = key_5
+        patternIndex: 0  // 0=keyOne, 1=keyTwo, 2=keyThree, 3=keyFour, 4=keyFive
     )
 }
