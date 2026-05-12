@@ -9,6 +9,8 @@ import SwiftUI
 
 struct NewGameAlertView: View {
     
+    let bodyText: String
+    
     var body: some View {
         ZStack {
             // Overlay Gelap
@@ -38,7 +40,7 @@ struct NewGameAlertView: View {
                 
                 // Body Text
                 VStack(spacing: 10) {
-                    Text("Are you sure want to start a new game? Past progress will be deleted!")
+                    Text(bodyText)
                         .font(.system(size: 18, weight: .bold, design: .rounded))
                         .multilineTextAlignment(.center)
                         .foregroundColor(.white)
@@ -100,7 +102,9 @@ struct NewGameAlertView: View {
 // Preview Landscape
 struct NewGameAlertView_Previews: PreviewProvider {
     static var previews: some View {
-        NewGameAlertView()
+        NewGameAlertView(
+            bodyText: "Are you sure want to start a new game? Past progress will be deleted!"
+        )
             .previewInterfaceOrientation(.landscapeRight)
     }
 }
