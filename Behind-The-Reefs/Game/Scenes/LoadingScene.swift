@@ -11,21 +11,19 @@ class LoadingScene: SKScene {
 
     // MARK: - Nodes
     private var backgroundNode: SKSpriteNode?
-    private var bubbleEmitter: SKEmitterNode?
-    private var loadingLabel: SKLabelNode?
 
     // MARK: - Setup
 
     override func didMove(to view: SKView) {
         setupBackground()
         setupBubbleParticles()
-        setupAudio()             // ← tambahan
+        setupAudio()
     }
 
     // MARK: - Audio
 
     private func setupAudio() {
-        let audio = SKAudioNode(fileNamed: "bubbleAudio")
+        let audio = SKAudioNode(fileNamed: "bubbleAudio") // ganti sesuai nama file MP3 kalian
         audio.autoplayLooped = true
         addChild(audio)
     }
@@ -40,108 +38,64 @@ class LoadingScene: SKScene {
         addChild(background)
         self.backgroundNode = background
 
+        // Mulai dari gelap lalu fade in
         background.alpha = 0
-        let fadeIn = SKAction.fadeIn(withDuration: 0.8)
-        background.run(fadeIn)
+        background.run(SKAction.fadeIn(withDuration: 0.8))
     }
 
     // MARK: - Bubble Particles
+    // Langsung pakai PNG asset tanpa file .sks
 
     private func setupBubbleParticles() {
-        guard let emitter = SKEmitterNode(fileNamed: "bubbleParticle") else {
-            setupManualBubbles()
-            return
-        }
+        let emitter = SKEmitterNode()
 
+        // Set texture langsung dari PNG asset
+        // Ganti "bubbleParticle" dengan nama PNG kalian di xcassets
+        emitter.particleTexture = SKTexture(imageNamed: "bubbleParticle")
+
+        // Posisi emitter di bawah layar agar bubble naik dari bawah
         emitter.position = CGPoint(x: frame.midX, y: frame.minY - 20)
         emitter.zPosition = 2
+
+        // Jumlah bubble per detik — naikkan untuk lebih padat
+        emitter.particleBirthRate = 15
+
+        // Durasi hidup setiap bubble
+        emitter.particleLifetime = 3.0
+        emitter.particleLifetimeRange = 1.0
+
+        // Arah naik ke atas
+        emitter.emissionAngle = .pi / 2   // 90 derajat = ke atas
+        emitter.emissionAngleRange = 0.3  // sedikit variasi arah
+
+        // Kecepatan naik
+        emitter.particleSpeed = 100
+        emitter.particleSpeedRange = 40
+
+        // Ukuran bubble
+        emitter.particleScale = 0.15
+        emitter.particleScaleRange = 0.1
+
+        // Posisi spawn acak sepanjang lebar layar
+        emitter.particlePositionRange = CGVector(
+            dx: frame.width,
+            dy: 0
+        )
+
+        // Transparansi — makin transparan saat naik
+        emitter.particleAlpha = 0.7
+        emitter.particleAlphaRange = 0.2
+        emitter.particleAlphaSpeed = -0.15
+
+        // Tidak ada gravitasi — bubble naik lurus
+        emitter.yAcceleration = 0
+        emitter.xAcceleration = 0
+
         addChild(emitter)
-    }
-
-    // MARK: - Manual Bubbles
-
-    private func setupManualBubbles() {
-        for _ in 0..<30 {
-            spawnInitialBubble()
-        }
-
-        let spawnAction = SKAction.run { [weak self] in
-            self?.spawnOneBubble()
-        }
-        let wait     = SKAction.wait(forDuration: 0.08)
-        let sequence = SKAction.sequence([spawnAction, wait])
-        run(SKAction.repeatForever(sequence), withKey: "spawnBubbles")
-    }
-
-    private func spawnInitialBubble() {
-        let size   = CGFloat.random(in: 8...35)
-        let bubble = makeBubbleNode(size: size)
-
-        let randomX = CGFloat.random(in: frame.minX...frame.maxX)
-        let randomY = CGFloat.random(in: frame.minY...frame.maxY)
-        bubble.position = CGPoint(x: randomX, y: randomY)
-        addChild(bubble)
-
-        animateBubble(bubble, size: size)
-    }
-
-    private func spawnOneBubble() {
-        let size   = CGFloat.random(in: 6...32)
-        let bubble = makeBubbleNode(size: size)
-
-        let randomX = CGFloat.random(in: frame.minX...frame.maxX)
-        bubble.position = CGPoint(x: randomX, y: frame.minY - size)
-        addChild(bubble)
-
-        animateBubble(bubble, size: size)
-    }
-
-    // MARK: - Bubble Factory
-
-    private func makeBubbleNode(size: CGFloat) -> SKShapeNode {
-        let bubble = SKShapeNode(circleOfRadius: size)
-
-        let isLight = Bool.random()
-        if isLight {
-            bubble.fillColor   = UIColor(white: 1.0, alpha: CGFloat.random(in: 0.15...0.35))
-            bubble.strokeColor = UIColor(white: 1.0, alpha: CGFloat.random(in: 0.4...0.7))
-        } else {
-            bubble.fillColor   = UIColor(red: 0.6, green: 0.85, blue: 1.0,
-                                         alpha: CGFloat.random(in: 0.2...0.4))
-            bubble.strokeColor = UIColor(red: 0.75, green: 0.92, blue: 1.0,
-                                         alpha: CGFloat.random(in: 0.5...0.8))
-        }
-
-        bubble.lineWidth = CGFloat.random(in: 0.8...2.0)
-        bubble.zPosition = CGFloat.random(in: 1...3)
-
-        return bubble
-    }
-
-    // MARK: - Bubble Animation
-
-    private func animateBubble(_ bubble: SKShapeNode, size: CGFloat) {
-        let duration = Double.random(in: 1.8...4.0)
-
-        let moveUp  = SKAction.moveBy(
-                        x: CGFloat.random(in: -40...40),
-                        y: frame.height + size * 2,
-                        duration: duration)
-
-        let scaleUp = SKAction.scale(
-                        to: CGFloat.random(in: 1.1...1.4),
-                        duration: duration)
-
-        let fadeOut = SKAction.fadeOut(withDuration: 0.4)
-        let remove  = SKAction.removeFromParent()
-
-        let floating = SKAction.group([moveUp, scaleUp])
-        bubble.run(SKAction.sequence([floating, fadeOut, remove]))
     }
 
     // MARK: - Cleanup
     // SKAudioNode otomatis berhenti saat scene di-dismiss
-    // tidak perlu manual stop
 
     override func willMove(from view: SKView) {
         removeAllActions()
