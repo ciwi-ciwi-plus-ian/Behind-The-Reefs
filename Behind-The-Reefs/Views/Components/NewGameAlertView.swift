@@ -19,7 +19,7 @@ struct NewGameAlertView: View {
             VStack(spacing: 0) {
                 // Header
                 Text("NEW GAME WARNING")
-                    .font(.system(size: 28, weight: .heavy, design: .rounded))
+                    .font(.custom("Chewy-Regular",size: 28))
                     .foregroundColor(.white)
                     .shadow(color: .black.opacity(0.5), radius: 2, x: 2, y: 2)
                     .padding(.top, 20)
@@ -41,13 +41,10 @@ struct NewGameAlertView: View {
                 // Body Text
                 VStack(spacing: 10) {
                     Text(bodyText)
-                        .font(.system(size: 18, weight: .bold, design: .rounded))
-                        .multilineTextAlignment(.center)
-                        .foregroundColor(.white)
+                        .font(.custom("Sniglet-Regular",size: 18))
                     
                     Text("Are you sure you want to proceed?")
-                        .font(.system(size: 16, weight: .medium, design: .rounded))
-                        .foregroundColor(.white.opacity(0.9))
+                        .font(.custom("Sniglet-Regular",size: 16))
                 }
                 .padding(.horizontal, 30)
                 .padding(.bottom, 25)
@@ -57,7 +54,7 @@ struct NewGameAlertView: View {
                     // NO
                     Button(action: {}) {
                         Text("NO, CANCEL")
-                            .font(.system(size: 14, weight: .black))
+                            .font(.custom("Chewy-Regular",size: 14))
                             .foregroundColor(.white)
                             .padding(.vertical, 19)
                             .padding(.horizontal, 20)
@@ -70,7 +67,7 @@ struct NewGameAlertView: View {
                     // YES
                     Button(action: {}) {
                         Text("YES, START\nNEW GAME")
-                            .font(.system(size: 14, weight: .black))
+                            .font(.custom("Chewy-Regular",size: 14))
                             .multilineTextAlignment(.center)
                             .foregroundColor(.white)
                             .padding(.vertical, 10)
