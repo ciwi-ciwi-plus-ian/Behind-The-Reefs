@@ -35,8 +35,6 @@ struct TutorialView: View {
         .onTapGesture { advance() }
     }
 
-    // MARK: - Subviews
-
     private func backgroundImage(size: CGSize) -> some View {
         Image(tutorialStep < 3 ? "PuzzleScreen" : "PuzzleScreenWithPoints")
             .resizable()
@@ -152,8 +150,6 @@ struct TutorialView: View {
             .position(x: x, y: y)
     }
 
-    // MARK: - Overlay
-
     @ViewBuilder
     private func overlayView(sortRect: CGRect) -> some View {
         if tutorialStep >= 3 {
@@ -177,8 +173,6 @@ struct TutorialView: View {
                 .ignoresSafeArea()
         }
     }
-
-    // MARK: - Actions
 
     private func advance() {
         if tutorialStep < 4 { tutorialStep += 1 } else { isPresented = false }

@@ -2,34 +2,26 @@ import SpriteKit
 
 final class PuzzleScene: SKScene {
 
-    // MARK: - Layout
-
     private enum Layout {
         static let sortingWidth: CGFloat = 520
         static let columnCount:  Int     = 6
-        static let columnWidth:  CGFloat = sortingWidth / CGFloat(columnCount)  // ≈ 86.67
-        static let pieceSize             = CGSize(width: 108, height: 108)
-        static let slotInset:    CGFloat = 6   // gap between column edge and slot border
+        static let columnWidth:  CGFloat = sortingWidth / CGFloat(columnCount)
+        static let slotInset:    CGFloat = 6
+        static let poolMargin:   CGFloat = 150
     }
 
-    // Pool columns flank the 520-wide sorting area (X outside ±260).
-    private var leftPoolX:  CGFloat { -(Layout.sortingWidth / 2 + Layout.pieceSize.width / 2 + 28) }
-    private var rightPoolX: CGFloat {   Layout.sortingWidth / 2 + Layout.pieceSize.width / 2 + 28 }
-
-    // MARK: - State
+    private let leftPoolX  = -(Layout.sortingWidth / 2 + Layout.poolMargin)
+    private let rightPoolX =   Layout.sortingWidth / 2 + Layout.poolMargin
 
     private var allPieces:    [PieceNode]      = []
-    private var columnPieces: [Int: PieceNode] = [:]   // column 0–5 → occupying piece
-    private var slots:        [Int: SlotNode]  = [:]   // column 0–5 → slot node
+    private var columnPieces: [Int: PieceNode] = [:]
+    private var slots:        [Int: SlotNode]  = [:]
 
-    private var draggedPiece: PieceNode?
-    private var dragOffset:   CGPoint = .zero
-
-    // MARK: - Public callback (always invoked on the main thread)
+    private var draggedPiece:     PieceNode?
+    private var dragOffset:       CGPoint = .zero
+    private var dragSourceColumn: Int?    = nil
 
     var onAnswerChecked: ((Bool) -> Void)?
-
-    // MARK: - Lifecycle
 
     override func didMove(to view: SKView) {
         backgroundColor = .clear
@@ -37,8 +29,6 @@ final class PuzzleScene: SKScene {
         setupSlots()
         setupPieces()
     }
-
-    // MARK: - Setup
 
     private func columnCenterX(at index: Int) -> CGFloat {
         -Layout.sortingWidth / 2 + Layout.columnWidth * (CGFloat(index) + 0.5)
@@ -60,14 +50,13 @@ final class PuzzleScene: SKScene {
         let homes = poolPositions()
         let items = PuzzleItem.allCases.shuffled()
         for (i, item) in items.enumerated() {
-            let piece = PieceNode(item: item, home: homes[i], size: Layout.pieceSize)
+            let piece = PieceNode(item: item, home: homes[i])
             piece.position = homes[i]
             addChild(piece)
             allPieces.append(piece)
         }
     }
 
-    // 3 pieces left of the sorting area, 3 pieces right — evenly spaced vertically.
     private func poolPositions() -> [CGPoint] {
         let step = size.height * 0.27
         let ys: [CGFloat] = [step, 0, -step]
@@ -75,24 +64,26 @@ final class PuzzleScene: SKScene {
              + ys.map { CGPoint(x: rightPoolX, y: $0) }
     }
 
-    // MARK: - Column helpers
-
-    /// Returns the column index (0–5) for a given X, or nil if outside the sorting area.
     private func targetColumn(for x: CGFloat) -> Int? {
         let half = Layout.sortingWidth / 2
         guard x >= -half, x <= half else { return nil }
         return min(Int((x + half) / Layout.columnWidth), Layout.columnCount - 1)
     }
 
-    // MARK: - Touch Handling
-
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         guard let touch = touches.first else { return }
         let loc = touch.location(in: self)
 
-        guard let piece = nodes(at: loc).compactMap({ $0 as? PieceNode }).first else { return }
+        var hitPiece: PieceNode?
+        var topZ = -CGFloat.greatestFiniteMagnitude
+        physicsWorld.enumerateBodies(at: loc) { body, _ in
+            guard let p = body.node as? PieceNode, p.zPosition > topZ else { return }
+            topZ = p.zPosition
+            hitPiece = p
+        }
+        guard let piece = hitPiece else { return }
 
-        // Lift out of its column if it was placed there.
+        dragSourceColumn = piece.columnIndex
         if let col = piece.columnIndex {
             columnPieces.removeValue(forKey: col)
             slots[col]?.setHighlighted(false)
@@ -114,7 +105,6 @@ final class PuzzleScene: SKScene {
         piece.position = CGPoint(x: loc.x + dragOffset.x,
                                  y: loc.y + dragOffset.y)
 
-        // Highlight the column being hovered over.
         let hovered = targetColumn(for: piece.position.x)
         slots.forEach { $1.setHighlighted($0 == hovered) }
     }
@@ -135,19 +125,29 @@ final class PuzzleScene: SKScene {
         piece.zPosition = 1
         slots.values.forEach { $0.setHighlighted(false) }
 
-        if !cancelled, let col = targetColumn(for: piece.position.x) {
-            if let occupant = columnPieces[col], occupant !== piece {
-                columnPieces.removeValue(forKey: col)
+        guard !cancelled, let targetCol = targetColumn(for: piece.position.x) else { return }
+
+        if let occupant = columnPieces[targetCol], occupant !== piece {
+            columnPieces.removeValue(forKey: targetCol)
+
+            if let sourceCol = dragSourceColumn {
+                columnPieces[sourceCol] = occupant
+                occupant.snapToColumn(sourceCol, at: CGPoint(x: columnCenterX(at: sourceCol), y: occupant.position.y))
+            } else {
                 occupant.columnIndex = nil
+                let pushX = columnCenterX(at: targetCol) < 0 ? leftPoolX : rightPoolX
+                let move = SKAction.move(to: CGPoint(x: pushX, y: occupant.position.y), duration: 0.18)
+                move.timingMode = .easeOut
+                occupant.run(move)
             }
-            columnPieces[col] = piece
-            piece.snapToColumn(col, at: CGPoint(x: columnCenterX(at: col), y: piece.position.y))
+        } else if let sourceCol = dragSourceColumn, sourceCol != targetCol {
+            columnPieces.removeValue(forKey: sourceCol)
         }
+
+        columnPieces[targetCol] = piece
+        piece.snapToColumn(targetCol, at: CGPoint(x: columnCenterX(at: targetCol), y: piece.position.y))
     }
 
-    // MARK: - Validation
-
-    /// Reads columns 0–5, compares against the 5 predefined sequences, fires the callback.
     func checkAnswer() {
         let order = (0..<Layout.columnCount).compactMap { columnPieces[$0]?.item }
         let isCorrect = order.count == Layout.columnCount
@@ -155,7 +155,6 @@ final class PuzzleScene: SKScene {
         onAnswerChecked?(isCorrect)
     }
 
-    /// Sends every piece back to its pool home position.
     func resetPieces() {
         columnPieces.removeAll()
         for piece in allPieces {

@@ -1,25 +1,37 @@
 import SpriteKit
 
-// Draggable puzzle piece — one per PuzzleItem.
 final class PieceNode: SKSpriteNode {
+
+    private static let scaleFactor: CGFloat = 1
 
     let item: PuzzleItem
     let homePosition: CGPoint
 
-    // nil  → piece is in the pool
-    // 0–5  → piece is locked into that column
     var columnIndex: Int? = nil
 
-    init(item: PuzzleItem, home: CGPoint, size: CGSize) {
+    init(item: PuzzleItem, home: CGPoint) {
         self.item = item
         self.homePosition = home
+        let texture = SKTexture(imageNamed: item.rawValue)
+        let natural = texture.size()
         super.init(
-            texture: SKTexture(imageNamed: item.rawValue),
+            texture: texture,
             color: .clear,
-            size: size
+            size: CGSize(
+                width:  natural.width  * PieceNode.scaleFactor,
+                height: natural.height * PieceNode.scaleFactor
+            )
         )
         name = item.rawValue
         zPosition = 1
+
+        let body = SKPhysicsBody(texture: texture, alphaThreshold: 0.05, size: self.size)
+        body.isDynamic = false
+        body.affectedByGravity = false
+        body.categoryBitMask = 0
+        body.contactTestBitMask = 0
+        body.collisionBitMask = 0
+        physicsBody = body
     }
 
     required init?(coder: NSCoder) { fatalError() }

@@ -1,6 +1,5 @@
 import SpriteKit
 
-// Invisible hit-zone for one column in the sorting area.
 final class SlotNode: SKShapeNode {
 
     let columnIndex: Int
