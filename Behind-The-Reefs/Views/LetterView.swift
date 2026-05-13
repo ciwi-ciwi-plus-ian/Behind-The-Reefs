@@ -5,6 +5,9 @@ struct LetterView: View {
     @State private var showOverlay = false
     @State private var showContent = false
 
+    private let snigletFont: Font = .custom("Sniglet-Regular", size: 16)
+    private let textColor: Color = .white
+
     private let letterParagraphs: [String] = [
         "My dear descendant,",
         "If this letter has reached you, then you are ready. Beneath the ocean lies a place shaped by order and meaning, where nothing is random and everything must be set as it was meant to be.",
@@ -16,7 +19,7 @@ struct LetterView: View {
 
     var body: some View {
         ZStack {
-            Image(isOpened ? "letterFrameOne" : "letterFrameTwo")
+            Image(isOpened ? "letterFrameOpened" : "letterFrameClosed")
                 .resizable()
                 .scaledToFill()
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -33,23 +36,21 @@ struct LetterView: View {
             VStack(alignment: .leading, spacing: 16) {
                 ForEach(letterParagraphs, id: \.self) { paragraph in
                     Text(paragraph)
-                        .font(.system(size: 14, weight: .regular, design: .serif))
-                        .foregroundColor(.white)
+                        .font(snigletFont)
                         .multilineTextAlignment(.leading)
                 }
 
                 Button(action: {}) {
                     Text("Begin!")
-                        .font(.system(size: 18, weight: .bold))
-                        .foregroundColor(.black)
-                        .padding(.horizontal, 28)
+                        .font(snigletFont)
+                        .padding(.horizontal, 32)
                         .padding(.vertical, 12)
-                        .background(Color(white: 0.85))
+                        .background(Color.white.opacity(0.25))
                         .clipShape(Capsule())
                 }
-                .padding(.top, 8)
                 .frame(maxWidth: .infinity, alignment: .center)
             }
+            .foregroundColor(.white)
             .frame(maxWidth: 520, maxHeight: .infinity)
             .padding(.horizontal, 28)
             .ignoresSafeArea()
