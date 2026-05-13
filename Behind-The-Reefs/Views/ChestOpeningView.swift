@@ -12,8 +12,6 @@ struct ChestOpeningView: View {
     @State private var chestOpened   = false
     @State private var translateKeys = false
     @State private var fadeKeys      = false
-
-    // NEW
     @State private var showDarkOverlay = false
 
     @State private var rotatedKeys: [Bool] = Array(repeating: false, count: 5)
@@ -96,8 +94,8 @@ struct ChestOpeningView: View {
             }
         }
         .onAppear {
-            // SHOW overlay hitam selama 1 detik
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.75) {
+            // SHOW overlay
+            DispatchQueue.main.asyncAfter(deadline: .now()) {
                 withAnimation(.easeInOut(duration: 0.25)) {
                     showDarkOverlay = true
                 }
@@ -112,7 +110,7 @@ struct ChestOpeningView: View {
                 }
             }
 
-            // HIDE overlay setelah 1 detik
+            // HIDE overlay
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
                 withAnimation(.easeInOut(duration: 0.2)) {
                     showDarkOverlay = false
