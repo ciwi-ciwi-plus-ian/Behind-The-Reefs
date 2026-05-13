@@ -24,7 +24,7 @@ struct NewGameAlertView: View {
                 VStack(spacing: 0) {
                     // Header
                     Text("Start Again?")
-                        .font(.custom("Chewy-Regular", size: 28))
+                        .font(.custom("Chewy-Regular", size: 32))
                         .foregroundColor(.white)
                         .shadow(color: .black.opacity(0.5), radius: 2, x: 2, y: 2)
                         .padding(.top, 10)
@@ -46,7 +46,7 @@ struct NewGameAlertView: View {
                     // Body Text
                     VStack(spacing: 8) {
                         Text("Are you sure want to start a new game? Past progress will be deleted!")
-                            .font(.custom("Sniglet-Regular", size: 16))
+                            .font(.custom("Sniglet-Regular", size: 18))
                             .foregroundColor(.white)
                     }
                     .multilineTextAlignment(.center)
@@ -57,38 +57,25 @@ struct NewGameAlertView: View {
                     HStack(spacing: 15) {
                         // NO
                         Button(action: {}) {
-                            Text("NO, CANCEL")
-                                .font(.custom("Chewy-Regular", size: 14))
-                                .foregroundColor(.white)
-                                .padding(.vertical, 12)
-                                .padding(.horizontal, 15)
-                                .background(
-                                    Capsule()
-                                        .fill(Color.red)
-                                        .overlay(Capsule().stroke(Color.white.opacity(0.8), lineWidth: 3))
-                                )
+                            Image("noCancel")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(height: 35)
                         }
                         
                         // YES
                         Button(action: {}) {
-                            Text("YES, START\nNEW GAME")
-                                .font(.custom("Chewy-Regular", size: 13))
-                                .multilineTextAlignment(.center)
-                                .foregroundColor(.white)
-                                .padding(.vertical, 8)
-                                .padding(.horizontal, 25)
-                                .background(
-                                    Capsule()
-                                        .fill(Color.green)
-                                        .overlay(Capsule().stroke(Color.white.opacity(0.8), lineWidth: 3))
-                                )
+                            Image("yesNewGame")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(height: 35)
                         }
                     }
                     .padding(.bottom, 15)
                 }
             }
             .padding(20)
-            .frame(width: 400, height: 280)
+            .frame(width: 440, height: 280)
             .background(
                 Image("wood")
                     .resizable()
