@@ -16,7 +16,7 @@ struct LetterView: View {
 
     var body: some View {
         ZStack {
-            Image(isOpened ? "Beyond_the_Reefs_SuratBuka" : "Beyond_the_Reef_LetterScene")
+            Image(isOpened ? "letterFrameOne" : "letterFrameTwo")
                 .resizable()
                 .scaledToFill()
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
