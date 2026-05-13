@@ -59,8 +59,10 @@ struct ChestOpeningView: View {
                         Image(chestOpened ? "chestOpened" : "chestClosed")
                             .resizable()
                             .scaledToFit()
-                            .frame(width: chestOpened ? 400 : 350)
-                            .offset(y: chestOpened ? 10 : -60)
+                            .frame(width: chestOpened ? 1000 : 875)
+                            .offset(y: chestOpened ? 10 : -50)
+//                            .frame(width: chestOpened ? 400 : 350)
+//                            .offset(y: chestOpened ? 10 : -60)
                         Spacer()
                     }
 
