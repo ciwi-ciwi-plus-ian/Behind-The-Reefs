@@ -105,7 +105,7 @@ struct ChestOpeningView: View {
                                     .rotationEffect(
                                         .degrees(rotatedKeys[index] ? 180 : 30)
                                     )
-                                    .offset(y: translateKeys ? 10 : 70)
+                                    .offset(y: translateKeys ? -30 : 15)
                                     .opacity(fadeKeys ? 0 : 1)
 
                                     .animation(.easeInOut(duration: 1),
@@ -120,7 +120,7 @@ struct ChestOpeningView: View {
                         }
                         .padding(.bottom, 30)
                     }
-                    .frame(height: 300)
+                    .frame(height: 400)
                 }
             }
         }
@@ -146,18 +146,20 @@ struct ChestOpeningView: View {
                 withAnimation(.easeInOut(duration: 0.2)) {
                     showDarkOverlay = false
                 }
-
-                // mulai translasi
+            }
+            
+            // Translasi
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2.75) {
                 translateKeys = true
             }
 
             // Fade semua kunci
-            DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 3.5) {
                 fadeKeys = true
             }
 
             // Open chest
-            DispatchQueue.main.asyncAfter(deadline: .now() + 3.5) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 4.0) {
                 chestOpened = true
             }
         }
