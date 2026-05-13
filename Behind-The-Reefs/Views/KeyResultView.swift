@@ -9,12 +9,10 @@ import SwiftUI
 
 struct KeyResultView: View {
 
-    // Data yang diterima dari puzzle yang selesai
-    var sortDescription: String  // contoh: "You've sorted the creatures by number of dots"
-    var patternIndex: Int        // index pola yang baru selesai (0-4)
+    var sortDescription: String
+    var patternIndex: Int
 
-    // MARK: - Key Asset Names
-    // Sesuaikan nama di sini kalau nama file aset berubah
+    // MARK: - Asset Names
     private let keyAssetNames = [
         "keyOne",   // index 0 — pola 1
         "keyTwo",   // index 1 — pola 2
@@ -23,27 +21,37 @@ struct KeyResultView: View {
         "keyFive"   // index 4 — pola 5
     ]
 
-    // Ambil nama aset kunci berdasarkan patternIndex dengan aman
     private var currentKeyAsset: String {
         guard patternIndex >= 0 && patternIndex < keyAssetNames.count else {
-            return "keyOne" // fallback kalau index di luar range
+            return "keyOne"
         }
         return keyAssetNames[patternIndex]
     }
 
+    // MARK: - Button Size
+    // Sesuaikan nilai ini untuk atur besar kecil button
+    private let homeButtonWidth:     CGFloat = 100
+    private let homeButtonHeight:    CGFloat = 60
+    private let continueButtonWidth: CGFloat = 130
+    private let continueButtonHeight: CGFloat = 60
+
+    // MARK: - Animation State
+    @State private var keyScale:    CGFloat = 0.3
+    @State private var keyOpacity:  CGFloat = 0.0
+    @State private var glowOpacity: CGFloat = 0.3
+    @State private var glowRadius:  CGFloat = 50
+
     var body: some View {
         ZStack {
 
-            // MARK: - Background (digelapkan)
+            // MARK: - Background
             Image("mainMenuBackground") // ← nama file background
                 .resizable()
                 .scaledToFill()
                 .ignoresSafeArea()
-                .overlay(
-                    Color.black.opacity(0.55)
-                )
+                .overlay(Color.black.opacity(0.55))
 
-            VStack(spacing: 32) {
+            VStack(spacing: 0) {
 
                 // MARK: - Sort Description Text
                 Text(sortDescription)
@@ -51,43 +59,107 @@ struct KeyResultView: View {
                     .fontWeight(.bold)
                     .foregroundStyle(.white)
                     .multilineTextAlignment(.center)
-                    .padding(.horizontal, 70)
-                    .padding(.top, 50)
-                
+                    .padding(.horizontal, 40)
+                    .padding(.top, 30)
 
-                // MARK: - Key Image
-                Image(currentKeyAsset) // otomatis load keyOne/keyTwo/dst
-                    .resizable()
-                    .scaledToFit()
-                    .frame(height: 180)
-                    .scaleEffect(keyScale)
-                    .opacity(keyOpacity)
-                    .onAppear {
-                        withAnimation(.spring(duration: 0.5, bounce: 0.4)) {
-                            keyScale   = 1.0
-                            keyOpacity = 1.0
+                // MARK: - Key + Glow Effect
+                ZStack {
+
+                    // Glow lingkaran kuning di belakang kunci
+                    Circle()
+                        .fill(
+                            RadialGradient(
+                                colors: [
+                                    Color.yellow.opacity(0.5),
+                                    Color.yellow.opacity(0.2),
+                                    Color.clear
+                                ],
+                                center: .center,
+                                startRadius: 10,
+                                endRadius: glowRadius
+                            )
+                        )
+                        .frame(width: glowRadius * 2.5, height: glowRadius * 2.5)
+                        .opacity(glowOpacity)
+                        // Animasi glow berdenyut
+                        .onAppear {
+                            withAnimation(
+                                .easeInOut(duration: 1.5)
+                                .repeatForever(autoreverses: true)
+                            ) {
+                                glowOpacity = 0.8
+                                glowRadius  = 80
+                            }
                         }
+
+                    // Gambar kunci
+                    Image(currentKeyAsset)
+                        .resizable()
+                        .padding(.top, 30)
+                        .scaledToFit()
+                        .frame(height: 200)
+                        .rotationEffect(.degrees(30))
+                        .scaleEffect(keyScale)
+                        .opacity(keyOpacity)
+                        // Animasi kunci melayang naik turun
+                        .offset(y: floatOffset)
+                        .onAppear {
+                            // Muncul dengan spring
+                            withAnimation(.spring(duration: 0.5, bounce: 0.4)) {
+                                keyScale   = 1.0
+                                keyOpacity = 1.0
+                            }
+                            // Mulai animasi melayang setelah muncul
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                                withAnimation(
+                                    .easeInOut(duration: 1.8)
+                                    .repeatForever(autoreverses: true)
+                                ) {
+                                    floatOffset = -12
+                                }
+                            }
+                        }
+                }
+                .padding(.bottom, 32)
+
+                // MARK: - Buttons Row
+                HStack(spacing: 20) {
+
+                    // Home Button
+                    Button {
+                        // navigasi ke main menu — akan diisi saat routing siap
+                    } label: {
+                        Image("homeButton") // ← nama file aset tombol home bawah
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: homeButtonWidth, height: homeButtonHeight)
                     }
 
-                // MARK: - Finish Button
-                Button {
-                    // navigasi ke puzzle berikutnya — akan diisi saat routing siap
-                } label: {
-                    Image("btn_finish") // ← nama file aset tombol finish
-                        .resizable()
-                        .scaledToFit()
-                        .frame(height: 56)
+                    // Continue Button
+                    Button {
+                        // navigasi ke puzzle berikutnya — akan diisi saat routing siap
+                    } label: {
+                        Image("continueButton") // ← nama file aset tombol continue
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: continueButtonWidth, height: continueButtonHeight)
+                    }
                 }
             }
+            .padding(.horizontal, 40)
 
             // MARK: - Home Icon (pojok kiri atas)
             VStack {
                 HStack {
-                    Image("btn_home") // ← nama file aset tombol home
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 44, height: 44)
-                        .padding(16)
+                    Button {
+                        // navigasi ke main menu — akan diisi saat routing siap
+                    } label: {
+                        Image("homeIcon")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 48, height: 48)
+                    }
+                    .padding(20)
                     Spacer()
                 }
                 Spacer()
@@ -97,11 +169,15 @@ struct KeyResultView: View {
             VStack {
                 HStack {
                     Spacer()
-                    Image("btn_chest") // ← nama file aset tombol chest
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 44, height: 44)
-                        .padding(16)
+                    Button {
+                        // buka collection view — akan diisi saat routing siap
+                    } label: {
+                        Image("treasureChestIcon")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 48, height: 48)
+                    }
+                    .padding(20)
                 }
                 Spacer()
             }
@@ -109,16 +185,15 @@ struct KeyResultView: View {
         .navigationBarHidden(true)
     }
 
-    // MARK: - Animation State
-    @State private var keyScale:   CGFloat = 0.3
-    @State private var keyOpacity: CGFloat = 0.0
+    // Float animation state — dipisah agar bisa diakses di onAppear
+    @State private var floatOffset: CGFloat = 0
 }
 
 // MARK: - Preview
 
 #Preview (traits: .landscapeRight){
     KeyResultView(
-        sortDescription: "You've sorted the creatures by number of dots",
-        patternIndex: 0  // 0=keyOne, 1=keyTwo, 2=keyThree, 3=keyFour, 4=keyFive
+        sortDescription: "You've sorted the creatures by height",
+        patternIndex: 0
     )
 }
