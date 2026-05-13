@@ -40,6 +40,20 @@ struct ChestOpeningView: View {
 
                 // MARK: - Chest Layer
                 ZStack {
+                    // Glow
+                    Circle()
+                            .fill(
+                                RadialGradient(
+                                    colors: [
+                                        Color.yellow.opacity(chestOpened ? 0.55 : 0),
+                                        Color.yellow.opacity(chestOpened ? 0.25 : 0),
+                                        Color.clear
+                                    ],
+                                    center: .center,
+                                    startRadius: 0,
+                                    endRadius: 230
+                                )
+                            )
                     VStack {
                         // Chest
                         Image(chestOpened ? "chestOpened" : "chestClosed")
@@ -65,12 +79,27 @@ struct ChestOpeningView: View {
                         HStack(spacing: 14) {
 
                             ForEach(0..<5, id: \.self) { index in
-
-                                Image(keyAssetNames[index])
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(width: 120, height: 120)
-
+                                ZStack{
+                                    // Glow
+                                    Circle()
+                                            .fill(
+                                                RadialGradient(
+                                                    colors: [
+                                                        Color.yellow.opacity(showDarkOverlay ? 0.5 : 0),
+                                                        Color.yellow.opacity(showDarkOverlay ? 0.2 : 0),
+                                                        Color.clear
+                                                    ],
+                                                    center: .center,
+                                                    startRadius: 10,
+                                                    endRadius: 90
+                                                )
+                                            ).animation(nil, value: showDarkOverlay)
+                                    
+                                    Image(keyAssetNames[index])
+                                        .resizable()
+                                        .scaledToFit()
+                                }.frame(width: 120, height: 120)
+                                
                                     .rotationEffect(
                                         .degrees(rotatedKeys[index] ? 180 : 30)
                                     )
