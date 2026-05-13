@@ -16,8 +16,8 @@ struct ChestOpeningView: View {
             // Chest
             Image(
                 chestOpened
-                ? "Behind_the_Reefs_TreasureChest-02"
-                : "Behind_the_Reefs_TreasureChest-01"
+                ? "chestOpened"
+                : "chestClosed"
             )
             .resizable()
             .scaledToFit()
