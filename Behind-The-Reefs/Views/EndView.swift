@@ -9,6 +9,11 @@ import SwiftUI
 
 struct EndView: View {
 
+    // MARK: - Button Size
+    // Sesuaikan nilai ini untuk atur besar kecil homeButton
+    private let homeButtonWidth:  CGFloat = 100
+    private let homeButtonHeight: CGFloat = 60
+
     var body: some View {
         ZStack {
 
@@ -17,8 +22,9 @@ struct EndView: View {
                 .resizable()
                 .scaledToFill()
                 .ignoresSafeArea()
+                .overlay(Color.black.opacity(0.4))
 
-            VStack(spacing: 24) {
+            VStack(spacing: 30) {
 
                 // MARK: - Congratulations Card
                 VStack(spacing: 8) {
@@ -32,8 +38,8 @@ struct EndView: View {
                         .fontWeight(.bold)
                         .foregroundStyle(.black)
                 }
-                .padding(.horizontal, 40)
-                .padding(.vertical, 28)
+                .padding(.horizontal, 60)
+                .padding(.vertical, 40)
                 .background(
                     RoundedRectangle(cornerRadius: 16)
                         .fill(Color.white.opacity(0.6))
@@ -43,32 +49,13 @@ struct EndView: View {
                 Button {
                     // navigasi ke main menu — akan diisi saat routing siap
                 } label: {
-                    Text("Home")
-                        .font(.body)
-                        .fontWeight(.medium)
-                        .foregroundStyle(.black)
-                        .padding(.horizontal, 32)
-                        .padding(.vertical, 12)
-                        .background(
-                            RoundedRectangle(cornerRadius: 20)
-                                .fill(Color.white.opacity(0.6))
-                        )
-                }
-            }
-
-            // MARK: - Home Icon (pojok kiri atas)
-            VStack {
-                HStack {
-                    Image(systemName: "house.fill")
+                    Image("homeButton") // ← aset tombol home
                         .resizable()
                         .scaledToFit()
-                        .frame(width: 36, height: 36)
-                        .foregroundStyle(.orange)
-                        .padding(16)
-                    Spacer()
+                        .frame(width: homeButtonWidth, height: homeButtonHeight)
                 }
-                Spacer()
             }
+            .padding(.top, 50)
         }
         .navigationBarHidden(true)
     }
