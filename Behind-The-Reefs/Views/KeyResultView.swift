@@ -28,12 +28,21 @@ struct KeyResultView: View {
         return keyAssetNames[patternIndex]
     }
 
+    // Cek apakah ini pola terakhir
+    // true  → tampilkan finishButton saja
+    // false → tampilkan homeButton + continueButton
+    private var isLastPattern: Bool {
+        patternIndex == 4
+    }
+
     // MARK: - Button Size
     // Sesuaikan nilai ini untuk atur besar kecil button
     private let homeButtonWidth:     CGFloat = 100
     private let homeButtonHeight:    CGFloat = 60
     private let continueButtonWidth: CGFloat = 130
     private let continueButtonHeight: CGFloat = 60
+    private let finishButtonWidth:   CGFloat = 130  // ← atur ukuran finishButton di sini
+    private let finishButtonHeight:  CGFloat = 60
 
     // MARK: - Animation State
     @State private var keyScale:    CGFloat = 0.3
@@ -123,26 +132,43 @@ struct KeyResultView: View {
                 .padding(.bottom, 32)
 
                 // MARK: - Buttons Row
-                HStack(spacing: 20) {
+                // Tampilan button berbeda tergantung pola terakhir atau bukan
+                if isLastPattern {
 
-                    // Home Button
+                    // Pola 5 (keyFive) — hanya tampilkan Finish button
                     Button {
-                        // navigasi ke main menu — akan diisi saat routing siap
+                        // navigasi ke EndView — akan diisi saat routing siap
                     } label: {
-                        Image("homeButton") // ← nama file aset tombol home bawah
+                        Image("finishButton") // ← nama file aset tombol finish
                             .resizable()
                             .scaledToFit()
-                            .frame(width: homeButtonWidth, height: homeButtonHeight)
+                            .frame(width: finishButtonWidth, height: finishButtonHeight)
                     }
 
-                    // Continue Button
-                    Button {
-                        // navigasi ke puzzle berikutnya — akan diisi saat routing siap
-                    } label: {
-                        Image("continueButton") // ← nama file aset tombol continue
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: continueButtonWidth, height: continueButtonHeight)
+                } else {
+
+                    // Pola 1–4 — tampilkan Home + Continue button
+                    HStack(spacing: 20) {
+
+                        // Home Button
+                        Button {
+                            // navigasi ke main menu — akan diisi saat routing siap
+                        } label: {
+                            Image("homeButton") // ← nama file aset tombol home bawah
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: homeButtonWidth, height: homeButtonHeight)
+                        }
+
+                        // Continue Button
+                        Button {
+                            // navigasi ke puzzle berikutnya — akan diisi saat routing siap
+                        } label: {
+                            Image("continueButton") // ← nama file aset tombol continue
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: continueButtonWidth, height: continueButtonHeight)
+                        }
                     }
                 }
             }
@@ -194,6 +220,6 @@ struct KeyResultView: View {
 #Preview (traits: .landscapeRight){
     KeyResultView(
         sortDescription: "You've sorted the creatures by height",
-        patternIndex: 0
+        patternIndex: 0  // ganti ke 4 untuk test tampilan pola terakhir
     )
 }
