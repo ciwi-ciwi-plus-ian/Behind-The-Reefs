@@ -73,6 +73,7 @@ struct NewGameAlertView: View {
                     }
                     .padding(.bottom, 15)
                 }
+
             }
             .padding(20)
             .frame(width: 440, height: 280)
@@ -83,6 +84,26 @@ struct NewGameAlertView: View {
             )
             .clipShape(RoundedRectangle(cornerRadius: 30))
             .shadow(radius: 10)
+
+            // Bubble decor topmost layer
+            VStack {
+                HStack {
+                    Image("bubbleBottomLeft")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 90)
+                        .padding(.top,270)
+                        .padding(.leading, 115)
+                    Spacer()
+                    Image("bubbleTopRight")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 90)
+                        .padding(.bottom,210)
+                        .padding(.trailing,110)
+                }
+                Spacer()
+            }
         }
     }
 }
