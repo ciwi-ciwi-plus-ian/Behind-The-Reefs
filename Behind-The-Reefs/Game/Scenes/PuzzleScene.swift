@@ -102,8 +102,12 @@ final class PuzzleScene: SKScene {
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
         guard let touch = touches.first, let piece = draggedPiece else { return }
         let loc = touch.location(in: self)
-        piece.position = CGPoint(x: loc.x + dragOffset.x,
-                                 y: loc.y + dragOffset.y)
+        let halfW = size.width / 2
+        let halfH = size.height / 2
+        piece.position = CGPoint(
+            x: min(max(loc.x + dragOffset.x, -halfW), halfW),
+            y: min(max(loc.y + dragOffset.y, -halfH), halfH)
+        )
 
         let hovered = targetColumn(for: piece.position.x)
         slots.forEach { $1.setHighlighted($0 == hovered) }
