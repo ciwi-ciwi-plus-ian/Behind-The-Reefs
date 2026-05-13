@@ -31,9 +31,22 @@
 		2B451B2D2FAC942A00CB4F2E /* Behind-The-Reefs.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = "Behind-The-Reefs.xcodeproj"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		6FC96B2D2FB36AFC005C4197 /* Exceptions for "Behind-The-Reefs" folder in "Behind-The-Reefs" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 2B451AC72FAC939300CB4F2E /* Behind-The-Reefs */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		2B451ACA2FAC939300CB4F2E /* Behind-The-Reefs */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				6FC96B2D2FB36AFC005C4197 /* Exceptions for "Behind-The-Reefs" folder in "Behind-The-Reefs" target */,
+			);
 			path = "Behind-The-Reefs";
 			sourceTree = "<group>";
 		};
@@ -422,7 +435,7 @@
 				DEVELOPMENT_TEAM = 984P4SW3VJ;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_FILE = "Behind-The-Reefs/Info.plist";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
@@ -458,7 +471,7 @@
 				DEVELOPMENT_TEAM = 984P4SW3VJ;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_FILE = "Behind-The-Reefs/Info.plist";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
