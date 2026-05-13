@@ -5,6 +5,7 @@
 //  Created by Ivone Liwang on 12/05/26.
 //
 
+
 import SwiftUI
 
 struct ChestOpeningView: View {
@@ -15,58 +16,66 @@ struct ChestOpeningView: View {
     @State private var rotatedKeys: [Bool] = Array(repeating: false, count: 5)
 
     // MARK: - Key Asset Names
-    // Sesuaikan nama di sini kalau nama file aset berubah
     private let keyAssetNames = [
         "keyOne",   // index 0
         "keyTwo",   // index 1
         "keyThree", // index 2
         "keyFour",  // index 3
         "keyFive"   // index 4
-    ] 
+    ]
 
     var body: some View {
 
-        VStack {
+        // ZStack agar background bisa ditaruh di belakang konten
+        ZStack {
 
-            // MARK: - Chest
-            Image(chestOpened ? "chestOpened" : "chestClosed") // ← nama aset chest
+            // MARK: - Background
+            // Ganti otomatis mengikuti state chestOpened
+            // chestOpened false → chestBackgroundZoomOut (chest masih tertutup)
+            // chestOpened true  → chestBackgroundZoomIn  (chest terbuka)
+            Image(chestOpened ? "chestBackgroundZoomOut" : "chestBackgroundZoomIn")
                 .resizable()
-                .scaledToFit()
-                .frame(width: 400)
+                .scaledToFill()
+                .ignoresSafeArea()
+                .animation(.easeInOut(duration: 0.5), value: chestOpened) // transisi smooth saat berganti
 
-            // MARK: - Keys
-            // ForEach loop dari index 0–4
-            // Setiap index ambil nama aset dari keyAssetNames[index]
-            HStack(spacing: 14) {
+            // MARK: - Konten (chest + keys)
+            VStack {
 
-                ForEach(0..<5, id: \.self) { index in
+                // Chest
+                Image(chestOpened ? "chestOpened" : "chestClosed")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 400)
+                    .offset(x: 0, y: 50)   
 
-                    Image(keyAssetNames[index]) // ← ambil nama dari array
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 75, height: 75)
+                // Keys
+                HStack(spacing: 14) {
 
-                        // Rotate one by one
-                        .rotationEffect(
-                            .degrees(rotatedKeys[index] ? 180 : 30)
-                        )
+                    ForEach(0..<5, id: \.self) { index in
 
-                        // Move together
-                        .offset(y: translateKeys ? -40 : 0)
+                        Image(keyAssetNames[index])
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 75, height: 75)
 
-                        // Fade together
-                        .opacity(fadeKeys ? 0 : 1)
+                            .rotationEffect(
+                                .degrees(rotatedKeys[index] ? 180 : 30)
+                            )
+                            .offset(y: translateKeys ? -40 : 0)
+                            .opacity(fadeKeys ? 0 : 1)
 
-                        .animation(.easeInOut(duration: 1),   value: rotatedKeys[index])
-                        .animation(.easeInOut(duration: 1),   value: translateKeys)
-                        .animation(.easeOut(duration: 0.75),  value: fadeKeys)
+                            .animation(.easeInOut(duration: 1),  value: rotatedKeys[index])
+                            .animation(.easeInOut(duration: 1),  value: translateKeys)
+                            .animation(.easeOut(duration: 0.75), value: fadeKeys)
+                    }
                 }
+                .padding(.bottom, 30)
             }
-            .padding(.bottom, 30)
         }
         .onAppear {
 
-            // Rotate one by one — setiap kunci rotate dengan jeda 0.15 detik
+            // Rotate one by one
             for index in 0..<5 {
                 DispatchQueue.main.asyncAfter(
                     deadline: .now() + 0.5 + Double(index) * 0.15
@@ -75,17 +84,17 @@ struct ChestOpeningView: View {
                 }
             }
 
-            // Move semua kunci ke atas bersamaan
+            // Move semua kunci ke atas
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.75) {
                 translateKeys = true
             }
 
-            // Fade semua kunci bersamaan
+            // Fade semua kunci
             DispatchQueue.main.asyncAfter(deadline: .now() + 2.50) {
                 fadeKeys = true
             }
 
-            // Buka chest
+            // Buka chest — background ikut berganti ke chestBackgroundZoomIn
             DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
                 chestOpened = true
             }
