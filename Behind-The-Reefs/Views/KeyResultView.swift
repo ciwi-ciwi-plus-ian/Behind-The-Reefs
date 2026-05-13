@@ -28,33 +28,30 @@ struct KeyResultView: View {
         return keyAssetNames[patternIndex]
     }
 
-    // Cek apakah ini pola terakhir
-    // true  → tampilkan finishButton saja
-    // false → tampilkan homeButton + continueButton
     private var isLastPattern: Bool {
         patternIndex == 4
     }
 
     // MARK: - Button Size
-    // Sesuaikan nilai ini untuk atur besar kecil button
-    private let homeButtonWidth:     CGFloat = 100
-    private let homeButtonHeight:    CGFloat = 60
-    private let continueButtonWidth: CGFloat = 130
+    private let homeButtonWidth:      CGFloat = 100
+    private let homeButtonHeight:     CGFloat = 60
+    private let continueButtonWidth:  CGFloat = 130
     private let continueButtonHeight: CGFloat = 60
-    private let finishButtonWidth:   CGFloat = 130  // ← atur ukuran finishButton di sini
-    private let finishButtonHeight:  CGFloat = 60
+    private let finishButtonWidth:    CGFloat = 130
+    private let finishButtonHeight:   CGFloat = 60
 
     // MARK: - Animation State
     @State private var keyScale:    CGFloat = 0.3
     @State private var keyOpacity:  CGFloat = 0.0
     @State private var glowOpacity: CGFloat = 0.3
     @State private var glowRadius:  CGFloat = 50
+    @State private var floatOffset: CGFloat = 0
 
     var body: some View {
         ZStack {
 
             // MARK: - Background
-            Image("mainMenuBackground") // ← nama file background
+            Image("mainMenuBackground")
                 .resizable()
                 .scaledToFill()
                 .ignoresSafeArea()
@@ -74,7 +71,6 @@ struct KeyResultView: View {
                 // MARK: - Key + Glow Effect
                 ZStack {
 
-                    // Glow lingkaran kuning di belakang kunci
                     Circle()
                         .fill(
                             RadialGradient(
@@ -90,7 +86,6 @@ struct KeyResultView: View {
                         )
                         .frame(width: glowRadius * 2.5, height: glowRadius * 2.5)
                         .opacity(glowOpacity)
-                        // Animasi glow berdenyut
                         .onAppear {
                             withAnimation(
                                 .easeInOut(duration: 1.5)
@@ -101,7 +96,6 @@ struct KeyResultView: View {
                             }
                         }
 
-                    // Gambar kunci
                     Image(currentKeyAsset)
                         .resizable()
                         .padding(.top, 30)
@@ -110,15 +104,12 @@ struct KeyResultView: View {
                         .rotationEffect(.degrees(30))
                         .scaleEffect(keyScale)
                         .opacity(keyOpacity)
-                        // Animasi kunci melayang naik turun
                         .offset(y: floatOffset)
                         .onAppear {
-                            // Muncul dengan spring
                             withAnimation(.spring(duration: 0.5, bounce: 0.4)) {
                                 keyScale   = 1.0
                                 keyOpacity = 1.0
                             }
-                            // Mulai animasi melayang setelah muncul
                             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                                 withAnimation(
                                     .easeInOut(duration: 1.8)
@@ -132,39 +123,30 @@ struct KeyResultView: View {
                 .padding(.bottom, 32)
 
                 // MARK: - Buttons Row
-                // Tampilan button berbeda tergantung pola terakhir atau bukan
                 if isLastPattern {
-
-                    // Pola 5 (keyFive) — hanya tampilkan Finish button
                     Button {
                         // navigasi ke EndView — akan diisi saat routing siap
                     } label: {
-                        Image("finishButton") // ← nama file aset tombol finish
+                        Image("finishButton")
                             .resizable()
                             .scaledToFit()
                             .frame(width: finishButtonWidth, height: finishButtonHeight)
                     }
-
                 } else {
-
-                    // Pola 1–4 — tampilkan Home + Continue button
                     HStack(spacing: 20) {
-
-                        // Home Button
                         Button {
                             // navigasi ke main menu — akan diisi saat routing siap
                         } label: {
-                            Image("homeButton") // ← nama file aset tombol home bawah
+                            Image("homeButton")
                                 .resizable()
                                 .scaledToFit()
                                 .frame(width: homeButtonWidth, height: homeButtonHeight)
                         }
 
-                        // Continue Button
                         Button {
                             // navigasi ke puzzle berikutnya — akan diisi saat routing siap
                         } label: {
-                            Image("continueButton") // ← nama file aset tombol continue
+                            Image("continueButton")
                                 .resizable()
                                 .scaledToFit()
                                 .frame(width: continueButtonWidth, height: continueButtonHeight)
@@ -174,52 +156,47 @@ struct KeyResultView: View {
             }
             .padding(.horizontal, 40)
 
-            // MARK: - Home Icon (pojok kiri atas)
+            // MARK: - Home Icon pojok kiri atas
+            // Bukan button — hanya dekorasi dengan warna gelap mengikuti overlay
             VStack {
                 HStack {
-                    Button {
-                        // navigasi ke main menu — akan diisi saat routing siap
-                    } label: {
-                        Image("homeIcon")
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 48, height: 48)
-                    }
-                    .padding(20)
+                    Image("homeIcon")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 48, height: 48)
+                        .opacity(0.45) // ← sesuaikan nilai ini (0.0 = gelap total, 1.0 = normal)
+                        .padding(20)
                     Spacer()
                 }
                 Spacer()
             }
+            .allowsHitTesting(false) // ← tidak bisa diklik sama sekali
 
-            // MARK: - Chest Icon (pojok kanan atas)
+            // MARK: - Chest Icon pojok kanan atas
+            // Bukan button — hanya dekorasi dengan warna gelap mengikuti overlay
             VStack {
                 HStack {
                     Spacer()
-                    Button {
-                        // buka collection view — akan diisi saat routing siap
-                    } label: {
-                        Image("treasureChestIcon")
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 48, height: 48)
-                    }
-                    .padding(20)
+                    Image("treasureChestIcon")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 48, height: 48)
+                        .opacity(0.45) // ← sesuaikan nilai ini
+                        .padding(20)
                 }
                 Spacer()
             }
+            .allowsHitTesting(false) // ← tidak bisa diklik sama sekali
         }
         .navigationBarHidden(true)
     }
-
-    // Float animation state — dipisah agar bisa diakses di onAppear
-    @State private var floatOffset: CGFloat = 0
 }
 
 // MARK: - Preview
 
-#Preview (traits: .landscapeRight){
+#Preview(traits: .landscapeRight) {
     KeyResultView(
         sortDescription: "You've sorted the creatures by height",
-        patternIndex: 0  // ganti ke 4 untuk test tampilan pola terakhir
+        patternIndex: 0
     )
 }
