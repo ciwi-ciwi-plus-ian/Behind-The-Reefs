@@ -1,7 +1,80 @@
-//
-//  LetterView.swift
-//  Behind-The-Reefs
-//
-//  Created by Ivone Liwang on 12/05/26.
-//
+import SwiftUI
 
+struct LetterView: View {
+    @State private var isOpened = false
+    @State private var showOverlay = false
+    @State private var showContent = false
+
+    private let snigletFont: Font = .custom("Sniglet-Regular", size: 16)
+    private let textColor: Color = .white
+
+    private let letterParagraphs: [String] = [
+        "My dear descendant,",
+        "If this letter has reached you, then you are ready. Beneath the ocean lies a place shaped by order and meaning, where nothing is random and everything must be set as it was meant to be.",
+        "You will find scattered pieces, lost and misplaced. Your task is simple, though not easy. Every detail has a purpose and the path will reveal itself.",
+        "Do not rush. Observe closely. The truth is not hidden. It is waiting to be put back together.",
+        "Complete what I began.",
+        "Reveal the truth."
+    ]
+
+    var body: some View {
+        ZStack {
+            Image(isOpened ? "letterFrameOpened" : "letterFrameClosed")
+                .resizable()
+                .scaledToFill()
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .clipped()
+                .offset(y: -1)
+                .ignoresSafeArea()
+                .animation(.easeInOut(duration: 0.4), value: isOpened)
+
+            Color.black
+                .opacity(showOverlay ? 0.8 : 0.0)
+                .ignoresSafeArea()
+                .animation(.easeInOut(duration: 0.6), value: showOverlay)
+
+            VStack(alignment: .leading, spacing: 16) {
+                ForEach(letterParagraphs, id: \.self) { paragraph in
+                    Text(paragraph)
+                        .font(snigletFont)
+                        .multilineTextAlignment(.leading)
+                }
+
+                Button(action: {}) {
+                    Text("Begin!")
+                        .font(snigletFont)
+                        .padding(.horizontal, 32)
+                        .padding(.vertical, 12)
+                        .background(Color.white.opacity(0.25))
+                        .clipShape(Capsule())
+                }
+                .frame(maxWidth: .infinity, alignment: .center)
+            }
+            .foregroundColor(.white)
+            .frame(maxWidth: 520, maxHeight: .infinity)
+            .padding(.horizontal, 28)
+            .ignoresSafeArea()
+            .opacity(showContent ? 1.0 : 0.0)
+            .animation(.easeInOut(duration: 0.6), value: showContent)
+        }
+        .onAppear {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                isOpened = true
+            }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                withAnimation {
+                    showOverlay = true
+                }
+            }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+                withAnimation {
+                    showContent = true
+                }
+            }
+        }
+    }
+}
+
+#Preview(traits: .landscapeRight) {
+    LetterView()
+}
