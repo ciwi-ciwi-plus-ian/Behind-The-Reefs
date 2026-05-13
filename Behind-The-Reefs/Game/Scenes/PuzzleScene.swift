@@ -136,16 +136,12 @@ final class PuzzleScene: SKScene {
         slots.values.forEach { $0.setHighlighted(false) }
 
         if !cancelled, let col = targetColumn(for: piece.position.x) {
-            // Evict whoever was already in this column.
             if let occupant = columnPieces[col], occupant !== piece {
                 columnPieces.removeValue(forKey: col)
-                occupant.returnToHome()
+                occupant.columnIndex = nil
             }
             columnPieces[col] = piece
-            // Snap X to column centre only — Y stays where the user released.
             piece.snapToColumn(col, at: CGPoint(x: columnCenterX(at: col), y: piece.position.y))
-        } else {
-            piece.returnToHome()
         }
     }
 

@@ -9,6 +9,7 @@ struct PuzzleGameView: View {
         ZStack {
             background
             gameLayer
+            navigationBar
             if let result = viewModel.result {
                 resultOverlay(result)
             }
@@ -27,6 +28,33 @@ struct PuzzleGameView: View {
     private var gameLayer: some View {
         SpriteView(scene: viewModel.scene, options: [.allowsTransparency])
             .ignoresSafeArea()
+    }
+
+    private var navigationBar: some View {
+        VStack {
+            HStack {
+                Button { } label: {
+                    Image("homeIcon")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 52, height: 52)
+                }
+                .padding(.leading, 16)
+
+                Spacer()
+
+                Button { } label: {
+                    Image("treasureChestIcon")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 52, height: 52)
+                }
+                .padding(.trailing, 16)
+            }
+            .padding(.horizontal, 32)
+            .padding(.top)
+            Spacer()
+        }
     }
 
     @ViewBuilder
