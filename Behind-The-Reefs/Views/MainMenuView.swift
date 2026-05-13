@@ -11,68 +11,50 @@ struct MainMenuView: View {
     
     var body: some View {
         
-        NavigationStack {
+        ZStack {
             
-            ZStack {
+            // Background
+            Image("mainMenuBackground")
+                .resizable()
+                .scaledToFill()
+                .ignoresSafeArea()
+            
+            VStack {
                 
-                // Background
-                Image("mainMenuBackground")
+                // Title
+                Image("title")
                     .resizable()
-                    .scaledToFill()
-                    .ignoresSafeArea()
+                    .scaledToFit()
+                    .frame(width: 374)
+                    .padding(.top, 34)
                 
-                VStack(spacing: 20) {
-                    
-                    Spacer()
-                    
-                    // Title
-                    Text("Behind The Reefs")
-                        .font(.largeTitle)
-                        .fontWeight(.bold)
-                    
-                    Spacer()
+                // Button Group
+                VStack (spacing: 9) {
                     
                     // Continue Button
-//                    NavigationLink(destination: ContinueView()) {
-                        Text("Continue")
-                            .font(.title2)
-                            .fontWeight(.semibold)
-                            .foregroundColor(.white)
-                            .frame(width: 220, height: 60)
-                            .background(Color.blue)
-                            .cornerRadius(30)
-//                    }
+                    Image("continueButton")
+                        .resizable()
+                        .scaledToFit()
+//                        .frame(width: 178, height: 42)
                     
                     // New Game Button
-//                    NavigationLink(destination: NewGameView()) {
-                        Text("New Game")
-                            .font(.title2)
-                            .fontWeight(.semibold)
-                            .foregroundColor(.white)
-                            .frame(width: 220, height: 60)
-                            .background(Color.blue)
-                            .cornerRadius(30)
-//                    }
+                    Image("newGameButton")
+                        .resizable()
+                        .scaledToFit()
+//                        .frame(width: 140, height: 60)
                     
                     // Credits Button
-//                    NavigationLink(destination: CreditsView()) {
-                        Text("Credits")
-                            .font(.title2)
-                            .fontWeight(.semibold)
-                            .foregroundColor(.white)
-                            .frame(width: 180, height: 50)
-                            .background(Color.gray)
-                            .cornerRadius(25)
-//                    }
-                    
-                    Spacer()
+                    Image("creditsButton")
+                        .resizable()
+                        .scaledToFit()
+//                        .frame(width: 90, height: 36)
                 }
-                .padding()
+                .padding(.top,11.65)
             }
         }
     }
 }
 
-#Preview(traits:.landscapeRight) {
+#Preview(traits: .landscapeRight) {
     MainMenuView()
 }
