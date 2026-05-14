@@ -50,18 +50,54 @@ struct KeyResultView: View {
     var body: some View {
         ZStack {
 
-            // MARK: - Background
+            // MARK: - Layer 1: Background
             Image("mainMenuBackground")
                 .resizable()
                 .scaledToFill()
                 .ignoresSafeArea()
-                .overlay(Color.black.opacity(0.55))
 
+            // MARK: - Layer 1: Home Icon & Chest Icon
+            // Diletakkan sebelum overlay agar ikut gelap
+
+            // Home Icon pojok kiri atas
+            VStack {
+                HStack {
+                    Image("homeIcon")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 48, height: 48)
+                        .padding(20)
+                    Spacer()
+                }
+                Spacer()
+            }
+
+            // Chest Icon pojok kanan atas
+            VStack {
+                HStack {
+                    Spacer()
+                    Image("treasureChestIcon")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 60, height: 60)
+                        .padding(16)
+                }
+                Spacer()
+            }
+
+            // MARK: - Layer 2: Overlay gelap
+            // Mengenai background + homeIcon + chestIcon di atas
+            // Konten utama di layer 3 ke atas tidak kena
+            Color.black.opacity(0.55)
+                .ignoresSafeArea()
+
+            // MARK: - Layer 3: Konten utama
+            // Teks, key, dan buttons — bebas dari overlay
             VStack(spacing: 0) {
 
-                // MARK: - Sort Description Text
+                // Sort Description Text
                 Text(sortDescription)
-                    .font(.title2)
+                    .font(.custom("Sniglet-Regular", size: 24))
                     .fontWeight(.bold)
                     .foregroundStyle(.white)
                     .multilineTextAlignment(.center)
@@ -155,38 +191,6 @@ struct KeyResultView: View {
                 }
             }
             .padding(.horizontal, 40)
-
-            // MARK: - Home Icon pojok kiri atas
-            // Bukan button — hanya dekorasi dengan warna gelap mengikuti overlay
-            VStack {
-                HStack {
-                    Image("homeIcon")
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 48, height: 48)
-                        .opacity(0.45) // ← sesuaikan nilai ini (0.0 = gelap total, 1.0 = normal)
-                        .padding(20)
-                    Spacer()
-                }
-                Spacer()
-            }
-            .allowsHitTesting(false) // ← tidak bisa diklik sama sekali
-
-            // MARK: - Chest Icon pojok kanan atas
-            // Bukan button — hanya dekorasi dengan warna gelap mengikuti overlay
-            VStack {
-                HStack {
-                    Spacer()
-                    Image("treasureChestIcon")
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 48, height: 48)
-                        .opacity(0.45) // ← sesuaikan nilai ini
-                        .padding(20)
-                }
-                Spacer()
-            }
-            .allowsHitTesting(false) // ← tidak bisa diklik sama sekali
         }
         .navigationBarHidden(true)
     }
