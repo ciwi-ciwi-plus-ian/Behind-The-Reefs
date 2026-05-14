@@ -121,7 +121,7 @@ struct ChestOpeningView: View {
                                 .frame(width: 120, height: 120)
                                 .rotationEffect(.degrees(rotatedKeys[index] ? 180 : 30))
                                 .offset(y: translateKeys ? -30 : 15)
-                                .scaleEffect(translateKeys ? 0.7 : 0.7)
+                                .scaleEffect(translateKeys ? 0.8 : 0.8)  
                                 .opacity(fadeKeys ? 0 : 1)
                                 .animation(.easeInOut(duration: 1),  value: rotatedKeys[index])
                                 .animation(.easeInOut(duration: 1),  value: translateKeys)
