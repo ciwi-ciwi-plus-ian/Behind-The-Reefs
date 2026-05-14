@@ -92,6 +92,7 @@ struct CollectionView: View {
         .navigationBarHidden(true)
         .onAppear {
             viewModel.loadKeyStatus(from: progress)
+//            viewModel.keyUnlockStatus[1] = true
         }
     }
 
@@ -107,6 +108,8 @@ struct CollectionView: View {
             Image(assetName)
                 .resizable()
                 .scaledToFit()
+                .rotationEffect(.degrees(30))
+                .shadow(color: .black.opacity(0.8), radius: 6, x: 4, y: 6)
 
         } else {
 
@@ -117,6 +120,7 @@ struct CollectionView: View {
                 .colorMultiply(.black)
                 .opacity(0.8)
                 .rotationEffect(.degrees(30))
+                .shadow(color: .black.opacity(0.8), radius: 6, x: 4, y: 6)
         }
     }
 }
