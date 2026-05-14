@@ -16,8 +16,8 @@ final class PuzzleViewModel: ObservableObject {
     }()
 
     init() {
-        scene.onAnswerChecked = { [weak self] isCorrect in
-            self?.result = isCorrect ? .correct : .incorrect
+        scene.onAnswerChecked = { [weak self] _ in
+            self?.result = .correct
         }
     }
 

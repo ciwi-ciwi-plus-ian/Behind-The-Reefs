@@ -62,26 +62,17 @@ struct PuzzleGameView: View {
         Color.black.opacity(0.55).ignoresSafeArea()
 
         VStack(spacing: 18) {
-            Text(result == .correct ? "Correct!" : "Not quite...")
+            Text("Correct!")
                 .font(.custom("Sniglet-Regular", size: 32))
                 .foregroundColor(.white)
 
-            Text(result == .correct
-                 ? "You found a matching order!"
-                 : "Try rearranging the items.")
+            Text("You found a matching order!")
                 .font(.custom("Sniglet-Regular", size: 17))
                 .foregroundColor(.white.opacity(0.85))
                 .multilineTextAlignment(.center)
 
-            HStack(spacing: 16) {
-                if result == .incorrect {
-                    overlayButton("Try Again", filled: false) {
-                        viewModel.result = nil
-                    }
-                }
-                overlayButton(result == .correct ? "Continue" : "Reset", filled: true) {
-                    viewModel.resetPieces()
-                }
+            overlayButton("Continue", filled: true) {
+                viewModel.resetPieces()
             }
         }
         .padding(40)

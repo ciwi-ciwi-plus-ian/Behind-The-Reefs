@@ -7,7 +7,7 @@ final class PuzzleScene: SKScene {
         static let columnCount:  Int     = 6
         static let columnWidth:  CGFloat = sortingWidth / CGFloat(columnCount)
         static let slotInset:    CGFloat = 6
-        static let poolMargin:   CGFloat = 150
+        static let poolMargin:   CGFloat = 65
     }
 
     private let leftPoolX  = -(Layout.sortingWidth / 2 + Layout.poolMargin)
@@ -28,6 +28,7 @@ final class PuzzleScene: SKScene {
         anchorPoint     = CGPoint(x: 0.5, y: 0.5)
         setupSlots()
         setupPieces()
+        startHintTimer()
     }
 
     private func columnCenterX(at index: Int) -> CGFloat {
@@ -58,10 +59,23 @@ final class PuzzleScene: SKScene {
     }
 
     private func poolPositions() -> [CGPoint] {
-        let step = size.height * 0.27
-        let ys: [CGFloat] = [step, 0, -step]
-        return ys.map { CGPoint(x: leftPoolX,  y: $0) }
-             + ys.map { CGPoint(x: rightPoolX, y: $0) }
+        let layoutA: [CGPoint] = [
+            CGPoint(x: leftPoolX,  y:  size.height * 0.28),
+            CGPoint(x: leftPoolX,  y:  0),
+            CGPoint(x: leftPoolX,  y: -size.height * 0.28),
+            CGPoint(x: rightPoolX, y:  size.height * 0.28),
+            CGPoint(x: rightPoolX, y:  0),
+            CGPoint(x: rightPoolX, y: -size.height * 0.28),
+        ]
+        let layoutB: [CGPoint] = [
+            CGPoint(x: leftPoolX,  y:  size.height * 0.32),
+            CGPoint(x: leftPoolX,  y:  size.height * 0.06),
+            CGPoint(x: leftPoolX,  y: -size.height * 0.22),
+            CGPoint(x: rightPoolX, y:  size.height * 0.22),
+            CGPoint(x: rightPoolX, y: -size.height * 0.06),
+            CGPoint(x: rightPoolX, y: -size.height * 0.32),
+        ]
+        return Bool.random() ? layoutA : layoutB
     }
 
     private func targetColumn(for x: CGFloat) -> Int? {
@@ -150,20 +164,109 @@ final class PuzzleScene: SKScene {
 
         columnPieces[targetCol] = piece
         piece.snapToColumn(targetCol, at: CGPoint(x: columnCenterX(at: targetCol), y: piece.position.y))
+
+        if columnPieces.count == Layout.columnCount {
+            checkAnswer()
+        }
     }
 
     func checkAnswer() {
         let order = (0..<Layout.columnCount).compactMap { columnPieces[$0]?.item }
         let isCorrect = order.count == Layout.columnCount
             && PuzzlePatternData.correctSequences.contains(order)
-        onAnswerChecked?(isCorrect)
+        guard isCorrect else { return }
+        snapAllToMidY()
+        onAnswerChecked?(true)
+    }
+
+    private func snapAllToMidY() {
+        for (col, piece) in columnPieces {
+            let target = CGPoint(x: columnCenterX(at: col), y: 0)
+            let move = SKAction.move(to: target, duration: 0.35)
+            move.timingMode = .easeOut
+            piece.run(move)
+        }
+    }
+
+    // MARK: - Hint timer
+
+    private func startHintTimer() {
+        removeAction(forKey: "hintTimer")
+        let seq = SKAction.sequence([
+            .wait(forDuration: 60),
+            .run { [weak self] in self?.showHintIfNeeded() }
+        ])
+        run(.repeatForever(seq), withKey: "hintTimer")
+    }
+
+    private func showHintIfNeeded() {
+        guard columnPieces.count == Layout.columnCount else { return }
+        let order = (0..<Layout.columnCount).compactMap { columnPieces[$0]?.item }
+        guard !PuzzlePatternData.correctSequences.contains(order) else { return }
+        guard let piece = columnPieces.values.randomElement() else { return }
+        showHintBubble(near: piece)
+    }
+
+    private func showHintBubble(near piece: PieceNode) {
+        childNode(withName: "hintBubble")?.removeFromParent()
+
+        let bubble = makeBubbleNode()
+        bubble.name = "hintBubble"
+        // bubbleH/2 (33) + tailH (14) + small gap (6) above piece top
+        bubble.position = CGPoint(x: piece.position.x,
+                                  y: piece.position.y + piece.size.height / 2 + 53)
+        bubble.alpha = 0
+        addChild(bubble)
+
+        bubble.run(.sequence([
+            .fadeIn(withDuration: 0.25),
+            .wait(forDuration: 3.5),
+            .fadeOut(withDuration: 0.4),
+            .removeFromParent()
+        ]))
+    }
+
+    private func makeBubbleNode() -> SKNode {
+        let container = SKNode()
+
+        let line1 = SKLabelNode(text: "I don't think this")
+        line1.fontName                = "Sniglet-Regular"
+        line1.fontSize                = 16
+        line1.fontColor               = .white
+        line1.horizontalAlignmentMode = .center
+        line1.verticalAlignmentMode   = .center
+        line1.position = CGPoint(x: 0, y: 14)
+        container.addChild(line1)
+
+        let line2 = SKLabelNode(text: "is quite right...")
+        line2.fontName                = "Sniglet-Regular"
+        line2.fontSize                = 16
+        line2.fontColor               = .white
+        line2.horizontalAlignmentMode = .center
+        line2.verticalAlignmentMode   = .center
+        line2.position = CGPoint(x: 0, y: -6)
+        container.addChild(line2)
+
+        let tail = SKLabelNode(text: "/")
+        tail.fontName                = "Sniglet-Regular"
+        tail.fontSize                = 20
+        tail.fontColor               = .white
+        tail.horizontalAlignmentMode = .center
+        tail.verticalAlignmentMode   = .top
+        tail.position = CGPoint(x: 0, y: -20)
+        container.addChild(tail)
+
+        return container
     }
 
     func resetPieces() {
         columnPieces.removeAll()
+        childNode(withName: "hintBubble")?.removeFromParent()
+        removeAction(forKey: "hintTimer")
         for piece in allPieces {
             piece.removeAllActions()
             piece.returnToHome()
         }
+        startHintTimer()
     }
 }
