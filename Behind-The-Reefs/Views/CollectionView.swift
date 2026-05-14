@@ -77,14 +77,15 @@ struct CollectionView: View {
             VStack {
                 HStack {
                     Spacer()
-                    Image("exitButton") // ← nama file aset exitButton
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 40, height: 40)
-                        .padding(40)
-                        .onTapGesture {
-                            // kembali ke puzzle — akan diisi saat routing siap
-                        }
+                    Button {
+                        // kembali ke puzzle — akan diisi saat routing siap
+                    } label: {
+                        Image("exitButton") // ← nama file aset exitButton
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 40, height: 40)
+                            .padding(40)
+                    }
                 }
                 Spacer()
             }
