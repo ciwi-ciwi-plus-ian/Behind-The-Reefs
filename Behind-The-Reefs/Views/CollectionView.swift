@@ -7,73 +7,84 @@
 
 import SwiftUI
 import SwiftData
- 
+
 struct CollectionView: View {
- 
-    // Terima GameProgress dari PuzzleGameView
+
     var progress: GameProgress?
- 
+
     @State private var viewModel = CollectionViewModel()
- 
+
     // Ukuran kunci — sesuaikan di sini
-    private let keySize:     CGFloat = 120
-    private let keySpacing:  CGFloat = 20
-    private let chestWidth:  CGFloat = 500
- 
+    private let keySize:    CGFloat = 120
+    private let keySpacing: CGFloat = 14
+    private let chestWidth: CGFloat = 875
+
+    // Opacity overlay gelap — sesuaikan di sini
+    // 0.0 = tidak ada overlay, 1.0 = gelap total
+    private let overlayOpacity: CGFloat = 0.5  // ← ubah nilai ini
+
     var body: some View {
         ZStack {
- 
-            // MARK: - Background
-            Image("chestBackgroundZoomOut") // ← nama file background sesuai ChestOpeningView
+
+            // MARK: - Layer 1: Background
+            Image("chestBackgroundZoomOut")
                 .resizable()
                 .scaledToFill()
                 .ignoresSafeArea()
- 
-            VStack(spacing: 0) {
- 
-                Spacer()
- 
-                // MARK: - Chest Image (selalu tertutup di CollectionView)
-                Image("chestClosed") // ← nama file aset chest tertutup
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: chestWidth)
- 
-                // MARK: - Keys Row
-                HStack(spacing: keySpacing) {
-                    ForEach(0..<5, id: \.self) { index in
-                        keySlot(for: index)
+
+            // MARK: - Layer 2: Chest
+            // Chest diletakkan sebelum overlay agar ikut gelap
+            VStack {
+                ZStack {
+                    VStack {
+                        Image("chestClosed")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: chestWidth)
+                            .offset(y: -50)
+                        Spacer()
                     }
                 }
-                .padding(.bottom, 40)
             }
- 
-            // MARK: - Close Button (pojok kanan atas)
+
+            // MARK: - Layer 3: Overlay gelap
+            // Hanya mengenai background dan chest di bawahnya
+            // Keys yang ada di layer 4 ke atas tidak kena
+            Color.black
+                .opacity(overlayOpacity)
+                .ignoresSafeArea()
+
+            // MARK: - Layer 4: Keys
+            // Di atas overlay — tidak kena efek gelap
+            VStack {
+                ZStack {
+                    VStack {
+                        Spacer()
+                        HStack(spacing: keySpacing) {
+                            ForEach(0..<5, id: \.self) { index in
+                                keySlot(for: index)
+                                    .frame(width: keySize, height: keySize)
+                            }
+                        }
+                        .padding(.bottom, 30)
+                    }
+                    .frame(height: 400)
+                }
+            }
+
+            // MARK: - Layer 5: Exit Button (pojok kanan atas)
+            // Di atas overlay — tidak kena efek gelap
             VStack {
                 HStack {
                     Spacer()
-                    Image("closeButton") // ← nama file aset tombol close/X
+                    Image("exitButton") // ← nama file aset exitButton
                         .resizable()
                         .scaledToFit()
-                        .frame(width: 44, height: 44)
-                        .padding(20)
+                        .frame(width: 40, height: 40)
+                        .padding(40)
                         .onTapGesture {
-                            // Kembali ke puzzle — handle di PuzzleGameView
-                            // akan diisi saat routing siap
+                            // kembali ke puzzle — akan diisi saat routing siap
                         }
-                }
-                Spacer()
-            }
- 
-            // MARK: - Counter pojok kiri atas
-            VStack {
-                HStack {
-                    Text("\(viewModel.collectedCount)/5")
-                        .font(.headline)
-                        .fontWeight(.bold)
-                        .foregroundStyle(.white)
-                        .padding(20)
-                    Spacer()
                 }
                 Spacer()
             }
@@ -83,37 +94,35 @@ struct CollectionView: View {
             viewModel.loadKeyStatus(from: progress)
         }
     }
- 
+
     // MARK: - Key Slot
-    // Tampilkan gambar asli kalau unlock, siluet hitam kalau belum
- 
+    // Kalau unlock → gambar asli berwarna
+    // Kalau belum  → siluet hitam
+
     @ViewBuilder
     private func keySlot(for index: Int) -> some View {
         if let assetName = viewModel.assetName(for: index) {
- 
-            // Kunci sudah didapat — tampilkan gambar asli
+
+            // Kunci sudah didapat — gambar asli berwarna
             Image(assetName)
                 .resizable()
                 .scaledToFit()
-                .frame(width: keySize, height: keySize)
- 
+
         } else {
- 
-            // Kunci belum didapat — tampilkan siluet hitam dari kode
-            // Pakai gambar asli tapi di-overlay hitam penuh
+
+            // Kunci belum didapat — siluet hitam
             Image(viewModel.keyAssetNames[index])
                 .resizable()
                 .scaledToFit()
-                .frame(width: keySize, height: keySize)
-                .colorMultiply(.black) // ← jadikan siluet hitam tanpa perlu aset terpisah
+                .colorMultiply(.black)
                 .opacity(0.8)
                 .rotationEffect(.degrees(30))
         }
     }
 }
- 
+
 // MARK: - Preview
- 
+
 #Preview(traits: .landscapeRight) {
     CollectionView(progress: nil)
 }

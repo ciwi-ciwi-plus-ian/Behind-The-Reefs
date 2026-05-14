@@ -132,7 +132,7 @@ struct ChestOpeningView: View {
                     }
                     .frame(height: 400)
                 }
-            }
+            } 
         }
         .onAppear {
 
