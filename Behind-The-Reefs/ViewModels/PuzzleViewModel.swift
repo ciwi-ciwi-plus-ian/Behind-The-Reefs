@@ -24,7 +24,7 @@ final class PuzzleViewModel: ObservableObject {
     func checkAnswer() { scene.checkAnswer() }
 
     func resetPieces() {
-        scene.resetPieces()
+//        scene.resetPieces()
         result = nil
     }
 }
