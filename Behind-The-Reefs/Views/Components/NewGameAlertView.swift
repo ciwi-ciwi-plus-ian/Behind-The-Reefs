@@ -36,7 +36,7 @@ struct NewGameAlertView: View {
                                 .fill(Color.black.opacity(0.25))
                                 .frame(height: 1)
                                 .offset(y: 2)
-                                .padding(.horizontal, 40)
+                                .padding(.horizontal, 60)
                         )
                         .padding(.vertical, 20)
                     
