@@ -124,11 +124,20 @@ final class PuzzleScene: SKScene {
         let loc = touch.location(in: self)
         let halfW = size.width / 2
         let halfH = size.height / 2
-        piece.position = CGPoint(
-            x: min(max(loc.x + dragOffset.x, -halfW), halfW),
-            y: min(max(loc.y + dragOffset.y, -halfH), halfH)
-        )
 
+        let halfPieceW = piece.size.width / 2
+        let halfPieceH = piece.size.height / 2
+
+        piece.position = CGPoint(
+            x: min(
+                max(loc.x + dragOffset.x, -halfW + halfPieceW),
+                halfW - halfPieceW
+            ),
+            y: min(
+                max(loc.y + dragOffset.y, -halfH + halfPieceH),
+                halfH - halfPieceH
+            )
+        )
         let hovered = targetColumn(for: piece.position.x)
         slots.forEach { $1.setHighlighted($0 == hovered) }
     }
