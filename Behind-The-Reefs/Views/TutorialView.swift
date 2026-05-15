@@ -6,11 +6,12 @@ private extension Font {
 }
 
 struct TutorialView: View {
+    @State private var animateTriangles = false
     @State private var tutorialStep: Int = 1
     @Binding var isPresented: Bool
-
+    
     private static let sortAreaWidth: CGFloat = 520
-
+    
     var body: some View {
         GeometryReader { proxy in
             let sortRect = CGRect(
@@ -34,16 +35,16 @@ struct TutorialView: View {
         .ignoresSafeArea()
         .onTapGesture { advance() }
     }
-
+    
     private func backgroundImage(size: CGSize) -> some View {
-        Image(tutorialStep < 3 ? "PuzzleScreen" : "PuzzleScreenWithPoints")
+        Image(tutorialStep < 3 ? "PuzzleScreen" : "PuzzleScreen")
             .resizable()
             .scaledToFill()
             .frame(width: size.width, height: size.height)
             .clipped()
             .ignoresSafeArea()
     }
-
+    
     private var navigationBar: some View {
         VStack {
             HStack(alignment: .center) {
@@ -55,7 +56,7 @@ struct TutorialView: View {
                 }
                 .padding(.leading, 16)
                 .opacity(tutorialStep == 1 ? 1.0 : 0.3)
-
+                
                 if tutorialStep == 1 {
                     Text("Tap home to return\nto the main menu")
                         .font(.snigletBody)
@@ -63,9 +64,9 @@ struct TutorialView: View {
                         .multilineTextAlignment(.leading)
                         .padding(.leading, 8)
                 }
-
+                
                 Spacer()
-
+                
                 if tutorialStep == 2 {
                     Text("Tap here to view\nyour collected items")
                         .font(.snigletBody)
@@ -73,7 +74,7 @@ struct TutorialView: View {
                         .multilineTextAlignment(.trailing)
                         .padding(.trailing, 8)
                 }
-
+                
                 Button { } label: {
                     Image("treasureChestIcon")
                         .resizable()
@@ -88,7 +89,7 @@ struct TutorialView: View {
             Spacer()
         }
     }
-
+    
     private var nextButton: some View {
         VStack {
             Spacer()
@@ -108,7 +109,7 @@ struct TutorialView: View {
             }
         }
     }
-
+    
     private var skipButton: some View {
         VStack {
             Spacer()
@@ -124,24 +125,24 @@ struct TutorialView: View {
             .padding()
         }
     }
-
+    
     private func creatureItems(sortRect: CGRect, screenWidth: CGFloat) -> some View {
         let bottomY = sortRect.midY + 100
         let size: CGFloat = 80
-
+        
         let chocoX: CGFloat  = tutorialStep == 3
-            ? sortRect.minX / 2
-            : sortRect.minX + sortRect.width * 0.25
+        ? sortRect.minX / 2
+        : sortRect.minX + sortRect.width * 0.25
         let purpleX: CGFloat = tutorialStep == 3
-            ? sortRect.maxX + (screenWidth - sortRect.maxX) / 2
-            : sortRect.minX + sortRect.width * 0.9
-
+        ? sortRect.maxX + (screenWidth - sortRect.maxX) / 2
+        : sortRect.minX + sortRect.width * 0.9
+        
         return ZStack {
             creatureImage("itemChoco",  x: chocoX,  y: bottomY, size: size)
             creatureImage("itemPurple", x: purpleX, y: bottomY, size: size)
         }
     }
-
+    
     private func creatureImage(_ name: String, x: CGFloat, y: CGFloat, size: CGFloat) -> some View {
         Image(name)
             .resizable()
@@ -149,7 +150,7 @@ struct TutorialView: View {
             .frame(width: size, height: size)
             .position(x: x, y: y)
     }
-
+    
     @ViewBuilder
     private func overlayView(sortRect: CGRect) -> some View {
         if tutorialStep >= 3 {
@@ -159,6 +160,9 @@ struct TutorialView: View {
                     .frame(width: sortRect.width, height: sortRect.height)
                     .position(x: sortRect.midX, y: sortRect.midY)
                     .blendMode(.destinationOut)
+                Image("bobbingTriangle")
+                    .resizable()
+                    .scaledToFit().frame(width: 475).offset(y: animateTriangles ? 100 : 120)
                 Text("Drag and drop\nyour items here")
                     .font(.snigletTitle)
                     .foregroundColor(.white)
@@ -168,12 +172,20 @@ struct TutorialView: View {
             }
             .compositingGroup()
             .ignoresSafeArea()
+            .onAppear {
+                withAnimation(
+                    .easeInOut(duration: 2)
+                    .repeatForever(autoreverses: true)
+                ) {
+                    animateTriangles.toggle()
+                }
+            }
         } else {
             Color.black.opacity(0.75)
                 .ignoresSafeArea()
         }
     }
-
+    
     private func advance() {
         if tutorialStep < 4 { tutorialStep += 1 } else { isPresented = false }
     }
