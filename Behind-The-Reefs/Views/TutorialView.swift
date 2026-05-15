@@ -1,4 +1,5 @@
 import SwiftUI
+import SpriteKit
 
 private extension Font {
     static let snigletBody  = Font.custom("Sniglet-Regular", size: 15)
@@ -8,6 +9,8 @@ private extension Font {
 struct TutorialView: View {
     @State private var animateTriangles = false
     @State private var tutorialStep: Int = 1
+    @State private var tutorialScene = TutorialScene()
+    @State private var tutorialStep3Completed = false
     @Binding var isPresented: Bool
     
     private static let sortAreaWidth: CGFloat = 520
@@ -24,16 +27,22 @@ struct TutorialView: View {
                 backgroundImage(size: proxy.size)
                 overlayView(sortRect: sortRect)
                 if tutorialStep >= 3 {
-                    creatureItems(sortRect: sortRect, screenWidth: proxy.size.width)
+                    tutorialSceneView()
+                        .zIndex(1)
                 }
                 navigationBar
-                nextButton
+                if tutorialStep != 3 {
+                    nextButton
+                }
                 if tutorialStep < 4 { skipButton }
             }
             .frame(width: proxy.size.width, height: proxy.size.height)
         }
         .ignoresSafeArea()
-        .onTapGesture { advance() }
+        .onTapGesture { if tutorialStep != 3 { advance() } }
+        .onChange(of: tutorialStep) { newStep in
+            if newStep == 3 { configureTutorialScene() }
+        }
     }
     
     private func backgroundImage(size: CGSize) -> some View {
@@ -104,10 +113,13 @@ struct TutorialView: View {
                         .background(tutorialStep < 4 ? Color.white.opacity(0.25) : Color.black.opacity(0.55))
                         .clipShape(Capsule())
                 }
+                .disabled(tutorialStep == 3 && !tutorialStep3Completed)
+                
                 .padding()
                 Spacer()
             }
         }
+        .zIndex(2)
     }
     
     private var skipButton: some View {
@@ -124,18 +136,15 @@ struct TutorialView: View {
             .padding(.horizontal, 32)
             .padding()
         }
+        .zIndex(2)
     }
     
     private func creatureItems(sortRect: CGRect, screenWidth: CGFloat) -> some View {
         let bottomY = sortRect.midY + 100
         let size: CGFloat = 80
         
-        let chocoX: CGFloat  = tutorialStep == 3
-        ? sortRect.minX / 2
-        : sortRect.minX + sortRect.width * 0.25
-        let purpleX: CGFloat = tutorialStep == 3
-        ? sortRect.maxX + (screenWidth - sortRect.maxX) / 2
-        : sortRect.minX + sortRect.width * 0.9
+        let chocoX: CGFloat  = sortRect.minX + sortRect.width * 0.25
+        let purpleX: CGFloat = sortRect.minX + sortRect.width * 0.9
         
         return ZStack {
             creatureImage("itemChoco",  x: chocoX,  y: bottomY, size: size)
@@ -160,18 +169,30 @@ struct TutorialView: View {
                     .frame(width: sortRect.width, height: sortRect.height)
                     .position(x: sortRect.midX, y: sortRect.midY)
                     .blendMode(.destinationOut)
-                Image("bobbingTriangle")
-                    .resizable()
-                    .scaledToFit().frame(width: 475).offset(y: animateTriangles ? 100 : 120)
-                Text("Drag and drop\nyour items here")
-                    .font(.snigletTitle)
-                    .foregroundColor(.white)
-                    .multilineTextAlignment(.center)
-                    .frame(width: sortRect.width)
-                    .position(x: sortRect.midX, y: sortRect.midY)
+                if tutorialStep == 3 {
+                    Text("Drag and drop\nyour items here")
+                        .font(.snigletTitle)
+                        .foregroundColor(.white)
+                        .multilineTextAlignment(.center)
+                        .frame(width: sortRect.width)
+                        .position(x: sortRect.midX, y: sortRect.midY)
+                    Image("bobbingTriangle")
+                        .resizable()
+                        .scaledToFit().frame(width: 475).offset(y: animateTriangles ? 100 : 120)
+                }
+                else {
+                    Text("You've done it!\nNow you're all set!")
+                        .font(.snigletTitle)
+                        .foregroundColor(.white)
+                        .multilineTextAlignment(.center)
+                        .frame(width: sortRect.width)
+                        .position(x: sortRect.midX, y: sortRect.midY)
+                }
+                
             }
             .compositingGroup()
             .ignoresSafeArea()
+            .allowsHitTesting(false)
             .onAppear {
                 withAnimation(
                     .easeInOut(duration: 2)
@@ -186,7 +207,33 @@ struct TutorialView: View {
         }
     }
     
+    private func configureTutorialScene() {
+        tutorialStep3Completed = false
+        tutorialScene = TutorialScene()
+        tutorialScene.isDragEnabled = true
+        tutorialScene.onTutorialCompleted = { completed in
+            if completed {
+                DispatchQueue.main.async {
+                    tutorialScene.isDragEnabled = false
+                    tutorialStep3Completed = true
+                    tutorialStep = 4
+                }
+            }
+        }
+    }
+    
+    private func tutorialSceneView() -> some View {
+        SpriteView(scene: tutorialScene, options: [.allowsTransparency])
+            .ignoresSafeArea()
+            .onAppear {
+                if tutorialStep >= 3, tutorialStep3Completed == false {
+                    configureTutorialScene()
+                }
+            }
+    }
+    
     private func advance() {
+        if tutorialStep == 3 && !tutorialStep3Completed { return }
         if tutorialStep < 4 { tutorialStep += 1 } else { isPresented = false }
     }
 }
