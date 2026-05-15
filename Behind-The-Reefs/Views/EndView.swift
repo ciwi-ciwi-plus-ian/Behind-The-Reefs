@@ -9,8 +9,10 @@ import SwiftUI
 
 struct EndView: View {
 
-    // MARK: - Button Size
-    // Sesuaikan nilai ini untuk atur besar kecil homeButton
+    // MARK: - Size
+    // Sesuaikan nilai ini untuk atur besar kecil elemen
+    private let frameWidth:       CGFloat = 500  // ← atur lebar frame kayu
+    private let frameHeight:      CGFloat = 300  // ← atur tinggi frame kayu
     private let homeButtonWidth:  CGFloat = 100
     private let homeButtonHeight: CGFloat = 60
 
@@ -18,44 +20,50 @@ struct EndView: View {
         ZStack {
 
             // MARK: - Background
-            Image("mainMenuBackground")
+            Image("mainMenuBackground") // ← nama file background
                 .resizable()
                 .scaledToFill()
                 .ignoresSafeArea()
-                .overlay(Color.black.opacity(0.4))
+                .overlay(Color.black.opacity(0.55))
 
-            VStack(spacing: 30) {
+            // MARK: - Frame kayu + konten di dalamnya
+            ZStack {
 
-                // MARK: - Congratulations Card
-                VStack(spacing: 8) {
-                    Text("Congratulations!")
-                        .font(.title2)
-                        .fontWeight(.bold)
-                        .foregroundStyle(.black)
+                // Aset frame kayu sebagai background card
+                Image("frame") // ← nama file aset frame kayu
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: frameWidth, height: frameHeight)
 
-                    Text("You Finished the game >0<")
-                        .font(.title3)
-                        .fontWeight(.bold)
-                        .foregroundStyle(.black)
-                }
-                .padding(.horizontal, 60)
-                .padding(.vertical, 40)
-                .background(
-                    RoundedRectangle(cornerRadius: 16)
-                        .fill(Color.white.opacity(0.6))
-                )
+                // Konten di atas frame
+                VStack(spacing: 24) {
 
-                // MARK: - Home Button
-                Button {
-                    // navigasi ke main menu — akan diisi saat routing siap
-                } label: {
-                    Image("homeButton") // ← aset tombol home
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: homeButtonWidth, height: homeButtonHeight)
+                    // MARK: - Teks Congratulations
+                    VStack(spacing: 6) {
+                        Text("Congratulations!")
+                            .font(.custom("Chewy", size: 32)) // ← font Chewy
+                            .foregroundStyle(.white)
+                            .shadow(color: .black.opacity(0.4), radius: 2, x: 1, y: 2)
+
+                        Text("You've finished the game")
+                            .font(.custom("Chewy", size: 28)) // ← font Chewy
+                            .foregroundStyle(.white)
+                            .shadow(color: .black.opacity(0.4), radius: 2, x: 1, y: 2)
+                    }
+                    .padding(.top, 30)
+                    .multilineTextAlignment(.center)
+
+                    // MARK: - Home Button
+                    Button {
+                        // navigasi ke main menu — akan diisi saat routing siap
+                    } label: {
+                        Image("homeButton") // ← nama file aset tombol home
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: homeButtonWidth, height: homeButtonHeight)
+                    }
                 }
             }
-            .padding(.top, 50)
         }
         .navigationBarHidden(true)
     }
