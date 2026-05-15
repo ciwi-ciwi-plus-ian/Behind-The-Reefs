@@ -5,97 +5,181 @@
 //  Created by Ivone Liwang on 12/05/26.
 //
 
-
 import SwiftUI
 
 struct ChestOpeningView: View {
 
-    @State private var chestOpened   = false
-    @State private var translateKeys = false
-    @State private var fadeKeys      = false
+    @State private var chestOpened     = false
+    @State private var translateKeys   = false
+    @State private var fadeKeys        = false
+    @State private var showDarkOverlay = false
+
     @State private var rotatedKeys: [Bool] = Array(repeating: false, count: 5)
+
+    @State private var glowOpacity: CGFloat = 0.3
+    @State private var glowRadius:  CGFloat = 50
 
     // MARK: - Key Asset Names
     private let keyAssetNames = [
-        "keyOne",   // index 0
-        "keyTwo",   // index 1
-        "keyThree", // index 2
-        "keyFour",  // index 3
-        "keyFive"   // index 4
+        "keyOne",
+        "keyTwo",
+        "keyThree",
+        "keyFour",
+        "keyFive"
     ]
 
     var body: some View {
 
-        // ZStack agar background bisa ditaruh di belakang konten
         ZStack {
 
             // MARK: - Background
-            // Ganti otomatis mengikuti state chestOpened
-            // chestOpened false → chestBackgroundZoomOut (chest masih tertutup)
-            // chestOpened true  → chestBackgroundZoomIn  (chest terbuka)
-            Image(chestOpened ? "chestBackgroundZoomOut" : "chestBackgroundZoomIn")
-                .resizable()
-                .scaledToFill()
-                .ignoresSafeArea()
-                .animation(.easeInOut(duration: 0.5), value: chestOpened) // transisi smooth saat berganti
+            // Pakai ZStack dua layer agar transisi smooth tanpa flash putih
+            // Kedua aset di-load sejak awal, hanya opacity yang berubah
+            ZStack {
+                // Background 1 — ZoomOut (chest tertutup)
+                Image("chestBackgroundZoomOut")
+                    .resizable()
+                    .scaledToFill()
+                    .ignoresSafeArea()
 
-            // MARK: - Konten (chest + keys)
+                // Background 2 — ZoomIn (chest terbuka)
+                // Fade in saat chestOpened = true
+                Image("chestBackgroundZoomIn")
+                    .resizable()
+                    .scaledToFill()
+                    .ignoresSafeArea()
+                    .opacity(chestOpened ? 1.0 : 0.0)
+                    .animation(.easeInOut(duration: 0.8), value: chestOpened)
+            }
+
             VStack {
 
-                // Chest
-                Image(chestOpened ? "chestOpened" : "chestClosed")
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 400)
-                    .offset(x: 0, y: 50)   
+                // MARK: - Chest Layer
+                ZStack {
+                    // Glow chest
+                    Circle()
+                        .fill(
+                            RadialGradient(
+                                colors: [
+                                    Color.yellow.opacity(chestOpened ? 0.55 : 0),
+                                    Color.yellow.opacity(chestOpened ? 0.25 : 0),
+                                    Color.clear
+                                ],
+                                center: .center,
+                                startRadius: 0,
+                                endRadius: 230
+                            )
+                        )
 
-                // Keys
-                HStack(spacing: 14) {
-
-                    ForEach(0..<5, id: \.self) { index in
-
-                        Image(keyAssetNames[index])
+                    VStack {
+                        // Chest image
+                        Image(chestOpened ? "chestOpened" : "chestClosed")
                             .resizable()
                             .scaledToFit()
-                            .frame(width: 75, height: 75)
-
-                            .rotationEffect(
-                                .degrees(rotatedKeys[index] ? 180 : 30)
-                            )
-                            .offset(y: translateKeys ? -40 : 0)
-                            .opacity(fadeKeys ? 0 : 1)
-
-                            .animation(.easeInOut(duration: 1),  value: rotatedKeys[index])
-                            .animation(.easeInOut(duration: 1),  value: translateKeys)
-                            .animation(.easeOut(duration: 0.75), value: fadeKeys)
+                            .frame(width: chestOpened ? 1000 : 875)
+                            .offset(y: chestOpened ? 10 : -50)
+                        Spacer()
                     }
+
+                    // Dark Overlay
+                    if showDarkOverlay {
+                        Color.black
+                            .opacity(0.45)
+                            .ignoresSafeArea()
+                            .transition(.opacity)
+                    }
+
+                    // Keys
+                    VStack {
+                        Spacer()
+
+                        HStack(spacing: 14) {
+
+                            ForEach(0..<5, id: \.self) { index in
+                                ZStack {
+
+                                    Circle()
+                                        .fill(
+                                            RadialGradient(
+                                                colors: [
+                                                    Color.yellow.opacity(0.5),
+                                                    Color.yellow.opacity(0.2),
+                                                    Color.clear
+                                                ],
+                                                center: .center,
+                                                startRadius: 10,
+                                                endRadius: glowRadius
+                                            )
+                                        )
+                                        .frame(width: glowRadius * 2.5, height: glowRadius * 2.5)
+                                        .opacity(glowOpacity)
+
+                                    Image(keyAssetNames[index])
+                                        .resizable()
+                                        .scaledToFit()
+                                }
+                                .frame(width: 120, height: 120)
+                                .rotationEffect(.degrees(rotatedKeys[index] ? 180 : 30))
+                                .offset(y: translateKeys ? -30 : 15)
+                                .scaleEffect(translateKeys ? 0.8 : 0.8)  
+                                .opacity(fadeKeys ? 0 : 1)
+                                .animation(.easeInOut(duration: 1),  value: rotatedKeys[index])
+                                .animation(.easeInOut(duration: 1),  value: translateKeys)
+                                .animation(.easeOut(duration: 0.75), value: fadeKeys)
+                            }
+                        }
+                        .padding(.bottom, 30)
+                    }
+                    .frame(height: 400)
                 }
-                .padding(.bottom, 30)
-            }
+            } 
         }
         .onAppear {
+
+            // Mulai animasi glow pulse
+            withAnimation(
+                .easeInOut(duration: 1.5)
+                .repeatForever(autoreverses: true)
+            ) {
+                glowOpacity = 0.8
+                glowRadius  = 80
+            }
+
+            // SHOW overlay
+            DispatchQueue.main.asyncAfter(deadline: .now()) {
+                withAnimation(.easeInOut(duration: 0.25)) {
+                    showDarkOverlay = true
+                }
+            }
 
             // Rotate one by one
             for index in 0..<5 {
                 DispatchQueue.main.asyncAfter(
-                    deadline: .now() + 0.5 + Double(index) * 0.15
+                    deadline: (.now() + 1) + 0.5 + Double(index) * 0.15
                 ) {
                     rotatedKeys[index] = true
                 }
             }
 
-            // Move semua kunci ke atas
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1.75) {
+            // HIDE overlay
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                withAnimation(.easeInOut(duration: 0.2)) {
+                    showDarkOverlay = false
+                }
+            }
+
+            // Translasi
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2.75) {
                 translateKeys = true
             }
 
             // Fade semua kunci
-            DispatchQueue.main.asyncAfter(deadline: .now() + 2.50) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 3.5) {
                 fadeKeys = true
             }
 
-            // Buka chest — background ikut berganti ke chestBackgroundZoomIn
-            DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+            // Open chest — background ikut fade ke ZoomIn
+            DispatchQueue.main.asyncAfter(deadline: .now() + 4.0) {
                 chestOpened = true
             }
         }
