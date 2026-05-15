@@ -1,3 +1,4 @@
+import AVFoundation
 import SpriteKit
 
 final class PuzzleScene: SKScene {
@@ -21,6 +22,9 @@ final class PuzzleScene: SKScene {
     private var dragOffset:       CGPoint = .zero
     private var dragSourceColumn: Int?    = nil
 
+    private var bgmPlayer: AVAudioPlayer?
+    private let snapHaptic = UIImpactFeedbackGenerator(style: .light)
+
     var onAnswerChecked: ((Bool) -> Void)?
 
     override func didMove(to view: SKView) {
@@ -29,6 +33,8 @@ final class PuzzleScene: SKScene {
         setupSlots()
         setupPieces()
         startHintTimer()
+        startBGM()
+        snapHaptic.prepare()
     }
 
     private func columnCenterX(at index: Int) -> CGFloat {
@@ -164,6 +170,7 @@ final class PuzzleScene: SKScene {
 
         columnPieces[targetCol] = piece
         piece.snapToColumn(targetCol, at: CGPoint(x: columnCenterX(at: targetCol), y: piece.position.y))
+        snapHaptic.impactOccurred(intensity: 0.5)
 
         if columnPieces.count == Layout.columnCount {
             checkAnswer()
@@ -176,6 +183,7 @@ final class PuzzleScene: SKScene {
             && PuzzlePatternData.correctSequences.contains(order)
         guard isCorrect else { return }
         snapAllToMidY()
+        stopBGM()
         onAnswerChecked?(true)
     }
 
@@ -186,6 +194,21 @@ final class PuzzleScene: SKScene {
             move.timingMode = .easeOut
             piece.run(move)
         }
+    }
+
+    // MARK: - BGM
+
+    private func startBGM() {
+        guard let url = Bundle.main.url(forResource: "magicSolo", withExtension: "mp3") else { return }
+        bgmPlayer = try? AVAudioPlayer(contentsOf: url)
+        bgmPlayer?.numberOfLoops = -1
+        bgmPlayer?.volume = 1.0
+        bgmPlayer?.play()
+    }
+
+    private func stopBGM() {
+        bgmPlayer?.stop()
+        bgmPlayer = nil
     }
 
     // MARK: - Hint timer
@@ -212,9 +235,13 @@ final class PuzzleScene: SKScene {
 
         let bubble = makeBubbleNode()
         bubble.name = "hintBubble"
-        // bubbleH/2 (33) + tailH (14) + small gap (6) above piece top
-        bubble.position = CGPoint(x: piece.position.x,
-                                  y: piece.position.y + piece.size.height / 2 + 53)
+
+        let preferredY = piece.position.y + piece.size.height / 2 + 53
+        let bubbleHalfH: CGFloat = 45
+        let margin: CGFloat = 16
+        let clampedY = min(preferredY, size.height / 2 - bubbleHalfH - margin)
+
+        bubble.position = CGPoint(x: piece.position.x, y: clampedY)
         bubble.alpha = 0
         addChild(bubble)
 
@@ -228,6 +255,7 @@ final class PuzzleScene: SKScene {
 
     private func makeBubbleNode() -> SKNode {
         let container = SKNode()
+        container.zPosition = 20
 
         let line1 = SKLabelNode(text: "I don't think this")
         line1.fontName                = "Sniglet-Regular"
@@ -268,5 +296,6 @@ final class PuzzleScene: SKScene {
             piece.returnToHome()
         }
         startHintTimer()
+        startBGM()
     }
 }
