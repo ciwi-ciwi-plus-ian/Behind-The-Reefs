@@ -3,7 +3,6 @@
 //  Behind-The-Reefs
 //
 //  Created by Ivone Liwang on 12/05/26.
-//
 
 import SwiftUI
 
@@ -11,45 +10,70 @@ struct MainMenuView: View {
     
     var body: some View {
         
-        ZStack {
+        GeometryReader { geometry in
             
-            // Background
-            Image("mainMenuBackground")
-                .resizable()
-                .scaledToFill()
-                .ignoresSafeArea()
+            let w = geometry.size.width
+            let h = geometry.size.height
             
-            VStack {
+            ZStack {
                 
-                // Title
-                Image("title")
+                // Background
+                Image("mainMenuBackground")
                     .resizable()
-                    .scaledToFit()
-                    .frame(width: 374)
-                    .padding(.top, 34)
+                    .scaledToFill()
+                    .ignoresSafeArea()
                 
-                // Button Group
-                VStack (spacing: 9) {
+                VStack(spacing: h * 0.02) { // ← spacing POSITIF, kecil
                     
-                    // Continue Button
-                    Image("continueButton")
+                    // Title
+                    Image("title")
                         .resizable()
                         .scaledToFit()
-//                        .frame(width: 178, height: 42)
+                        .frame(width: w * 0.5) // ← width saja, NO height
+                        .padding(.leading, w * -0.10)
+                        .padding(.top, h * 0.07)
+                        .padding(.bottom, h * 0.03)
                     
-                    // New Game Button
-                    Image("newGameButton")
-                        .resizable()
-                        .scaledToFit()
-//                        .frame(width: 140, height: 60)
-                    
-                    // Credits Button
-                    Image("creditsButton")
-                        .resizable()
-                        .scaledToFit()
-//                        .frame(width: 90, height: 36)
+                    // Button Group
+                    VStack(spacing: h * -0.05) {
+                        
+                        // Continue Button
+                        Button {
+                            // navigasi ke main menu — akan diisi saat routing siap
+                        } label: {
+                            Image("continueButton")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: w * 0.30)
+                                .padding(.top, h * -0.10)
+                        }
+                        
+                        // New Game Button
+                        Button {
+                            // navigasi ke main menu — akan diisi saat routing siap
+                        } label: {
+                            Image("newGameButton")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: w * 0.30)
+                                .padding(.top, h * -0.10)
+                        }
+                        
+                        // Credits Button
+                        Button {
+                            // navigasi ke main menu — akan diisi saat routing siap
+                        } label: {
+                            Image("creditsButton")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: w * 0.30)
+                                .padding(.top, h * -0.10)
+                        }
+                    }
+                    .padding(.leading, w * -0.10)
+                    .padding(.bottom, h * -0.07)
                 }
-                .padding(.top,11.65)
+                .frame(width: w, height: h)
             }
         }
     }
