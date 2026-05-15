@@ -99,7 +99,6 @@ struct KeyResultView: View {
                 // Sort Description Text
                 Text("You've sorted the creatures by height")
                     .font(snigletFont)
-                    .fontWeight(.bold)
                     .foregroundStyle(.white)
                     .multilineTextAlignment(.center)
                     .padding(.horizontal, 40)
