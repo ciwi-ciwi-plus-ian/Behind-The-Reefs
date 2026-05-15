@@ -9,7 +9,6 @@ import SwiftUI
 
 struct KeyResultView: View {
 
-    var sortDescription: String
     var patternIndex: Int
 
     // MARK: - Asset Names
@@ -20,6 +19,8 @@ struct KeyResultView: View {
         "keyFour",  // index 3 — pola 4
         "keyFive"   // index 4 — pola 5
     ]
+    
+    private let snigletFont: Font = .custom("Sniglet-Regular", size: 24)
 
     private var currentKeyAsset: String {
         guard patternIndex >= 0 && patternIndex < keyAssetNames.count else {
@@ -96,8 +97,8 @@ struct KeyResultView: View {
             VStack(spacing: 0) {
 
                 // Sort Description Text
-                Text(sortDescription)
-                    .font(.custom("Sniglet-Regular", size: 24))
+                Text("You've sorted the creatures by height")
+                    .font(snigletFont)
                     .fontWeight(.bold)
                     .foregroundStyle(.white)
                     .multilineTextAlignment(.center)
@@ -200,7 +201,6 @@ struct KeyResultView: View {
 
 #Preview(traits: .landscapeRight) {
     KeyResultView(
-        sortDescription: "You've sorted the creatures by height",
         patternIndex: 0
     )
 }
