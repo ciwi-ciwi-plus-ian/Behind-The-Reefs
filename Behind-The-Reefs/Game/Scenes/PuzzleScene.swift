@@ -25,7 +25,7 @@ final class PuzzleScene: SKScene {
     private var bgmPlayer: AVAudioPlayer?
     private let snapHaptic = UIImpactFeedbackGenerator(style: .light)
 
-    var onAnswerChecked: ((Bool) -> Void)?
+    var onAnswerChecked: ((Int) -> Void)?
 
     override func didMove(to view: SKView) {
         backgroundColor = .clear
@@ -188,12 +188,17 @@ final class PuzzleScene: SKScene {
 
     func checkAnswer() {
         let order = (0..<Layout.columnCount).compactMap { columnPieces[$0]?.item }
-        let isCorrect = order.count == Layout.columnCount
-            && PuzzlePatternData.correctSequences.contains(order)
-        guard isCorrect else { return }
+        guard order.count == Layout.columnCount else { return }
+
+        // Cari index pattern mana yang cocok
+        guard let matchedIndex = PuzzlePatternData.all.firstIndex(where: {
+            $0.correctOrder == order
+        }) else { return }
+
+        // Kirim patternIndex ke ViewModel
         snapAllToMidY()
         stopBGM()
-        onAnswerChecked?(true)
+        onAnswerChecked?(matchedIndex)  // ← kirim index, bukan true/false
     }
 
     private func snapAllToMidY() {

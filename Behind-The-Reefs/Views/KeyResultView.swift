@@ -8,8 +8,9 @@
 import SwiftUI
 
 struct KeyResultView: View {
+    
+    
 
-    var sortDescription: String
     var patternIndex: Int
 
     // MARK: - Asset Names
@@ -200,7 +201,6 @@ struct KeyResultView: View {
 
 #Preview(traits: .landscapeRight) {
     KeyResultView(
-        sortDescription: "You've sorted the creatures by height",
         patternIndex: 0
     )
 }
