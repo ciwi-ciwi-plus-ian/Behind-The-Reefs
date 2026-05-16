@@ -18,6 +18,7 @@ struct PuzzleGameView: View {
         }
         .ignoresSafeArea()
         .statusBarHidden()
+        .navigationBarBackButtonHidden(true)
     }
 
     private var background: some View {

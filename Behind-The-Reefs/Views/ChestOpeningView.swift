@@ -52,6 +52,7 @@ struct ChestOpeningView: View {
                     .ignoresSafeArea()
                     .opacity(chestOpened ? 1.0 : 0.0)
                     .animation(.easeInOut(duration: 0.8), value: chestOpened)
+                    .navigationBarBackButtonHidden(true)
             }
 
             VStack {

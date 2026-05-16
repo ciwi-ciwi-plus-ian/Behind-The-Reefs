@@ -25,6 +25,7 @@ struct EndView: View {
                 .scaledToFill()
                 .ignoresSafeArea()
                 .overlay(Color.black.opacity(0.55))
+                .navigationBarBackButtonHidden(true)
 
             ZStack {
 

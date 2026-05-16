@@ -46,6 +46,7 @@ struct TutorialView: View {
         .onChange(of: tutorialStep) { newStep in
             if newStep == 3 { configureTutorialScene() }
         }
+        .navigationBarBackButtonHidden(true)
     }
     
     private func backgroundImage(size: CGSize) -> some View {
