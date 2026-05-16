@@ -7,6 +7,8 @@
 import SwiftUI
 
 struct MainMenuView: View {
+    
+    @Environment(NavigationRouter.self) private var router
 
     var body: some View {
 
@@ -58,4 +60,5 @@ struct MainMenuView: View {
 
 #Preview(traits: .landscapeRight) {
     MainMenuView()
+        .environment(NavigationRouter())
 }
