@@ -14,7 +14,7 @@ struct BehindTheReefsApp: App {
     // ← Ganti ini: langsung mulai di EndView untuk test
     @State private var router: NavigationRouter = {
         let r = NavigationRouter()
-        r.path = [.end]  // ← app langsung buka di EndView
+        r.path = [.chestOpening]  // ← app langsung buka di EndView
         return r
     }()
 

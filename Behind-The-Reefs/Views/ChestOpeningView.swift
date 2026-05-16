@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct ChestOpeningView: View {
+    
+    @Environment(NavigationRouter.self) private var router
 
     @State private var chestOpened     = false
     @State private var translateKeys   = false
@@ -182,13 +184,15 @@ struct ChestOpeningView: View {
             DispatchQueue.main.asyncAfter(deadline: .now() + 4.0) {
                 chestOpened = true
             }
+            
+            DispatchQueue.main.asyncAfter(deadline: .now() + 10.0) {
+                    router.navigate(to: .end)
+                }
         }
     }
 }
 
-struct ChestOpeningView_Previews: PreviewProvider {
-    static var previews: some View {
-        ChestOpeningView()
-            .previewInterfaceOrientation(.landscapeRight)
-    }
+#Preview(traits: .landscapeRight) {
+    ChestOpeningView()
+        .environment(NavigationRouter())
 }
