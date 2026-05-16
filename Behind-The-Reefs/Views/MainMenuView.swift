@@ -18,7 +18,6 @@ struct MainMenuView: View {
                 .scaledToFill()
                 .ignoresSafeArea()
 
-            // Title — fix di atas, tidak diubah
             VStack {
                 Image("title")
                     .resizable()
@@ -28,8 +27,6 @@ struct MainMenuView: View {
                 Spacer()
             }
 
-            // Buttons — geser ke bawah dengan padding top
-            // Buttons — geser ke bawah dengan offset
             VStack {
                 Spacer()
                 VStack(spacing: -48) {
@@ -54,7 +51,7 @@ struct MainMenuView: View {
                 }
                 Spacer()
             }
-            .offset(y: 100)  // ← geser ke bawah, tidak mempengaruhi layout lain
+            .offset(y: 100)
         }
     }
 }
