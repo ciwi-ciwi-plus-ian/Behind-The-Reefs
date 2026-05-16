@@ -2,6 +2,8 @@ import SwiftUI
 import SpriteKit
 
 struct PuzzleGameView: View {
+    
+    @Environment(NavigationRouter.self) private var router
 
     @StateObject private var viewModel = PuzzleViewModel()
 
@@ -19,6 +21,7 @@ struct PuzzleGameView: View {
         }
         .ignoresSafeArea()
         .statusBarHidden()
+        .navigationBarBackButtonHidden(true)
     }
 
     private var background: some View {
@@ -36,7 +39,9 @@ struct PuzzleGameView: View {
     private var navigationBar: some View {
         VStack {
             HStack {
-                Button { } label: {
+                Button {
+                    router.goToMainMenu()
+                } label: {
                     Image("homeIcon")
                         .resizable()
                         .scaledToFit()
@@ -46,7 +51,9 @@ struct PuzzleGameView: View {
 
                 Spacer()
 
-                Button { } label: {
+                Button {
+                    router.navigate(to: .collection)
+                } label: {
                     Image("treasureChestIcon")
                         .resizable()
                         .scaledToFit()
@@ -102,4 +109,5 @@ struct PuzzleGameView: View {
 
 #Preview(traits: .landscapeRight) {
     PuzzleGameView()
+        .environment(NavigationRouter())
 }

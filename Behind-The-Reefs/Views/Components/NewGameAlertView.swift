@@ -17,11 +17,6 @@ struct NewGameAlertView: View {
             
             // The Alert Container
             ZStack {
-                // White overlay
-                RoundedRectangle(cornerRadius: 22)
-                    .fill(Color.white.opacity(0.4))
-                
-                //Bubble decor
 
                 VStack(spacing: 0) {
                     // Header
@@ -35,13 +30,13 @@ struct NewGameAlertView: View {
                     Rectangle()
                         .fill(Color.white.opacity(0.8))
                         .frame(height: 4)
-                        .padding(.horizontal, 40)
+                        .padding(.horizontal, 60)
                         .overlay(
                             Rectangle()
                                 .fill(Color.black.opacity(0.25))
                                 .frame(height: 1)
                                 .offset(y: 2)
-                                .padding(.horizontal, 40)
+                                .padding(.horizontal, 60)
                         )
                         .padding(.vertical, 20)
                     
@@ -75,13 +70,14 @@ struct NewGameAlertView: View {
                     }
                     .padding(.bottom, 15)
                 }
+
             }
             .padding(20)
-            .frame(width: 440, height: 280)
+            .frame(width: 500, height: 300)
             .background(
-                Image("wood")
+                Image("frame")
                     .resizable()
-                    .scaledToFill()
+                    .scaledToFit()
             )
             .clipShape(RoundedRectangle(cornerRadius: 30))
             .shadow(radius: 10)
