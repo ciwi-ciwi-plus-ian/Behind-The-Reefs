@@ -29,24 +29,24 @@ struct MainMenuView: View {
 
             VStack {
                 Spacer()
-                VStack(spacing: -48) {
+                VStack(spacing: 10) {
                     Button { } label: {
                         Image("continueButton")
                             .resizable()
                             .scaledToFit()
-                            .frame(height: 100)
+                            .frame(height: 40)
                     }
                     Button { } label: {
                         Image("newGameButton")
                             .resizable()
                             .scaledToFit()
-                            .frame(height: 100)
+                            .frame(height: 40)
                     }
                     Button { } label: {
                         Image("creditsButton")
                             .resizable()
                             .scaledToFit()
-                            .frame(height: 100)
+                            .frame(height: 40)
                     }
                 }
                 Spacer()
