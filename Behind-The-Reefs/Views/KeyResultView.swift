@@ -9,7 +9,11 @@ import SwiftUI
 
 struct KeyResultView: View {
 
+    @Environment(NavigationRouter.self) private var router
+
     var patternIndex: Int
+    var onContinue: (() -> Void)?
+    var isAllCompleted: Bool = false
 
     // MARK: - Asset Names
     private let keyAssetNames = [
@@ -20,11 +24,26 @@ struct KeyResultView: View {
         "keyFive"
     ]
 
+    private let sortDescriptions = [
+        "You've sorted the creatures by height",
+        "You've sorted the creatures by legs / fins",
+        "You've sorted the creatures by eye's direction",
+        "You've sorted the creatures by pattern",
+        "You've sorted the creatures by number of dots"
+    ]
+
     private var currentKeyAsset: String {
         guard patternIndex >= 0 && patternIndex < keyAssetNames.count else {
             return "keyOne"
         }
         return keyAssetNames[patternIndex]
+    }
+
+    private var sortDescription: String {
+        guard patternIndex >= 0 && patternIndex < sortDescriptions.count else {
+            return "You've sorted the creatures!"
+        }
+        return sortDescriptions[patternIndex]
     }
 
     private var isLastPattern: Bool {
@@ -41,12 +60,13 @@ struct KeyResultView: View {
     var body: some View {
         ZStack {
 
-            Color.black.opacity(0.55)
+            Color.black.opacity(0.8)
                 .ignoresSafeArea()
+                .onTapGesture { }
 
             VStack(spacing: 0) {
 
-                Text("You've sorted the creatures by height")
+                Text(sortDescription)
                     .font(.custom("Sniglet-Regular", size: 26))
                     .foregroundStyle(.white)
                     .multilineTextAlignment(.center)
@@ -106,19 +126,25 @@ struct KeyResultView: View {
                 }
                 .padding(.bottom, 32)
 
-                if isLastPattern {
+                if isAllCompleted {
+
+                    // Pola 5 — navigate ke ChestOpening
                     Button {
-                        // navigasi ke EndView — akan diisi saat routing siap
+                        router.navigate(to: .chestOpening)
                     } label: {
                         Image("finishButton")
                             .resizable()
                             .scaledToFit()
                             .frame(height: 45)
                     }
+
                 } else {
+
+                    // Pola 1–4 — Home atau Continue
                     HStack(spacing: 15) {
+
                         Button {
-                            // navigasi ke main menu — akan diisi saat routing siap
+                            router.goToMainMenu()
                         } label: {
                             Image("homeButton")
                                 .resizable()
@@ -127,7 +153,7 @@ struct KeyResultView: View {
                         }
 
                         Button {
-                            // navigasi ke puzzle berikutnya — akan diisi saat routing siap
+                            onContinue?()
                         } label: {
                             Image("continueButton")
                                 .resizable()
@@ -144,7 +170,6 @@ struct KeyResultView: View {
 }
 
 #Preview(traits: .landscapeRight) {
-    KeyResultView(
-        patternIndex: 0
-    )
+    KeyResultView(patternIndex: 0)
+        .environment(NavigationRouter())
 }

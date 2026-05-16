@@ -12,8 +12,15 @@ struct PuzzleGameView: View {
             background
             gameLayer
             navigationBar
-            if let result = viewModel.result {
-                resultOverlay(result)
+            if viewModel.result == .correct {
+                KeyResultView(
+                    patternIndex: viewModel.matchedPatternIndex,
+                    onContinue: {
+                        viewModel.resetPieces() 
+                    },
+                    isAllCompleted: viewModel.isAllPatternsCompleted
+                )
+                .transition(.opacity.animation(.easeIn(duration: 0.3)))
             }
         }
         .ignoresSafeArea()

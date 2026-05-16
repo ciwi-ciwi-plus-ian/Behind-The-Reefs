@@ -33,7 +33,10 @@ struct BehindTheReefsApp: App {
                         case .puzzle:
                             PuzzleGameView()
                         case .keyResult(let index):
-                            KeyResultView(patternIndex: index)
+                            KeyResultView(
+                                patternIndex: index,
+                                isAllCompleted: false
+                            )
                         case .collection:
                             CollectionView()
                         case .chestOpening:
