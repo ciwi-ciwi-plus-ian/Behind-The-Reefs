@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct EndView: View {
+    
+    @Environment(NavigationRouter.self) private var router
 
     private let frameWidth:       CGFloat = 500
     private let frameHeight:      CGFloat = 300
@@ -23,6 +25,7 @@ struct EndView: View {
                 .scaledToFill()
                 .ignoresSafeArea()
                 .overlay(Color.black.opacity(0.55))
+                .navigationBarBackButtonHidden(true)
 
             ZStack {
 
@@ -53,11 +56,10 @@ struct EndView: View {
                     .padding(.top, 88)
                     .multilineTextAlignment(.center)
 
-                    // MARK: - Home Button
                     Button {
-                        // navigasi ke main menu — akan diisi saat routing siap
+                        router.goToMainMenu()
                     } label: {
-                        Image("homeButton") // ← nama file aset tombol home
+                        Image("homeButton")
                             .resizable()
                             .scaledToFit()
                             .frame(width: homeButtonWidth, height: homeButtonHeight)
@@ -70,8 +72,8 @@ struct EndView: View {
     }
 }
 
-// MARK: - Preview
 
 #Preview(traits: .landscapeRight) {
     EndView()
+        .environment(NavigationRouter())
 }

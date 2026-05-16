@@ -9,6 +9,8 @@ import SwiftUI
 import SwiftData
 
 struct CollectionView: View {
+    
+    @Environment(NavigationRouter.self) private var router
 
     var progress: GameProgress?
 
@@ -78,7 +80,7 @@ struct CollectionView: View {
                 HStack {
                     Spacer()
                     Button {
-                        // kembali ke puzzle — akan diisi saat routing siap
+                        router.navigate(to: .puzzle)
                     } label: {
                         Image("exitButton") // ← nama file aset exitButton
                             .resizable()
@@ -130,4 +132,5 @@ struct CollectionView: View {
 
 #Preview(traits: .landscapeRight) {
     CollectionView(progress: nil)
+        .environment(NavigationRouter())
 }
