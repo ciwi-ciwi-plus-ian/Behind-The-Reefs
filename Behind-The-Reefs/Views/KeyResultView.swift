@@ -58,9 +58,6 @@ struct KeyResultView: View {
                 .ignoresSafeArea()
 
             // MARK: - Layer 1: Home Icon & Chest Icon
-            // Diletakkan sebelum overlay agar ikut gelap
-
-            // Home Icon pojok kiri atas
             VStack {
                 HStack {
                     Image("homeIcon")
@@ -73,7 +70,6 @@ struct KeyResultView: View {
                 Spacer()
             }
 
-            // Chest Icon pojok kanan atas
             VStack {
                 HStack {
                     Spacer()
@@ -87,13 +83,10 @@ struct KeyResultView: View {
             }
 
             // MARK: - Layer 2: Overlay gelap
-            // Mengenai background + homeIcon + chestIcon di atas
-            // Konten utama di layer 3 ke atas tidak kena
             Color.black.opacity(0.55)
                 .ignoresSafeArea()
 
             // MARK: - Layer 3: Konten utama
-            // Teks, key, dan buttons — bebas dari overlay
             VStack(spacing: 0) {
 
                 // Sort Description Text
