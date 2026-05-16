@@ -196,9 +196,12 @@ final class PuzzleScene: SKScene {
         }) else { return }
 
         // Kirim patternIndex ke ViewModel
+        onAnswerChecked?(matchedIndex)  // ← kirim index, bukan true/false
+    }
+    
+    func snapAndStop() {
         snapAllToMidY()
         stopBGM()
-        onAnswerChecked?(matchedIndex)  // ← kirim index, bukan true/false
     }
 
     private func snapAllToMidY() {
