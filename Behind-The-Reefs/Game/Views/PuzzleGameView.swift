@@ -36,7 +36,9 @@ struct PuzzleGameView: View {
     private var navigationBar: some View {
         VStack {
             HStack {
-                Button { } label: {
+                Button {
+                    router.goToMainMenu()
+                } label: {
                     Image("homeIcon")
                         .resizable()
                         .scaledToFit()
@@ -46,7 +48,9 @@ struct PuzzleGameView: View {
 
                 Spacer()
 
-                Button { } label: {
+                Button {
+                    router.navigate(to: .collection)
+                } label: {
                     Image("treasureChestIcon")
                         .resizable()
                         .scaledToFit()
