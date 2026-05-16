@@ -16,7 +16,6 @@ struct MainMenuView: View {
 
         ZStack {
 
-            // Background
             Image("mainMenuBackground")
                 .resizable()
                 .scaledToFill()
@@ -59,10 +58,16 @@ struct MainMenuView: View {
                 Spacer()
             }
             if showNewGameAlert {
-                    NewGameAlertView(onDismiss: {
+                NewGameAlertView(
+                    onDismiss: {
                         showNewGameAlert = false
-                    })
-                }
+                    },
+                    onConfirm: {
+                        showNewGameAlert = false
+                        router.navigate(to: .letter)
+                    }
+                )
+            }
         }
     }
 }
