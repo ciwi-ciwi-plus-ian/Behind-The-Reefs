@@ -1,6 +1,9 @@
 import SwiftUI
 
 struct LetterView: View {
+    
+    @Environment(NavigationRouter.self) private var router
+    
     @State private var isOpened = false
     @State private var showOverlay = false
     @State private var showContent = false
@@ -40,7 +43,7 @@ struct LetterView: View {
                         .multilineTextAlignment(.leading)
                 }
 
-                Button(action: {}) {
+                Button(action: {router.navigate(to: .tutorial)}) {
                     Text("Begin!")
                         .font(snigletFont)
                         .padding(.horizontal, 32)
@@ -77,4 +80,5 @@ struct LetterView: View {
 
 #Preview(traits: .landscapeRight) {
     LetterView()
+        .environment(NavigationRouter())
 }
