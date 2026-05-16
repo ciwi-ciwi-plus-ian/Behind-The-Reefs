@@ -34,16 +34,26 @@ struct EndView: View {
                     .scaledToFit()
                     .frame(width: frameWidth, height: frameHeight)
 
-                VStack(spacing: 24) {
+                VStack(spacing: 2) {
 
                     VStack(spacing: 1) {
                         
-                        Text("You've finished the game")
-                            .font(.custom("Chewy", size: 28))
+                        Text("Every reef has a story,")
+                            .font(.custom("Sniglet", size: 20))
+                            .foregroundStyle(.white)
+                            .shadow(color: .black.opacity(0.4), radius: 2, x: 1, y: 2)
+                        
+                        Text("and now you've finished yours.")
+                            .font(.custom("Sniglet", size: 20))
+                            .foregroundStyle(.white)
+                            .shadow(color: .black.opacity(0.4), radius: 2, x: 1, y: 2)
+                        
+                        Text("Thank you for playing with us!")
+                            .font(.custom("Sniglet", size: 20))
                             .foregroundStyle(.white)
                             .shadow(color: .black.opacity(0.4), radius: 2, x: 1, y: 2)
                     }
-                    .padding(.top, 90)
+                    .padding(.top, 88)
                     .multilineTextAlignment(.center)
 
                     Button {
