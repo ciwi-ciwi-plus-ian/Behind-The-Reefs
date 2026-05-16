@@ -41,35 +41,6 @@ struct KeyResultView: View {
     var body: some View {
         ZStack {
 
-            Image("mainMenuBackground")
-                .resizable()
-                .scaledToFill()
-                .ignoresSafeArea()
-
-            VStack {
-                HStack {
-                    Image("homeIcon")
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 48, height: 48)
-                        .padding(20)
-                    Spacer()
-                }
-                Spacer()
-            }
-
-            VStack {
-                HStack {
-                    Spacer()
-                    Image("treasureChestIcon")
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 60, height: 60)
-                        .padding(16)
-                }
-                Spacer()
-            }
-
             Color.black.opacity(0.55)
                 .ignoresSafeArea()
 
@@ -174,6 +145,6 @@ struct KeyResultView: View {
 
 #Preview(traits: .landscapeRight) {
     KeyResultView(
-        patternIndex: 4
+        patternIndex: 0
     )
 }
