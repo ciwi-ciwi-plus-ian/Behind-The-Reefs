@@ -8,6 +8,8 @@ import SwiftUI
 
 struct MainMenuView: View {
     
+    @Environment(NavigationRouter.self) private var router
+    
     var body: some View {
         
         GeometryReader { geometry in
@@ -81,4 +83,5 @@ struct MainMenuView: View {
 
 #Preview(traits: .landscapeRight) {
     MainMenuView()
+        .environment(NavigationRouter())
 }

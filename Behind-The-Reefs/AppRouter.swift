@@ -11,12 +11,12 @@ import SwiftUI
 enum AppRoute: Hashable {
     case letter
     case loadingGame
-    case puzzle(patternIndex: Int)
+//    case puzzle(patternIndex: Int)
     case keyResult(patternIndex: Int)
     case collection
     case chestOpening
     case end
-    case credits
+//    case credits
 }
 
 // MARK: - NavigationRouter
@@ -38,12 +38,12 @@ class NavigationRouter {
         path.removeAll()
     }
 
-    func goToNextPuzzle(from currentIndex: Int) {
-        let nextIndex = currentIndex + 1
-        if nextIndex < 5 {
-            navigate(to: .puzzle(patternIndex: nextIndex))
-        } else {
-            navigate(to: .chestOpening)
-        }
-    }
+//    func goToNextPuzzle(from currentIndex: Int) {
+//        let nextIndex = currentIndex + 1
+//        if nextIndex < 5 {
+//            navigate(to: .puzzle(patternIndex: nextIndex))
+//        } else {
+//            navigate(to: .chestOpening)
+//        }
+//    }
 }

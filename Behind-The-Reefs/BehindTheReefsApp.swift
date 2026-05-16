@@ -11,17 +11,17 @@ import SwiftData
 @main
 struct BehindTheReefsApp: App {
 
-    @State private var router = NavigationRouter()
+    // ← Ganti ini: langsung mulai di EndView untuk test
+    @State private var router: NavigationRouter = {
+        let r = NavigationRouter()
+        r.path = [.end]  // ← app langsung buka di EndView
+        return r
+    }()
 
     var body: some Scene {
         WindowGroup {
             NavigationStack(path: $router.path) {
-
-                // ← ROOT VIEW
-                // Untuk test navigasi EndView → MainMenu, ganti ke EndView()
-                // Setelah selesai test, ganti kembali ke MainMenuView()
                 MainMenuView()
-
                     .navigationDestination(for: AppRoute.self) { route in
                         switch route {
                         case .letter:
