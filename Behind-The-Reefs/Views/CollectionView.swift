@@ -85,7 +85,7 @@ struct CollectionView: View {
                         Image("exitButton") // ← nama file aset exitButton
                             .resizable()
                             .scaledToFit()
-                            .frame(width: 40, height: 40)
+                            .frame(width: 35, height: 35)
                             .padding(40)
                     }
                 }
