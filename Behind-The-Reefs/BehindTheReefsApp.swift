@@ -37,8 +37,6 @@ struct BehindTheReefsApp: App {
                                 patternIndex: index,
                                 isAllCompleted: false
                             )
-                        case .collection:
-                            CollectionView()
                         case .chestOpening:
                             ChestOpeningView()
                         case .end:

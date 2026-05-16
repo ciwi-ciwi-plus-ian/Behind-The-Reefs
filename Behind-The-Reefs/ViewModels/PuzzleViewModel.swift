@@ -18,11 +18,19 @@ final class PuzzleViewModel: ObservableObject {
     }()
 
     init() {
-        // ← ubah parameter dari Bool ke Int (patternIndex)
         scene.onAnswerChecked = { [weak self] patternIndex in
-            self?.matchedPatternIndex = patternIndex
-            self?.completedPatterns.insert(patternIndex)
-            self?.result = .correct
+            guard let self = self else { return }
+
+            guard !self.completedPatterns.contains(patternIndex) else {
+                return
+            }
+
+            // Pattern baru — snap dan stop BGM
+            self.scene.snapAndStop()  
+
+            self.matchedPatternIndex = patternIndex
+            self.completedPatterns.insert(patternIndex)
+            self.result = .correct
         }
     }
 
