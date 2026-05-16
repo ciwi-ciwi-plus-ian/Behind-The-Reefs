@@ -1,11 +1,20 @@
 import SwiftUI
 import SpriteKit
+import SwiftData
 
 struct PuzzleGameView: View {
     
     @Environment(NavigationRouter.self) private var router
+    
+    @Environment(\.modelContext) private var context
 
     @StateObject private var viewModel = PuzzleViewModel()
+    
+    // Fetch GameProgress dari SwiftData
+        @Query private var progressList: [GameProgress]
+        private var progress: GameProgress? { progressList.first }
+
+        @State private var showCollection = false
 
     var body: some View {
         ZStack {
@@ -16,7 +25,9 @@ struct PuzzleGameView: View {
                 KeyResultView(
                     patternIndex: viewModel.matchedPatternIndex,
                     onContinue: {
-                        viewModel.resetPieces() 
+                        progress?.completePattern(viewModel.matchedPatternIndex)
+                                                try? context.save()
+                        viewModel.resetPieces()
                     },
                     isAllCompleted: viewModel.isAllPatternsCompleted
                 )
@@ -26,6 +37,17 @@ struct PuzzleGameView: View {
         .ignoresSafeArea()
         .statusBarHidden()
         .navigationBarBackButtonHidden(true)
+        .fullScreenCover(isPresented: $showCollection) {
+                    CollectionView()
+                        .environment(router)
+                }
+        .onAppear {
+            if progressList.isEmpty {
+                let newProgress = GameProgress()
+                context.insert(newProgress)
+                try? context.save()
+            }
+        }
     }
 
     private var background: some View {
@@ -56,7 +78,7 @@ struct PuzzleGameView: View {
                 Spacer()
 
                 Button {
-                    router.navigate(to: .collection)
+                    showCollection = true
                 } label: {
                     Image("treasureChestIcon")
                         .resizable()

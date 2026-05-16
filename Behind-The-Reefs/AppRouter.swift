@@ -15,7 +15,6 @@ enum AppRoute: Hashable {
     case puzzle
 //    case puzzle(patternIndex: Int)
     case keyResult(patternIndex: Int)
-    case collection
     case chestOpening
     case end
 //    case credits
