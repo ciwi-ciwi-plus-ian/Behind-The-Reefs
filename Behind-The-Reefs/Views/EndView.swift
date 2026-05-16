@@ -19,6 +19,7 @@ struct EndView: View {
     var body: some View {
         ZStack {
 
+            // MARK: - Background
             Image("mainMenuBackground")
                 .resizable()
                 .scaledToFill()
@@ -27,25 +28,21 @@ struct EndView: View {
 
             ZStack {
 
-                Image("frame")
+                Image("congratsFrame")
                     .resizable()
                     .scaledToFit()
                     .frame(width: frameWidth, height: frameHeight)
 
                 VStack(spacing: 24) {
 
-                    VStack(spacing: 6) {
-                        Text("Congratulations!")
-                            .font(.custom("Chewy", size: 32)) 
-                            .foregroundStyle(.white)
-                            .shadow(color: .black.opacity(0.4), radius: 2, x: 1, y: 2)
-
+                    VStack(spacing: 1) {
+                        
                         Text("You've finished the game")
                             .font(.custom("Chewy", size: 28))
                             .foregroundStyle(.white)
                             .shadow(color: .black.opacity(0.4), radius: 2, x: 1, y: 2)
                     }
-                    .padding(.top, 30)
+                    .padding(.top, 90)
                     .multilineTextAlignment(.center)
 
                     Button {
@@ -56,6 +53,7 @@ struct EndView: View {
                             .scaledToFit()
                             .frame(width: homeButtonWidth, height: homeButtonHeight)
                     }
+                    .padding(.top, 1)
                 }
             }
         }
