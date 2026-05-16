@@ -9,7 +9,6 @@ import SwiftUI
 
 struct KeyResultView: View {
 
-    var sortDescription: String
     var patternIndex: Int
 
     // MARK: - Asset Names
@@ -20,6 +19,8 @@ struct KeyResultView: View {
         "keyFour",  // index 3 — pola 4
         "keyFive"   // index 4 — pola 5
     ]
+    
+    private let snigletFont: Font = .custom("Sniglet-Regular", size: 24)
 
     private var currentKeyAsset: String {
         guard patternIndex >= 0 && patternIndex < keyAssetNames.count else {
@@ -57,9 +58,6 @@ struct KeyResultView: View {
                 .ignoresSafeArea()
 
             // MARK: - Layer 1: Home Icon & Chest Icon
-            // Diletakkan sebelum overlay agar ikut gelap
-
-            // Home Icon pojok kiri atas
             VStack {
                 HStack {
                     Image("homeIcon")
@@ -72,7 +70,6 @@ struct KeyResultView: View {
                 Spacer()
             }
 
-            // Chest Icon pojok kanan atas
             VStack {
                 HStack {
                     Spacer()
@@ -86,19 +83,15 @@ struct KeyResultView: View {
             }
 
             // MARK: - Layer 2: Overlay gelap
-            // Mengenai background + homeIcon + chestIcon di atas
-            // Konten utama di layer 3 ke atas tidak kena
             Color.black.opacity(0.55)
                 .ignoresSafeArea()
 
             // MARK: - Layer 3: Konten utama
-            // Teks, key, dan buttons — bebas dari overlay
             VStack(spacing: 0) {
 
                 // Sort Description Text
-                Text(sortDescription)
-                    .font(.custom("Sniglet-Regular", size: 24))
-                    .fontWeight(.bold)
+                Text("You've sorted the creatures by height")
+                    .font(snigletFont)
                     .foregroundStyle(.white)
                     .multilineTextAlignment(.center)
                     .padding(.horizontal, 40)
@@ -200,7 +193,6 @@ struct KeyResultView: View {
 
 #Preview(traits: .landscapeRight) {
     KeyResultView(
-        sortDescription: "You've sorted the creatures by height",
         patternIndex: 0
     )
 }
