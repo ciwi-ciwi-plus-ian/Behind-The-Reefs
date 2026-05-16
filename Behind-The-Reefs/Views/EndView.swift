@@ -9,10 +9,8 @@ import SwiftUI
 
 struct EndView: View {
 
-    // MARK: - Size
-    // Sesuaikan nilai ini untuk atur besar kecil elemen
-    private let frameWidth:       CGFloat = 500  // ← atur lebar frame kayu
-    private let frameHeight:      CGFloat = 300  // ← atur tinggi frame kayu
+    private let frameWidth:       CGFloat = 500
+    private let frameHeight:      CGFloat = 300
     private let homeButtonWidth:  CGFloat = 100
     private let homeButtonHeight: CGFloat = 60
 
@@ -20,37 +18,29 @@ struct EndView: View {
         ZStack {
 
             // MARK: - Background
-            Image("mainMenuBackground") // ← nama file background
+            Image("mainMenuBackground")
                 .resizable()
                 .scaledToFill()
                 .ignoresSafeArea()
                 .overlay(Color.black.opacity(0.55))
 
-            // MARK: - Frame kayu + konten di dalamnya
             ZStack {
 
-                // Aset frame kayu sebagai background card
-                Image("frame") // ← nama file aset frame kayu
+                Image("congratsFrame")
                     .resizable()
                     .scaledToFit()
                     .frame(width: frameWidth, height: frameHeight)
 
-                // Konten di atas frame
                 VStack(spacing: 24) {
 
-                    // MARK: - Teks Congratulations
-                    VStack(spacing: 6) {
-                        Text("Congratulations!")
-                            .font(.custom("Chewy", size: 32)) // ← font Chewy
-                            .foregroundStyle(.white)
-                            .shadow(color: .black.opacity(0.4), radius: 2, x: 1, y: 2)
-
+                    VStack(spacing: 1) {
+                        
                         Text("You've finished the game")
-                            .font(.custom("Chewy", size: 28)) // ← font Chewy
+                            .font(.custom("Chewy", size: 28))
                             .foregroundStyle(.white)
                             .shadow(color: .black.opacity(0.4), radius: 2, x: 1, y: 2)
                     }
-                    .padding(.top, 30)
+                    .padding(.top, 90)
                     .multilineTextAlignment(.center)
 
                     // MARK: - Home Button
@@ -62,6 +52,7 @@ struct EndView: View {
                             .scaledToFit()
                             .frame(width: homeButtonWidth, height: homeButtonHeight)
                     }
+                    .padding(.top, 1)
                 }
             }
         }
