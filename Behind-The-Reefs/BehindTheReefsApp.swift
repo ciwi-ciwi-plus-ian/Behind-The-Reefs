@@ -14,7 +14,7 @@ struct BehindTheReefsApp: App {
     // ← Ganti ini: langsung mulai di EndView untuk test
     @State private var router: NavigationRouter = {
         let r = NavigationRouter()
-        r.path = [.chestOpening]  // ← app langsung buka di EndView
+        r.path = [.tutorial]  // ← app langsung buka di EndView
         return r
     }()
 
@@ -28,8 +28,10 @@ struct BehindTheReefsApp: App {
                             LetterView()
                         case .loadingGame:
                             LoadingGameView()
-//                        case .puzzle(let index):
-//                            PuzzleGameView(patternIndex: index)
+                        case .tutorial:
+                            TutorialView(isPresented: .constant(true))
+                        case .puzzle:
+                            PuzzleGameView()
                         case .keyResult(let index):
                             KeyResultView(patternIndex: index)
                         case .collection:

@@ -7,6 +7,9 @@ private extension Font {
 }
 
 struct TutorialView: View {
+    
+    @Environment(NavigationRouter.self) private var router
+    
     @State private var animateTriangles = false
     @State private var tutorialStep: Int = 1
     @State private var tutorialScene = TutorialScene()
@@ -127,7 +130,9 @@ struct TutorialView: View {
             Spacer()
             HStack {
                 Spacer()
-                Button { } label: {
+                Button {
+                    router.navigate(to: .puzzle)
+                } label: {
                     Text("➜  Skip Tutorial")
                         .font(.snigletTitle)
                         .foregroundColor(.white)
@@ -234,10 +239,11 @@ struct TutorialView: View {
     
     private func advance() {
         if tutorialStep == 3 && !tutorialStep3Completed { return }
-        if tutorialStep < 4 { tutorialStep += 1 } else { isPresented = false }
+        if tutorialStep < 4 { tutorialStep += 1 } else { router.navigate(to: .puzzle) }
     }
 }
 
 #Preview(traits: .landscapeRight) {
     TutorialView(isPresented: .constant(true))
+        .environment(NavigationRouter())
 }

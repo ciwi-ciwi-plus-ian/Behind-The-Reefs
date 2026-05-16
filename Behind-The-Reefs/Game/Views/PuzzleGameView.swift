@@ -2,6 +2,8 @@ import SwiftUI
 import SpriteKit
 
 struct PuzzleGameView: View {
+    
+    @Environment(NavigationRouter.self) private var router
 
     @StateObject private var viewModel = PuzzleViewModel()
 
@@ -99,4 +101,5 @@ struct PuzzleGameView: View {
 
 #Preview(traits: .landscapeRight) {
     PuzzleGameView()
+        .environment(NavigationRouter())
 }

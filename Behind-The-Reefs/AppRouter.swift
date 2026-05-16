@@ -11,6 +11,8 @@ import SwiftUI
 enum AppRoute: Hashable {
     case letter
     case loadingGame
+    case tutorial                  
+    case puzzle
 //    case puzzle(patternIndex: Int)
     case keyResult(patternIndex: Int)
     case collection
