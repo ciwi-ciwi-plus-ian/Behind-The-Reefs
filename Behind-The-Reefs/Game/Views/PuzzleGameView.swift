@@ -13,11 +13,15 @@ struct PuzzleGameView: View {
             gameLayer
             navigationBar
             if viewModel.result == .correct {
-                        KeyResultView(
-                            patternIndex: viewModel.matchedPatternIndex
-                        )
-                        .transition(.opacity.animation(.easeIn(duration: 0.3)))
-                    }
+                KeyResultView(
+                    patternIndex: viewModel.matchedPatternIndex,
+                    onContinue: {
+                        viewModel.resetPieces() 
+                    },
+                    isAllCompleted: viewModel.isAllPatternsCompleted
+                )
+                .transition(.opacity.animation(.easeIn(duration: 0.3)))
+            }
         }
         .ignoresSafeArea()
         .statusBarHidden()
