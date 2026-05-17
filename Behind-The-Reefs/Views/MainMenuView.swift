@@ -9,12 +9,13 @@ import SwiftUI
 struct MainMenuView: View {
     
     @Environment(NavigationRouter.self) private var router
+    
+    @State private var showNewGameAlert = false
 
     var body: some View {
 
         ZStack {
 
-            // Background
             Image("mainMenuBackground")
                 .resizable()
                 .scaledToFill()
@@ -38,7 +39,9 @@ struct MainMenuView: View {
                             .scaledToFit()
                             .frame(height: 40)
                     }
-                    Button { } label: {
+                    Button {
+                        showNewGameAlert = true
+                    } label: {
                         Image("newGameButton")
                             .resizable()
                             .scaledToFit()
@@ -51,9 +54,20 @@ struct MainMenuView: View {
                             .frame(height: 40)
                     }
                 }
+                .offset(y: 100)
                 Spacer()
             }
-            .offset(y: 100)
+            if showNewGameAlert {
+                NewGameAlertView(
+                    onDismiss: {
+                        showNewGameAlert = false
+                    },
+                    onConfirm: {
+                        showNewGameAlert = false
+                        router.navigate(to: .letter)
+                    }
+                )
+            }
         }
     }
 }

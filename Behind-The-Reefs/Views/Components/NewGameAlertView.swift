@@ -10,6 +10,9 @@ import SwiftUI
 
 struct NewGameAlertView: View {
     
+    var onDismiss: (() -> Void)?
+    var onConfirm: (() -> Void)?
+    
     var body: some View {
         ZStack {
             // Black overlay
@@ -53,7 +56,9 @@ struct NewGameAlertView: View {
                     // Buttons
                     HStack(spacing: 15) {
                         // NO
-                        Button(action: {}) {
+                        Button{
+                            onDismiss?()
+                        } label :{
                             Image("noCancel")
                                 .resizable()
                                 .scaledToFit()
@@ -61,7 +66,7 @@ struct NewGameAlertView: View {
                         }
                         
                         // YES
-                        Button(action: {}) {
+                        Button(action: {onConfirm?()}) {
                             Image("yesNewGame")
                                 .resizable()
                                 .scaledToFit()
