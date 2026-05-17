@@ -38,13 +38,15 @@ struct TutorialView: View {
                 if tutorialStep != 3 {
                     nextButton
                 }
-                if tutorialStep < 4 { skipButton }
+                if tutorialStep < 4 {
+                    skipButton
+                }
             }
             .frame(width: proxy.size.width, height: proxy.size.height)
         }
         .ignoresSafeArea()
         .onTapGesture { if tutorialStep != 3 { advance() } }
-        .onChange(of: tutorialStep) { newStep in
+        .onChange(of: tutorialStep) { _, newStep in
             if newStep == 3 { configureTutorialScene() }
         }
         .navigationBarBackButtonHidden(true)
@@ -227,6 +229,7 @@ struct TutorialView: View {
                     tutorialScene.isDragEnabled = false
                     tutorialStep3Completed = true
                     tutorialStep = 4
+                    withAnimation(.easeInOut(duration: 0.4)) { tutorialStep = 4 }
                 }
             }
         }
@@ -244,7 +247,11 @@ struct TutorialView: View {
     
     private func advance() {
         if tutorialStep == 3 && !tutorialStep3Completed { return }
-        if tutorialStep < 4 { tutorialStep += 1 } else { router.navigate(to: .puzzle) }
+        if tutorialStep < 4 {
+            withAnimation(.easeInOut(duration: 0.4)) { tutorialStep += 1 }
+        } else {
+            router.navigate(to: .puzzle)
+        }
     }
 }
 
