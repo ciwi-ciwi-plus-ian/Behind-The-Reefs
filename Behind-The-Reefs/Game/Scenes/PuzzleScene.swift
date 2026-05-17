@@ -54,34 +54,33 @@ final class PuzzleScene: SKScene {
     }
 
     private func setupPieces() {
-        let homes = poolPositions()
-        let items = PuzzleItem.allCases.shuffled()
-        for (i, item) in items.enumerated() {
-            let piece = PieceNode(item: item, home: homes[i])
-            piece.position = homes[i]
+        for (item, pos) in poolLayout() {
+            let piece = PieceNode(item: item, home: pos)
+            piece.position = pos
             addChild(piece)
             allPieces.append(piece)
         }
     }
 
-    private func poolPositions() -> [CGPoint] {
-        let layoutA: [CGPoint] = [
-            CGPoint(x: leftPoolX,  y:  size.height * 0.28),
-            CGPoint(x: leftPoolX,  y:  0),
-            CGPoint(x: leftPoolX,  y: -size.height * 0.28),
-            CGPoint(x: rightPoolX, y:  size.height * 0.28),
-            CGPoint(x: rightPoolX, y:  0),
-            CGPoint(x: rightPoolX, y: -size.height * 0.28),
+    private func poolLayout() -> [(PuzzleItem, CGPoint)] {
+        let positions: [(CGPoint, CGPoint)] = [
+            (CGPoint(x: leftPoolX + 15, y:  100),
+             CGPoint(x: rightPoolX - 15, y:  100)),
+            (CGPoint(x: leftPoolX - 15, y:    0),
+             CGPoint(x: rightPoolX + 15, y:    0)),
+            (CGPoint(x: leftPoolX + 25, y: -110),
+             CGPoint(x: rightPoolX - 25, y: -110)),
         ]
-        let layoutB: [CGPoint] = [
-            CGPoint(x: leftPoolX,  y:  size.height * 0.32),
-            CGPoint(x: leftPoolX,  y:  size.height * 0.06),
-            CGPoint(x: leftPoolX,  y: -size.height * 0.22),
-            CGPoint(x: rightPoolX, y:  size.height * 0.22),
-            CGPoint(x: rightPoolX, y: -size.height * 0.06),
-            CGPoint(x: rightPoolX, y: -size.height * 0.32),
+
+        let colorPairs: [[(PuzzleItem, PuzzleItem)]] = [
+            [(.red, .yellow), (.choco, .blue), (.purple, .green)],
+            [(.blue, .choco), (.red, .yellow), (.green, .purple)],
         ]
-        return Bool.random() ? layoutA : layoutB
+
+        let pairs = colorPairs.randomElement()!
+        return zip(pairs, positions).flatMap { (pair, pos) in
+            [(pair.0, pos.0), (pair.1, pos.1)]
+        }
     }
 
     private func targetColumn(for x: CGFloat) -> Int? {
