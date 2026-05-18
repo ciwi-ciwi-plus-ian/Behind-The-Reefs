@@ -56,6 +56,11 @@ struct PuzzleGameView: View {
                 context.insert(newProgress)
                 try? context.save()
             }
+
+            if let progress = progress {
+                viewModel.completedPatterns = Set(progress.completedPatterns)
+            }
+
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.3) {
                 withAnimation(.easeOut(duration: 0.3)) {
                     showLoading = false

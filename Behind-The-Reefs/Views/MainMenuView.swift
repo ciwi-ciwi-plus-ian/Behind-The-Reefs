@@ -5,23 +5,30 @@
 //  Created by Ivone Liwang on 12/05/26.
 
 import SwiftUI
+import SwiftData
 
 struct MainMenuView: View {
     
     @Environment(NavigationRouter.self) private var router
+    @Environment(\.modelContext) private var context
+    @Query private var progressList: [GameProgress]
     
     @State private var showNewGameAlert = false
     @State private var showCredits = false
 
+    
+    private var progress: GameProgress? { progressList.first }
+    private var canContinue: Bool { progress?.completedPatterns.isEmpty == false }
+    
     var body: some View {
-
+        
         ZStack {
-
+            
             Image("mainMenuBackground")
                 .resizable()
                 .scaledToFill()
                 .ignoresSafeArea()
-
+            
             VStack {
                 Image("title")
                     .resizable()
@@ -30,16 +37,22 @@ struct MainMenuView: View {
                     .padding(.top, 50)
                 Spacer()
             }
-
+            
             VStack {
                 Spacer()
                 VStack(spacing: 10) {
-                    Button { } label: {
+                    Button {
+                        if canContinue {
+                            router.navigate(to: .puzzle)
+                        }
+                    } label: {
                         Image("continueButton")
                             .resizable()
                             .scaledToFit()
                             .frame(height: 40)
                     }
+                    .disabled(!canContinue)
+                    .opacity(canContinue ? 1 : 0.5)
                     Button {
                         showNewGameAlert = true
                     } label: {
@@ -67,6 +80,7 @@ struct MainMenuView: View {
                     },
                     onConfirm: {
                         showNewGameAlert = false
+                        resetProgressForNewGame()
                         router.navigate(to: .letter)
                     }
                 )
@@ -81,9 +95,13 @@ struct MainMenuView: View {
             }
         }
     }
-}
-
-#Preview(traits: .landscapeRight) {
-    MainMenuView()
-        .environment(NavigationRouter())
+    
+    private func resetProgressForNewGame() {
+        for progress in progressList {
+            context.delete(progress)
+        }
+        let newProgress = GameProgress()
+        context.insert(newProgress)
+        try? context.save()
+    }
 }
