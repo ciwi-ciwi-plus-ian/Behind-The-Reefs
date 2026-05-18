@@ -6,13 +6,18 @@ private extension Font {
     static let snigletTitle = Font.custom("Sniglet-Regular", size: 17)
 }
 
-struct TutorialView: View {
+struct TutorialView: View { 
+    
+    @Environment(NavigationRouter.self) private var router
+    
+    @State private var showLoading = true
     @State private var animateTriangles = false
     @State private var tutorialStep: Int = 1
     @State private var tutorialScene = TutorialScene()
     @State private var tutorialStep3Completed = false
+    @State private var showCollection = false
     @Binding var isPresented: Bool
-    
+     
     private static let sortAreaWidth: CGFloat = 520
     
     var body: some View {
@@ -31,17 +36,45 @@ struct TutorialView: View {
                         .zIndex(1)
                 }
                 navigationBar
+                    .allowsHitTesting(!showLoading)
                 if tutorialStep != 3 {
                     nextButton
+                        .allowsHitTesting(!showLoading)
                 }
-                if tutorialStep < 4 { skipButton }
+                if tutorialStep < 4 {
+                    skipButton
+                        .allowsHitTesting(!showLoading)
+                }
+                if showLoading {
+                    Color.black.opacity(0.7) 
+                        .ignoresSafeArea()
+                        .zIndex(9)
+ 
+                    LoadingGameView()
+                        .ignoresSafeArea()
+                        .transition(.opacity)
+                        .zIndex(10)
+                        .onAppear {
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 1.3) {
+                                withAnimation(.easeOut(duration: 0.5)) {
+                                    showLoading = false
+                                }
+                            }
+                        }
+                }
             }
             .frame(width: proxy.size.width, height: proxy.size.height)
         }
-        .ignoresSafeArea()
-        .onTapGesture { if tutorialStep != 3 { advance() } }
-        .onChange(of: tutorialStep) { newStep in
+        .ignoresSafeArea() 
+        .onTapGesture {
+            if tutorialStep != 3 && !showLoading { advance() }
+        }
+        .onChange(of: tutorialStep) { _, newStep in
             if newStep == 3 { configureTutorialScene() }
+        }
+        .navigationBarBackButtonHidden(true)
+        .fullScreenCover(isPresented: $showCollection) {
+            CollectionView()
         }
     }
     
@@ -57,11 +90,11 @@ struct TutorialView: View {
     private var navigationBar: some View {
         VStack {
             HStack(alignment: .center) {
-                Button { } label: {
+                Button { router.goToMainMenu() } label: {
                     Image("homeIcon")
                         .resizable()
                         .scaledToFit()
-                        .frame(width: 52, height: 52)
+                        .frame(width: 45, height: 45)
                 }
                 .padding(.leading, 16)
                 .opacity(tutorialStep == 1 ? 1.0 : 0.3)
@@ -84,7 +117,7 @@ struct TutorialView: View {
                         .padding(.trailing, 8)
                 }
                 
-                Button { } label: {
+                Button { showCollection = true } label: {
                     Image("treasureChestIcon")
                         .resizable()
                         .scaledToFit()
@@ -127,7 +160,9 @@ struct TutorialView: View {
             Spacer()
             HStack {
                 Spacer()
-                Button { } label: {
+                Button {
+                    router.navigate(to: .puzzle)
+                } label: {
                     Text("➜  Skip Tutorial")
                         .font(.snigletTitle)
                         .foregroundColor(.white)
@@ -217,6 +252,7 @@ struct TutorialView: View {
                     tutorialScene.isDragEnabled = false
                     tutorialStep3Completed = true
                     tutorialStep = 4
+                    withAnimation(.easeInOut(duration: 0.4)) { tutorialStep = 4 }
                 }
             }
         }
@@ -234,10 +270,15 @@ struct TutorialView: View {
     
     private func advance() {
         if tutorialStep == 3 && !tutorialStep3Completed { return }
-        if tutorialStep < 4 { tutorialStep += 1 } else { isPresented = false }
+        if tutorialStep < 4 {
+            withAnimation(.easeInOut(duration: 0.4)) { tutorialStep += 1 }
+        } else {
+            router.navigate(to: .puzzle)
+        }
     }
 }
 
 #Preview(traits: .landscapeRight) {
     TutorialView(isPresented: .constant(true))
+        .environment(NavigationRouter())
 }

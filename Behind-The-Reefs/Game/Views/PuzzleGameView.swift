@@ -1,21 +1,53 @@
 import SwiftUI
 import SpriteKit
+import SwiftData
 
 struct PuzzleGameView: View {
+    
+    @Environment(NavigationRouter.self) private var router
+    
+    @Environment(\.modelContext) private var context
 
     @StateObject private var viewModel = PuzzleViewModel()
+    
+    // Fetch GameProgress dari SwiftData
+        @Query private var progressList: [GameProgress]
+        private var progress: GameProgress? { progressList.first }
+
+        @State private var showCollection = false
 
     var body: some View {
         ZStack {
             background
             gameLayer
             navigationBar
-            if let result = viewModel.result {
-                resultOverlay(result)
+            if viewModel.result == .correct {
+                KeyResultView(
+                    patternIndex: viewModel.matchedPatternIndex,
+                    onContinue: {
+                        progress?.completePattern(viewModel.matchedPatternIndex)
+                                                try? context.save()
+                        viewModel.resetPieces()
+                    },
+                    isAllCompleted: viewModel.isAllPatternsCompleted
+                )
+                .transition(.opacity.animation(.easeIn(duration: 0.3)))
             }
         }
         .ignoresSafeArea()
         .statusBarHidden()
+        .navigationBarBackButtonHidden(true)
+        .fullScreenCover(isPresented: $showCollection) {
+                    CollectionView()
+                        .environment(router)
+                }
+        .onAppear {
+            if progressList.isEmpty {
+                let newProgress = GameProgress()
+                context.insert(newProgress)
+                try? context.save()
+            }
+        }
     }
 
     private var background: some View {
@@ -33,7 +65,9 @@ struct PuzzleGameView: View {
     private var navigationBar: some View {
         VStack {
             HStack {
-                Button { } label: {
+                Button {
+                    router.goToMainMenu()
+                } label: {
                     Image("homeIcon")
                         .resizable()
                         .scaledToFit()
@@ -43,7 +77,9 @@ struct PuzzleGameView: View {
 
                 Spacer()
 
-                Button { } label: {
+                Button {
+                    showCollection = true
+                } label: {
                     Image("treasureChestIcon")
                         .resizable()
                         .scaledToFit()
@@ -99,4 +135,5 @@ struct PuzzleGameView: View {
 
 #Preview(traits: .landscapeRight) {
     PuzzleGameView()
+        .environment(NavigationRouter())
 }

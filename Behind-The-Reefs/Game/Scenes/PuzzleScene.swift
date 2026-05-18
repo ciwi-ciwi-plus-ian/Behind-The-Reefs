@@ -25,7 +25,7 @@ final class PuzzleScene: SKScene {
     private var bgmPlayer: AVAudioPlayer?
     private let snapHaptic = UIImpactFeedbackGenerator(style: .light)
 
-    var onAnswerChecked: ((Bool) -> Void)?
+    var onAnswerChecked: ((Int) -> Void)?
 
     override func didMove(to view: SKView) {
         backgroundColor = .clear
@@ -54,34 +54,33 @@ final class PuzzleScene: SKScene {
     }
 
     private func setupPieces() {
-        let homes = poolPositions()
-        let items = PuzzleItem.allCases.shuffled()
-        for (i, item) in items.enumerated() {
-            let piece = PieceNode(item: item, home: homes[i])
-            piece.position = homes[i]
+        for (item, pos) in poolLayout() {
+            let piece = PieceNode(item: item, home: pos)
+            piece.position = pos
             addChild(piece)
             allPieces.append(piece)
         }
     }
 
-    private func poolPositions() -> [CGPoint] {
-        let layoutA: [CGPoint] = [
-            CGPoint(x: leftPoolX,  y:  size.height * 0.28),
-            CGPoint(x: leftPoolX,  y:  0),
-            CGPoint(x: leftPoolX,  y: -size.height * 0.28),
-            CGPoint(x: rightPoolX, y:  size.height * 0.28),
-            CGPoint(x: rightPoolX, y:  0),
-            CGPoint(x: rightPoolX, y: -size.height * 0.28),
+    private func poolLayout() -> [(PuzzleItem, CGPoint)] {
+        let positions: [(CGPoint, CGPoint)] = [
+            (CGPoint(x: leftPoolX + 15, y:  100),
+             CGPoint(x: rightPoolX - 15, y:  100)),
+            (CGPoint(x: leftPoolX - 15, y:    0),
+             CGPoint(x: rightPoolX + 15, y:    0)),
+            (CGPoint(x: leftPoolX + 25, y: -110),
+             CGPoint(x: rightPoolX - 25, y: -110)),
         ]
-        let layoutB: [CGPoint] = [
-            CGPoint(x: leftPoolX,  y:  size.height * 0.32),
-            CGPoint(x: leftPoolX,  y:  size.height * 0.06),
-            CGPoint(x: leftPoolX,  y: -size.height * 0.22),
-            CGPoint(x: rightPoolX, y:  size.height * 0.22),
-            CGPoint(x: rightPoolX, y: -size.height * 0.06),
-            CGPoint(x: rightPoolX, y: -size.height * 0.32),
+
+        let colorPairs: [[(PuzzleItem, PuzzleItem)]] = [
+            [(.red, .yellow), (.choco, .blue), (.purple, .green)],
+            [(.blue, .choco), (.red, .yellow), (.green, .purple)],
         ]
-        return Bool.random() ? layoutA : layoutB
+
+        let pairs = colorPairs.randomElement()!
+        return zip(pairs, positions).flatMap { (pair, pos) in
+            [(pair.0, pos.0), (pair.1, pos.1)]
+        }
     }
 
     private func targetColumn(for x: CGFloat) -> Int? {
@@ -188,12 +187,20 @@ final class PuzzleScene: SKScene {
 
     func checkAnswer() {
         let order = (0..<Layout.columnCount).compactMap { columnPieces[$0]?.item }
-        let isCorrect = order.count == Layout.columnCount
-            && PuzzlePatternData.correctSequences.contains(order)
-        guard isCorrect else { return }
+        guard order.count == Layout.columnCount else { return }
+
+        // Cari index pattern mana yang cocok
+        guard let matchedIndex = PuzzlePatternData.all.firstIndex(where: {
+            $0.correctOrder == order
+        }) else { return }
+
+        // Kirim patternIndex ke ViewModel
+        onAnswerChecked?(matchedIndex)  // ← kirim index, bukan true/false
+    }
+    
+    func snapAndStop() {
         snapAllToMidY()
         stopBGM()
-        onAnswerChecked?(true)
     }
 
     private func snapAllToMidY() {

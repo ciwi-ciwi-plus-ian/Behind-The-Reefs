@@ -6,12 +6,48 @@
 //
 
 import SwiftUI
+import SwiftData
 
 @main
 struct BehindTheReefsApp: App {
+
+    @State private var router =  NavigationRouter()
+
     var body: some Scene {
         WindowGroup {
-            LoadingGameView()
+            NavigationStack(path: $router.path) {
+                MainMenuView()
+                    .navigationDestination(for: AppRoute.self) { route in
+                        switch route {
+                        case .letter:
+                            LetterView()
+                        case .loadingGame:
+                            LoadingGameView()
+                        case .tutorial:
+                            TutorialView(isPresented: .constant(true))
+                        case .puzzle:
+                            PuzzleGameView()
+                        case .keyResult(let index):
+                            KeyResultView(
+                                patternIndex: index,
+                                isAllCompleted: false
+                            )
+                        case .chestOpening:
+                            ChestOpeningView()
+                        case .end:
+                            EndView()
+//                        case .credits:
+//                            CreditsView()
+                        }
+                    }
+            }
+            .environment(router)
         }
+        .modelContainer(for: [
+            PlayerData.self,
+            GameProgress.self,
+            GameKey.self,
+            AudioSettings.self
+        ])
     }
 }

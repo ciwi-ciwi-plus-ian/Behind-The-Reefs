@@ -7,12 +7,15 @@
 import SwiftUI
 
 struct MainMenuView: View {
+    
+    @Environment(NavigationRouter.self) private var router
+    
+    @State private var showNewGameAlert = false
 
     var body: some View {
 
         ZStack {
 
-            // Background
             Image("mainMenuBackground")
                 .resizable()
                 .scaledToFill()
@@ -29,33 +32,47 @@ struct MainMenuView: View {
 
             VStack {
                 Spacer()
-                VStack(spacing: -48) {
+                VStack(spacing: 10) {
                     Button { } label: {
                         Image("continueButton")
                             .resizable()
                             .scaledToFit()
-                            .frame(height: 100)
+                            .frame(height: 40)
                     }
-                    Button { } label: {
+                    Button {
+                        showNewGameAlert = true
+                    } label: {
                         Image("newGameButton")
                             .resizable()
                             .scaledToFit()
-                            .frame(height: 100)
+                            .frame(height: 40)
                     }
                     Button { } label: {
                         Image("creditsButton")
                             .resizable()
                             .scaledToFit()
-                            .frame(height: 100)
+                            .frame(height: 40)
                     }
                 }
+                .offset(y: 100)
                 Spacer()
             }
-            .offset(y: 100)
+            if showNewGameAlert {
+                NewGameAlertView(
+                    onDismiss: {
+                        showNewGameAlert = false
+                    },
+                    onConfirm: {
+                        showNewGameAlert = false
+                        router.navigate(to: .letter)
+                    }
+                )
+            }
         }
     }
 }
 
 #Preview(traits: .landscapeRight) {
     MainMenuView()
+        .environment(NavigationRouter())
 }

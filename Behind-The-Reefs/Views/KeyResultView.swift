@@ -9,18 +9,28 @@ import SwiftUI
 
 struct KeyResultView: View {
 
+    @Environment(NavigationRouter.self) private var router
+
     var patternIndex: Int
+    var onContinue: (() -> Void)?
+    var isAllCompleted: Bool = false
 
     // MARK: - Asset Names
     private let keyAssetNames = [
-        "keyOne",   // index 0 — pola 1
-        "keyTwo",   // index 1 — pola 2
-        "keyThree", // index 2 — pola 3
-        "keyFour",  // index 3 — pola 4
-        "keyFive"   // index 4 — pola 5
+        "keyOne",
+        "keyTwo",
+        "keyThree",
+        "keyFour",
+        "keyFive"
     ]
-    
-    private let snigletFont: Font = .custom("Sniglet-Regular", size: 24)
+
+    private let sortDescriptions = [
+        "You've sorted the creatures by height",
+        "You've sorted the creatures by number of legs/fins",
+        "You've sorted the creatures by eye's direction",
+        "You've sorted the creatures by number of lines",
+        "You've sorted the creatures by number of dots"
+    ]
 
     private var currentKeyAsset: String {
         guard patternIndex >= 0 && patternIndex < keyAssetNames.count else {
@@ -29,17 +39,16 @@ struct KeyResultView: View {
         return keyAssetNames[patternIndex]
     }
 
+    private var sortDescription: String {
+        guard patternIndex >= 0 && patternIndex < sortDescriptions.count else {
+            return "You've sorted the creatures!"
+        }
+        return sortDescriptions[patternIndex]
+    }
+
     private var isLastPattern: Bool {
         patternIndex == 4
     }
-
-    // MARK: - Button Size
-    private let homeButtonWidth:      CGFloat = 100
-    private let homeButtonHeight:     CGFloat = 60
-    private let continueButtonWidth:  CGFloat = 130
-    private let continueButtonHeight: CGFloat = 60
-    private let finishButtonWidth:    CGFloat = 130
-    private let finishButtonHeight:   CGFloat = 60
 
     // MARK: - Animation State
     @State private var keyScale:    CGFloat = 0.3
@@ -51,53 +60,19 @@ struct KeyResultView: View {
     var body: some View {
         ZStack {
 
-            // MARK: - Layer 1: Background
-            Image("mainMenuBackground")
-                .resizable()
-                .scaledToFill()
+            Color.black.opacity(0.8)
                 .ignoresSafeArea()
+                .onTapGesture { }
 
-            // MARK: - Layer 1: Home Icon & Chest Icon
-            VStack {
-                HStack {
-                    Image("homeIcon")
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 48, height: 48)
-                        .padding(20)
-                    Spacer()
-                }
-                Spacer()
-            }
-
-            VStack {
-                HStack {
-                    Spacer()
-                    Image("treasureChestIcon")
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 60, height: 60)
-                        .padding(16)
-                }
-                Spacer()
-            }
-
-            // MARK: - Layer 2: Overlay gelap
-            Color.black.opacity(0.55)
-                .ignoresSafeArea()
-
-            // MARK: - Layer 3: Konten utama
             VStack(spacing: 0) {
 
-                // Sort Description Text
-                Text("You've sorted the creatures by height")
-                    .font(snigletFont)
+                Text(sortDescription)
+                    .font(.custom("Sniglet-Regular", size: 26))
                     .foregroundStyle(.white)
                     .multilineTextAlignment(.center)
                     .padding(.horizontal, 40)
                     .padding(.top, 30)
 
-                // MARK: - Key + Glow Effect
                 ZStack {
 
                     Circle()
@@ -151,34 +126,39 @@ struct KeyResultView: View {
                 }
                 .padding(.bottom, 32)
 
-                // MARK: - Buttons Row
-                if isLastPattern {
+                if isAllCompleted {
+
+                    // Pola 5 — navigate ke ChestOpening
                     Button {
-                        // navigasi ke EndView — akan diisi saat routing siap
+                        router.navigate(to: .chestOpening)
                     } label: {
                         Image("finishButton")
                             .resizable()
                             .scaledToFit()
-                            .frame(width: finishButtonWidth, height: finishButtonHeight)
+                            .frame(height: 45)
                     }
+
                 } else {
-                    HStack(spacing: 20) {
+
+                    // Pola 1–4 — Home atau Continue
+                    HStack(spacing: 15) {
+
                         Button {
-                            // navigasi ke main menu — akan diisi saat routing siap
+                            router.goToMainMenu()
                         } label: {
                             Image("homeButton")
                                 .resizable()
                                 .scaledToFit()
-                                .frame(width: homeButtonWidth, height: homeButtonHeight)
+                                .frame(height: 45)
                         }
 
                         Button {
-                            // navigasi ke puzzle berikutnya — akan diisi saat routing siap
+                            onContinue?()
                         } label: {
-                            Image("continueButton")
+                            Image("continueAlertButton")
                                 .resizable()
                                 .scaledToFit()
-                                .frame(width: continueButtonWidth, height: continueButtonHeight)
+                                .frame(height: 45)
                         }
                     }
                 }
@@ -189,10 +169,7 @@ struct KeyResultView: View {
     }
 }
 
-// MARK: - Preview
-
 #Preview(traits: .landscapeRight) {
-    KeyResultView(
-        patternIndex: 0
-    )
+    KeyResultView(patternIndex: 0)
+        .environment(NavigationRouter())
 }

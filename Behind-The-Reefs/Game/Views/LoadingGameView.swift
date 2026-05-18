@@ -14,22 +14,22 @@
 import SwiftUI
 import SpriteKit
 
-// MARK: - LoadingGameView
-// SwiftUI wrapper untuk LoadingScene
-// Navigasi akan ditambahkan belakangan
-
 struct LoadingGameView: View {
 
     // Buat scene sekali saja — jangan buat ulang setiap render
     @State private var scene: LoadingScene = {
         let s = LoadingScene()
-        s.scaleMode = .resizeFill  // fill seluruh layar
+        s.scaleMode = .resizeFill
         return s
     }()
 
     var body: some View {
-        SpriteView(scene: scene)
-            .ignoresSafeArea()          // full screen
-            .navigationBarHidden(true)  // sembunyikan nav bar
+        SpriteView(scene: scene, options: [.allowsTransparency])
+            .ignoresSafeArea()
+            .navigationBarHidden(true)
+            .background(.clear)
+            .onDisappear {
+                scene.stopAudio()
+            }
     }
 }
