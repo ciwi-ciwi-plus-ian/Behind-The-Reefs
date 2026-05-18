@@ -26,9 +26,9 @@ struct KeyResultView: View {
 
     private let sortDescriptions = [
         "You've sorted the creatures by height",
-        "You've sorted the creatures by legs / fins",
+        "You've sorted the creatures by number of legs/fins",
         "You've sorted the creatures by eye's direction",
-        "You've sorted the creatures by pattern",
+        "You've sorted the creatures by number of lines",
         "You've sorted the creatures by number of dots"
     ]
 
@@ -155,7 +155,7 @@ struct KeyResultView: View {
                         Button {
                             onContinue?()
                         } label: {
-                            Image("continueButton")
+                            Image("continueAlertButton")
                                 .resizable()
                                 .scaledToFit()
                                 .frame(height: 45)
