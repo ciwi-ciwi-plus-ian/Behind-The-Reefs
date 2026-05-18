@@ -43,7 +43,7 @@ struct TutorialView: View {
                     skipButton
                 }
                 if showLoading {
-                    Color.black.opacity(0.7)
+                    Color.black.opacity(0.7) 
                         .ignoresSafeArea()
                         .zIndex(9)
  
@@ -52,7 +52,7 @@ struct TutorialView: View {
                         .transition(.opacity)
                         .zIndex(10)
                         .onAppear {
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 1.3) {
                                 withAnimation(.easeOut(duration: 0.5)) {
                                     showLoading = false
                                 }

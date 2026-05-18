@@ -36,7 +36,7 @@ class LoadingScene: SKScene {
         emitter.zPosition = 2
 
         // Jumlah bubble per detik — naikkan untuk lebih padat
-        emitter.particleBirthRate = 50
+        emitter.particleBirthRate = 85
 
         // Durasi hidup setiap bubble
         emitter.particleLifetime = 1.0
@@ -47,11 +47,11 @@ class LoadingScene: SKScene {
         emitter.emissionAngleRange = 0.3  // sedikit variasi arah
 
         // Kecepatan naik
-        emitter.particleSpeed = 500
+        emitter.particleSpeed = 1200
         emitter.particleSpeedRange = 60
 
         // Ukuran bubble
-        emitter.particleScale = 0.15
+        emitter.particleScale = 0.20
         emitter.particleScaleRange = 0.1
 
         // Posisi spawn acak sepanjang lebar layar
