@@ -14,6 +14,8 @@ struct MainMenuView: View {
     @Query private var progressList: [GameProgress]
     
     @State private var showNewGameAlert = false
+    @State private var showCredits = false
+
     
     private var progress: GameProgress? { progressList.first }
     private var canContinue: Bool { progress?.completedPatterns.isEmpty == false }
@@ -59,7 +61,9 @@ struct MainMenuView: View {
                             .scaledToFit()
                             .frame(height: 40)
                     }
-                    Button { } label: {
+                    Button {
+                        showCredits = true
+                    } label: {
                         Image("creditsButton")
                             .resizable()
                             .scaledToFit()
@@ -80,6 +84,14 @@ struct MainMenuView: View {
                         router.navigate(to: .letter)
                     }
                 )
+            }
+            if showCredits {
+                Color.black.opacity(0.7)
+                    .ignoresSafeArea()
+                
+                CreditsView(onDismiss: {
+                    showCredits = false
+                })
             }
         }
     }

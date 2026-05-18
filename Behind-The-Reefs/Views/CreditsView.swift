@@ -9,6 +9,8 @@ import SwiftUI
 
 struct CreditsView: View {
     
+    var onDismiss: (() -> Void)?
+    
     var body: some View {
         
         ZStack {
@@ -17,6 +19,7 @@ struct CreditsView: View {
                 HStack {
                     Spacer()
                     Button {
+                        onDismiss?()
                     } label: {
                         Image("exitButton")
                             .resizable()
