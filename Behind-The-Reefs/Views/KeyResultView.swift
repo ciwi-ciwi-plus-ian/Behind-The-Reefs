@@ -144,6 +144,7 @@ struct KeyResultView: View {
                     HStack(spacing: 15) {
 
                         Button {
+                            onContinue?()
                             router.goToMainMenu()
                         } label: {
                             Image("homeButton")
