@@ -11,6 +11,7 @@ struct MainMenuView: View {
     @Environment(NavigationRouter.self) private var router
     
     @State private var showNewGameAlert = false
+    @State private var showCredits = false
 
     var body: some View {
 
@@ -47,7 +48,9 @@ struct MainMenuView: View {
                             .scaledToFit()
                             .frame(height: 40)
                     }
-                    Button { } label: {
+                    Button {
+                        showCredits = true
+                    } label: {
                         Image("creditsButton")
                             .resizable()
                             .scaledToFit()
@@ -67,6 +70,14 @@ struct MainMenuView: View {
                         router.navigate(to: .letter)
                     }
                 )
+            }
+            if showCredits {
+                Color.black.opacity(0.7)
+                    .ignoresSafeArea()
+                
+                CreditsView(onDismiss: {
+                    showCredits = false
+                })
             }
         }
     }

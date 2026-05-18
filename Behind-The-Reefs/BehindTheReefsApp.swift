@@ -34,8 +34,8 @@ struct BehindTheReefsApp: App {
                             ChestOpeningView()
                         case .end:
                             EndView()
-//                        case .credits:
-//                            CreditsView()
+                        case .credits:
+                            CreditsView()
                         }
                     }
             }
