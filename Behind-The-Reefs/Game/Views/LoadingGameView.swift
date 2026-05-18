@@ -28,5 +28,8 @@ struct LoadingGameView: View {
             .ignoresSafeArea()
             .navigationBarHidden(true)
             .background(.clear)
+            .onDisappear {
+                scene.stopAudio()
+            }
     }
 }

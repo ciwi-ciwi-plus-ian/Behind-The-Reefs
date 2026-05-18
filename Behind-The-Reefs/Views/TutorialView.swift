@@ -6,7 +6,7 @@ private extension Font {
     static let snigletTitle = Font.custom("Sniglet-Regular", size: 17)
 }
 
-struct TutorialView: View {
+struct TutorialView: View { 
     
     @Environment(NavigationRouter.self) private var router
     
@@ -43,19 +43,22 @@ struct TutorialView: View {
                     skipButton
                 }
                 if showLoading {
-                        LoadingGameView()
-                            .ignoresSafeArea()
-                            .transition(.opacity)
-                            .zIndex(10)
-                            .onAppear {
-                                // Auto-dismiss setelah 3 detik
-                                DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
-                                    withAnimation(.easeOut(duration: 0.5)) {
-                                        showLoading = false
-                                    }
+                    Color.black.opacity(0.7)
+                        .ignoresSafeArea()
+                        .zIndex(9)
+ 
+                    LoadingGameView()
+                        .ignoresSafeArea()
+                        .transition(.opacity)
+                        .zIndex(10)
+                        .onAppear {
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                                withAnimation(.easeOut(duration: 0.5)) {
+                                    showLoading = false
                                 }
                             }
-                    }
+                        }
+                }
             }
             .frame(width: proxy.size.width, height: proxy.size.height)
         }

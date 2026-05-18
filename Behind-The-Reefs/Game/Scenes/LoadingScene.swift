@@ -18,14 +18,13 @@ class LoadingScene: SKScene {
     }
 
     private func setupAudio() {
-        let audio = SKAudioNode(fileNamed: "bubbleAudio") // ganti sesuai nama file MP3 kalian
+        let audio = SKAudioNode(fileNamed: "bubbleAudio")
         audio.autoplayLooped = true
         addChild(audio)
         self.audioNode = audio
     }
 
-    var onComplete: (() -> Void)?  // ← tambahkan ini
-    private var audioNode: SKAudioNode?  // ← tambahkan ini
+    private var audioNode: SKAudioNode?
 
     private func setupBubbleParticles() {
         let emitter = SKEmitterNode()
@@ -72,6 +71,12 @@ class LoadingScene: SKScene {
 
         addChild(emitter)
     }
+    
+    func stopAudio() {
+            audioNode?.run(SKAction.stop())
+            audioNode?.removeFromParent()
+            audioNode = nil
+        }
 
     override func willMove(from view: SKView) {
         audioNode?.run(SKAction.stop())
