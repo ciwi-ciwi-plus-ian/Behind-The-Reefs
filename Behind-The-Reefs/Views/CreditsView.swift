@@ -31,12 +31,12 @@ struct CreditsView: View {
                 }
                 Spacer()
 
-                Text("Made with dedication by Behind the Reef team")
-                    .font(Font.custom("Chewy-Regular", size: 10))
+                Text("Made with dedication by Behind the Reefs team")
+                    .font(Font.custom("Sniglet-Regular", size: 9))
                     .foregroundColor(Color(red: 64/255, green: 64/255, blue: 64/255))
                     
-                Text("© 2026 Behind the Reef. All rights reserved.")
-                    .font(Font.custom("Chewy-Regular", size: 10))
+                Text("© 2026 Behind the Reefs. All rights reserved.")
+                    .font(Font.custom("Sniglet-Regular", size: 9))
                     .padding(.bottom, -15)
                     .foregroundColor(Color(red: 64/255, green: 64/255, blue: 64/255))
             }
@@ -57,74 +57,74 @@ struct CreditsView: View {
                 ZStack {
                     //Tulisan Credits Detail
                     VStack {
-                        Text("Behind The Reef")
-                            .font(Font.custom("Chewy-Regular", size: 40))
+                        Text("Behind The Reefs")
+                            .font(Font.custom("Sniglet-Regular", size: 30))
                             .foregroundColor(Color.white)
-                            .padding (.bottom,-20)
+                            .padding (.bottom,-10)
                             .padding(.top,15)
                         
                         Text("CREDITS")
-                            .font(Font.custom("Chewy-Regular", size: 20))
+                            .font(Font.custom("Sniglet-Regular", size: 15))
                             .foregroundColor(Color.white)
                         
                         //Devider line
                         Rectangle()
                             .fill(Color.white.opacity(0.8))
-                            .frame(width:400, height:3)
+                            .frame(width:380, height:3)
                             .padding(.horizontal, 40)
-                            .padding(.top,-10)
+                            .padding(.top,-5)
                         
                         HStack {
                             Text("Project Manager")
-                                .font(Font.custom("Chewy-Regular", size: 20))
+                                .font(Font.custom("Sniglet-Regular", size: 17))
                                 .foregroundColor(Color.white)
-                                .padding(.trailing,130)
+                                .padding(.trailing,135)
                             Text("Ivana Grasielda")
-                                .font(Font.custom("Chewy-Regular", size: 20))
+                                .font(Font.custom("Sniglet-Regular", size: 17))
                                 .foregroundColor(Color.white)
                         }
-                        .padding(.top,-10)
+                        .padding(.top,-5)
                         
                         HStack{
                             Text("Programmer 1")
-                                .font(Font.custom("Chewy-Regular", size: 20))
+                                .font(Font.custom("Sniglet-Regular", size: 17))
                                 .foregroundColor(Color.white)
-                                .padding(.trailing,173)
+                                .padding(.trailing,163)
                             Text("Bryan Samuel")
-                                .font(Font.custom("Chewy-Regular", size: 20))
+                                .font(Font.custom("Sniglet-Regular", size: 17))
                                 .foregroundColor(Color.white)
                         }
                         
                         HStack{
                             Text("Programmer 2")
-                                .font(Font.custom("Chewy-Regular", size: 20))
+                                .font(Font.custom("Sniglet-Regular", size: 17))
                                 .foregroundColor(Color.white)
                                 .padding(.trailing,168)
                             Text("Ivone Liwang")
-                                .font(Font.custom("Chewy-Regular", size: 20))
+                                .font(Font.custom("Sniglet-Regular", size: 17))
                                 .foregroundColor(Color.white)
                         }
                         
                         HStack{
                             Text("Programmer 3")
-                                .font(Font.custom("Chewy-Regular", size: 20))
+                                .font(Font.custom("Sniglet-Regular", size: 17))
                                 .foregroundColor(Color.white)
-                                .padding(.trailing,160)
-                                .padding(.leading,-7)
+                                .padding(.trailing,155)
+                                .padding(.leading,-10)
                             Text("Hana Azizah N.")
-                                .font(Font.custom("Chewy-Regular", size: 20))
+                                .font(Font.custom("Sniglet-Regular", size: 17))
                                 .foregroundColor(Color.white)
                                 .padding(.trailing,-10)
                         }
                         
                         HStack{
                             Text("Art & Design")
-                                .font(Font.custom("Chewy-Regular", size: 20))
+                                .font(Font.custom("Sniglet-Regular", size: 17))
                                 .foregroundColor(Color.white)
                                 .padding(.trailing,145)
                                 .padding(.leading,-7)
                             Text("Angely Georgina J.")
-                                .font(Font.custom("Chewy-Regular", size: 20))
+                                .font(Font.custom("Sniglet-Regular", size: 17))
                                 .foregroundColor(Color.white)
                                 .padding(.trailing,-10)
                             
@@ -132,12 +132,12 @@ struct CreditsView: View {
                         
                         .padding (.bottom,10)
                         Text("Special Thanks to Our Mentor")
-                            .font(Font.custom("Chewy-Regular", size: 15))
+                            .font(Font.custom("Sniglet-Regular", size: 15))
                             .foregroundColor(Color.white)
-                            .padding(.bottom,-12)
+                            .padding(.bottom,-9)
                         
                         Text("Amelia Alexandra")
-                            .font(Font.custom("Chewy-Regular", size: 20))
+                            .font(Font.custom("Sniglet-Regular", size: 17))
                             .foregroundColor(Color.white)
             
                     }
