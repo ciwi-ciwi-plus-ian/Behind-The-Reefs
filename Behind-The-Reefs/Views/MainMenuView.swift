@@ -5,19 +5,12 @@
 //  Created by Ivone Liwang on 12/05/26.
 
 import SwiftUI
-import SwiftData
 
 struct MainMenuView: View {
     
     @Environment(NavigationRouter.self) private var router
     
     @State private var showNewGameAlert = false
-    
-    @Query private var progressList: [GameProgress]
-        private var hasSavedProgress: Bool {
-            guard let progress = progressList.first else { return false }
-            return !progress.completedPatterns.isEmpty
-        }
 
     var body: some View {
 
@@ -45,9 +38,7 @@ struct MainMenuView: View {
                             .resizable()
                             .scaledToFit()
                             .frame(height: 40)
-                            .opacity(hasSavedProgress ? 1.0 : 0.4)
                     }
-                    .disabled(!hasSavedProgress)
                     Button {
                         showNewGameAlert = true
                     } label: {
