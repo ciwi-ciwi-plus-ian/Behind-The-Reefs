@@ -71,7 +71,7 @@ struct TutorialView: View {
                     Image("homeIcon")
                         .resizable()
                         .scaledToFit()
-                        .frame(width: 52, height: 52)
+                        .frame(width: 45, height: 45)
                 }
                 .padding(.leading, 16)
                 .opacity(tutorialStep == 1 ? 1.0 : 0.3)
