@@ -108,7 +108,7 @@ struct PuzzleGameView: View {
                 .multilineTextAlignment(.center)
 
             overlayButton("Continue", filled: true) {
-                viewModel.resetPieces()
+                viewModel.dismissResult()
             }
         }
         .padding(40)

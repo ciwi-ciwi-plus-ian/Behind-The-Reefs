@@ -197,13 +197,8 @@ final class PuzzleScene: SKScene {
         // Kirim patternIndex ke ViewModel
         onAnswerChecked?(matchedIndex)  // ← kirim index, bukan true/false
     }
-    
-    func snapAndStop() {
-        snapAllToMidY()
-        stopBGM()
-    }
 
-    private func snapAllToMidY() {
+   func snapAllToMidY() {
         for (col, piece) in columnPieces {
             let target = CGPoint(x: columnCenterX(at: col), y: 0)
             let move = SKAction.move(to: target, duration: 0.35)
@@ -301,17 +296,5 @@ final class PuzzleScene: SKScene {
         container.addChild(tail)
 
         return container
-    }
-
-    func resetPieces() {
-        columnPieces.removeAll()
-        childNode(withName: "hintBubble")?.removeFromParent()
-        removeAction(forKey: "hintTimer")
-        for piece in allPieces {
-            piece.removeAllActions()
-            piece.returnToHome()
-        }
-        startHintTimer()
-        startBGM()
     }
 }
