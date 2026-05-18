@@ -21,8 +21,6 @@ struct BehindTheReefsApp: App {
                         switch route {
                         case .letter:
                             LetterView()
-                        case .loadingGame:
-                            LoadingGameView()
                         case .tutorial:
                             TutorialView(isPresented: .constant(true))
                         case .puzzle:

@@ -10,7 +10,6 @@ import SwiftUI
 // MARK: - AppRoute
 enum AppRoute: Hashable {
     case letter
-    case loadingGame
     case tutorial                  
     case puzzle
 //    case puzzle(patternIndex: Int)

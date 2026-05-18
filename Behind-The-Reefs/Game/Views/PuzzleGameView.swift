@@ -15,6 +15,7 @@ struct PuzzleGameView: View {
         private var progress: GameProgress? { progressList.first }
 
         @State private var showCollection = false
+        @State private var showLoading = true
 
     var body: some View {
         ZStack {
@@ -33,6 +34,14 @@ struct PuzzleGameView: View {
                 )
                 .transition(.opacity.animation(.easeIn(duration: 0.3)))
             }
+            if showLoading {
+                Color.black.opacity(0.75)
+                    .ignoresSafeArea()
+                    .zIndex(20)
+                LoadingGameView()
+                    .zIndex(21)
+                    .transition(.opacity)
+            }
         }
         .ignoresSafeArea()
         .statusBarHidden()
@@ -46,6 +55,11 @@ struct PuzzleGameView: View {
                 let newProgress = GameProgress()
                 context.insert(newProgress)
                 try? context.save()
+            }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.3) {
+                withAnimation(.easeOut(duration: 0.3)) {
+                    showLoading = false
+                }
             }
         }
     }
