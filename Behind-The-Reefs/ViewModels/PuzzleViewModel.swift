@@ -25,8 +25,8 @@ final class PuzzleViewModel: ObservableObject {
                 return
             }
 
-            // Pattern baru — snap dan stop BGM
-            self.scene.snapAndStop()  
+            // Pattern baru — snap
+            self.scene.snapAllToMidY()
 
             self.matchedPatternIndex = patternIndex
             self.completedPatterns.insert(patternIndex)
@@ -39,9 +39,8 @@ final class PuzzleViewModel: ObservableObject {
         }
     
     func checkAnswer() { scene.checkAnswer() }
-
-    func resetPieces() {
-        scene.resetPieces()
-        result = nil
-    }
+    
+    func dismissResult() {
+    result = nil
+}
 }

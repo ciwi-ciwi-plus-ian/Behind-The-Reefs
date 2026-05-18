@@ -15,6 +15,7 @@ struct PuzzleGameView: View {
         private var progress: GameProgress? { progressList.first }
 
         @State private var showCollection = false
+        @State private var showLoading = true
 
     var body: some View {
         ZStack {
@@ -26,12 +27,20 @@ struct PuzzleGameView: View {
                     patternIndex: viewModel.matchedPatternIndex,
                     onContinue: {
                         progress?.completePattern(viewModel.matchedPatternIndex)
-                                                try? context.save()
-                        viewModel.resetPieces()
+                        try? context.save()
+                        viewModel.dismissResult()
                     },
                     isAllCompleted: viewModel.isAllPatternsCompleted
                 )
                 .transition(.opacity.animation(.easeIn(duration: 0.3)))
+            }
+            if showLoading {
+                Color.black.opacity(0.75)
+                    .ignoresSafeArea()
+                    .zIndex(20)
+                LoadingGameView()
+                    .zIndex(21)
+                    .transition(.opacity)
             }
         }
         .ignoresSafeArea()
@@ -46,6 +55,11 @@ struct PuzzleGameView: View {
                 let newProgress = GameProgress()
                 context.insert(newProgress)
                 try? context.save()
+            }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.3) {
+                withAnimation(.easeOut(duration: 0.3)) {
+                    showLoading = false
+                }
             }
         }
     }
@@ -108,7 +122,7 @@ struct PuzzleGameView: View {
                 .multilineTextAlignment(.center)
 
             overlayButton("Continue", filled: true) {
-                viewModel.resetPieces()
+                viewModel.dismissResult()
             }
         }
         .padding(40)

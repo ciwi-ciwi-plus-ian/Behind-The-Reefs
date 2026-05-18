@@ -10,7 +10,6 @@ struct TutorialView: View {
     
     @Environment(NavigationRouter.self) private var router
     
-    @State private var showLoading = true
     @State private var animateTriangles = false
     @State private var tutorialStep: Int = 1
     @State private var tutorialScene = TutorialScene()
@@ -36,38 +35,18 @@ struct TutorialView: View {
                         .zIndex(1)
                 }
                 navigationBar
-                    .allowsHitTesting(!showLoading)
                 if tutorialStep != 3 {
                     nextButton
-                        .allowsHitTesting(!showLoading)
                 }
                 if tutorialStep < 4 {
                     skipButton
-                        .allowsHitTesting(!showLoading)
-                }
-                if showLoading {
-                    Color.black.opacity(0.7) 
-                        .ignoresSafeArea()
-                        .zIndex(9)
- 
-                    LoadingGameView()
-                        .ignoresSafeArea()
-                        .transition(.opacity)
-                        .zIndex(10)
-                        .onAppear {
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 1.3) {
-                                withAnimation(.easeOut(duration: 0.5)) {
-                                    showLoading = false
-                                }
-                            }
-                        }
                 }
             }
             .frame(width: proxy.size.width, height: proxy.size.height)
         }
-        .ignoresSafeArea() 
+        .ignoresSafeArea()
         .onTapGesture {
-            if tutorialStep != 3 && !showLoading { advance() }
+            if tutorialStep != 3 { advance() }
         }
         .onChange(of: tutorialStep) { _, newStep in
             if newStep == 3 { configureTutorialScene() }
