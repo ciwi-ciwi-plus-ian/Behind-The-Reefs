@@ -9,48 +9,26 @@ import SpriteKit
 
 class LoadingScene: SKScene {
 
-    // MARK: - Nodes
     private var backgroundNode: SKSpriteNode?
 
-    // MARK: - Setup
-
     override func didMove(to view: SKView) {
-        setupBackground()
+        backgroundColor = .clear
         setupBubbleParticles()
         setupAudio()
     }
 
-    // MARK: - Audio
-
     private func setupAudio() {
-        let audio = SKAudioNode(fileNamed: "bubbleAudio") // ganti sesuai nama file MP3 kalian
+        let audio = SKAudioNode(fileNamed: "bubbleAudio")
         audio.autoplayLooped = true
         addChild(audio)
+        self.audioNode = audio
     }
 
-    // MARK: - Background
-
-    private func setupBackground() {
-        let background = SKSpriteNode(imageNamed: "bubbleBackground")
-        background.position = CGPoint(x: frame.midX, y: frame.midY)
-        background.size = frame.size
-        background.zPosition = 0
-        addChild(background)
-        self.backgroundNode = background
-
-        // Mulai dari gelap lalu fade in
-        background.alpha = 0
-        background.run(SKAction.fadeIn(withDuration: 0.8))
-    }
-
-    // MARK: - Bubble Particles
-    // Langsung pakai PNG asset tanpa file .sks
+    private var audioNode: SKAudioNode?
 
     private func setupBubbleParticles() {
         let emitter = SKEmitterNode()
 
-        // Set texture langsung dari PNG asset
-        // Ganti "bubbleParticle" dengan nama PNG kalian di xcassets
         emitter.particleTexture = SKTexture(imageNamed: "bubbleParticle")
 
         // Posisi emitter di bawah layar agar bubble naik dari bawah
@@ -58,7 +36,7 @@ class LoadingScene: SKScene {
         emitter.zPosition = 2
 
         // Jumlah bubble per detik — naikkan untuk lebih padat
-        emitter.particleBirthRate = 50
+        emitter.particleBirthRate = 85
 
         // Durasi hidup setiap bubble
         emitter.particleLifetime = 1.0
@@ -69,11 +47,11 @@ class LoadingScene: SKScene {
         emitter.emissionAngleRange = 0.3  // sedikit variasi arah
 
         // Kecepatan naik
-        emitter.particleSpeed = 500
+        emitter.particleSpeed = 1200
         emitter.particleSpeedRange = 60
 
         // Ukuran bubble
-        emitter.particleScale = 0.15
+        emitter.particleScale = 0.20
         emitter.particleScaleRange = 0.1
 
         // Posisi spawn acak sepanjang lebar layar
@@ -93,11 +71,17 @@ class LoadingScene: SKScene {
 
         addChild(emitter)
     }
-
-    // MARK: - Cleanup
-    // SKAudioNode otomatis berhenti saat scene di-dismiss
+    
+    func stopAudio() {
+            audioNode?.run(SKAction.stop())
+            audioNode?.removeFromParent()
+            audioNode = nil
+        }
 
     override func willMove(from view: SKView) {
+        audioNode?.run(SKAction.stop())
+        audioNode?.removeFromParent()
+        audioNode = nil
         removeAllActions()
         removeAllChildren()
     }
