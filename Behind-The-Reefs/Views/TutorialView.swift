@@ -10,6 +10,7 @@ struct TutorialView: View {
     
     @Environment(NavigationRouter.self) private var router
     
+    @State private var showLoading = true
     @State private var animateTriangles = false
     @State private var tutorialStep: Int = 1
     @State private var tutorialScene = TutorialScene()
@@ -41,6 +42,20 @@ struct TutorialView: View {
                 if tutorialStep < 4 {
                     skipButton
                 }
+                if showLoading {
+                        LoadingGameView()
+                            .ignoresSafeArea()
+                            .transition(.opacity)
+                            .zIndex(10)
+                            .onAppear {
+                                // Auto-dismiss setelah 3 detik
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                                    withAnimation(.easeOut(duration: 0.5)) {
+                                        showLoading = false
+                                    }
+                                }
+                            }
+                    }
             }
             .frame(width: proxy.size.width, height: proxy.size.height)
         }
