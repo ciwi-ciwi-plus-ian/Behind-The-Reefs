@@ -44,4 +44,8 @@ final class PuzzleViewModel: ObservableObject {
         scene.resetPieces()
         result = nil
     }
+    
+    func dismissResult() {
+    result = nil
+}
 }

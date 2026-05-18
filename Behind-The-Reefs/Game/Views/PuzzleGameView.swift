@@ -26,8 +26,8 @@ struct PuzzleGameView: View {
                     patternIndex: viewModel.matchedPatternIndex,
                     onContinue: {
                         progress?.completePattern(viewModel.matchedPatternIndex)
-                                                try? context.save()
-                        viewModel.resetPieces()
+                        try? context.save()
+                        viewModel.dismissResult()
                     },
                     isAllCompleted: viewModel.isAllPatternsCompleted
                 )
