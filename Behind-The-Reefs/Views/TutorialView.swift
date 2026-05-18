@@ -17,7 +17,7 @@ struct TutorialView: View {
     @State private var tutorialStep3Completed = false
     @State private var showCollection = false
     @Binding var isPresented: Bool
-    
+     
     private static let sortAreaWidth: CGFloat = 520
     
     var body: some View {
@@ -36,11 +36,14 @@ struct TutorialView: View {
                         .zIndex(1)
                 }
                 navigationBar
+                    .allowsHitTesting(!showLoading)
                 if tutorialStep != 3 {
                     nextButton
+                        .allowsHitTesting(!showLoading)
                 }
                 if tutorialStep < 4 {
                     skipButton
+                        .allowsHitTesting(!showLoading)
                 }
                 if showLoading {
                     Color.black.opacity(0.7) 
@@ -62,8 +65,10 @@ struct TutorialView: View {
             }
             .frame(width: proxy.size.width, height: proxy.size.height)
         }
-        .ignoresSafeArea()
-        .onTapGesture { if tutorialStep != 3 { advance() } }
+        .ignoresSafeArea() 
+        .onTapGesture {
+            if tutorialStep != 3 && !showLoading { advance() }
+        }
         .onChange(of: tutorialStep) { _, newStep in
             if newStep == 3 { configureTutorialScene() }
         }
