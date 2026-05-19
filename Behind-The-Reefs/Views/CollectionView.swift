@@ -21,6 +21,7 @@ struct CollectionView: View {
     @State private var selectedKeyIndex: Int? = nil
     @State private var keyOffsets: [CGFloat] = Array(repeating: -50, count: 5)
     @State private var buttonSoundPlayer: AVAudioPlayer?
+    @State private var tapKeySoundPlayer: AVAudioPlayer?  // ← tambahkan ini
 
     private let keySize:        CGFloat = 120
     private let keySpacing:     CGFloat = 14
@@ -92,7 +93,8 @@ struct CollectionView: View {
                     hideButtons: true,
                     onDismiss: {
                         selectedKeyIndex = nil
-                    }
+                    },
+                    showKeyAlert: false
                 )
                 .zIndex(10)
             }
@@ -117,13 +119,12 @@ struct CollectionView: View {
     private func triggerAnimation() {
         for i in 0..<5 {
             keyOffsets[i] = 0
-
             withAnimation(
                 .easeInOut(duration: 1.5)
                 .repeatForever(autoreverses: true)
-                .delay(Double(i) * 0.2)  // delay per kunci agar tidak serentak
+                .delay(Double(i) * 0.2)
             ) {
-                keyOffsets[i] = -10  // ← atur seberapa jauh naik turunnya
+                keyOffsets[i] = -10
             }
         }
     }
@@ -134,20 +135,21 @@ struct CollectionView: View {
     private func keySlot(for index: Int) -> some View {
         if let assetName = viewModel.assetName(for: index) {
 
-            // Kunci sudah didapat — animasi turun + bisa diklik
+            // Kunci sudah didapat — animasi + bisa diklik
             Image(assetName)
                 .resizable()
                 .scaledToFit()
                 .rotationEffect(.degrees(30))
                 .shadow(color: .black.opacity(0.8), radius: 6, x: 4, y: 6)
-                .offset(y: keyOffsets[index])  // ← animasi turun
+                .offset(y: keyOffsets[index])
                 .onTapGesture {
+                    playTapKeySound()  // ← tambahkan ini
                     selectedKeyIndex = index
                 }
 
         } else {
 
-            // Kunci belum didapat — siluet, tidak animasi, tidak bisa diklik
+            // Kunci belum didapat — siluet, tidak bisa diklik
             Image(viewModel.keyAssetNames[index])
                 .resizable()
                 .scaledToFit()
@@ -157,7 +159,9 @@ struct CollectionView: View {
                 .shadow(color: .black.opacity(0.8), radius: 6, x: 4, y: 6)
         }
     }
-    
+
+    // MARK: - Sound
+
     private func playButtonSound() {
         guard let url = Bundle.main.url(
             forResource: "exitSound",
@@ -165,6 +169,15 @@ struct CollectionView: View {
         ) else { return }
         buttonSoundPlayer = try? AVAudioPlayer(contentsOf: url)
         buttonSoundPlayer?.play()
+    }
+
+    private func playTapKeySound() {  // ← tambahkan fungsi ini
+        guard let url = Bundle.main.url(
+            forResource: "tapKeySound",
+            withExtension: "mp3"
+        ) else { return }
+        tapKeySoundPlayer = try? AVAudioPlayer(contentsOf: url)
+        tapKeySoundPlayer?.play()
     }
 }
 

@@ -17,6 +17,7 @@ struct KeyResultView: View {
     var isAllCompleted: Bool = false
     var hideButtons: Bool = false
     var onDismiss: (() -> Void)? = nil
+    var showKeyAlert: Bool = true
 
     @State private var buttonSoundPlayer: AVAudioPlayer?
 
@@ -189,12 +190,26 @@ struct KeyResultView: View {
             }
         }
         .navigationBarHidden(true)
+        .onAppear {
+            if showKeyAlert {
+                playKeyAlertSound()
+            }
+        }
     }
 
     // MARK: - Sound
     private func playButtonSound() {
         guard let url = Bundle.main.url(
             forResource: "buttonSound",
+            withExtension: "mp3"
+        ) else { return }
+        buttonSoundPlayer = try? AVAudioPlayer(contentsOf: url)
+        buttonSoundPlayer?.play()
+    }
+    
+    private func playKeyAlertSound() {
+        guard let url = Bundle.main.url(
+            forResource: "keyAlertSound",
             withExtension: "mp3"
         ) else { return }
         buttonSoundPlayer = try? AVAudioPlayer(contentsOf: url)
