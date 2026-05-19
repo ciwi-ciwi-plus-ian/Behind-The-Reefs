@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import AVFoundation
 
 struct ChestOpeningView: View {
     
@@ -17,6 +18,8 @@ struct ChestOpeningView: View {
     @State private var showDarkOverlay = false
 
     @State private var rotatedKeys: [Bool] = Array(repeating: false, count: 5)
+    @State private var unlockingPlayer: AVAudioPlayer?
+    @State private var chestOpenPlayer: AVAudioPlayer?
 
     @State private var glowOpacity: CGFloat = 0.3
     @State private var glowRadius:  CGFloat = 50
@@ -35,8 +38,6 @@ struct ChestOpeningView: View {
         ZStack {
 
             // MARK: - Background
-            // Pakai ZStack dua layer agar transisi smooth tanpa flash putih
-            // Kedua aset di-load sejak awal, hanya opacity yang berubah
             ZStack {
                 // Background 1 — ZoomOut (chest tertutup)
                 Image("chestBackgroundZoomOut")
@@ -45,7 +46,6 @@ struct ChestOpeningView: View {
                     .ignoresSafeArea()
 
                 // Background 2 — ZoomIn (chest terbuka)
-                // Fade in saat chestOpened = true
                 Image("chestBackgroundZoomIn")
                     .resizable()
                     .scaledToFill()
@@ -171,6 +171,10 @@ struct ChestOpeningView: View {
             }
 
             // Translasi
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                playSFX(name: "unlocking", player: &unlockingPlayer)
+            }
+
             DispatchQueue.main.asyncAfter(deadline: .now() + 2.75) {
                 translateKeys = true
             }
@@ -183,12 +187,20 @@ struct ChestOpeningView: View {
             // Open chest — background ikut fade ke ZoomIn
             DispatchQueue.main.asyncAfter(deadline: .now() + 4.0) {
                 chestOpened = true
+                playSFX(name: "chestopen", player: &chestOpenPlayer)
             }
             
             DispatchQueue.main.asyncAfter(deadline: .now() + 10.0) {
                     router.navigate(to: .end)
                 }
         }
+    }
+
+    private func playSFX(name: String, player: inout AVAudioPlayer?) {
+        guard let url = Bundle.main.url(forResource: name, withExtension: "mp3") else { return }
+        player = try? AVAudioPlayer(contentsOf: url)
+        player?.prepareToPlay()
+        player?.play()
     }
 }
 
