@@ -44,8 +44,11 @@ struct NewGameAlertView: View {
                         .padding(.vertical, 20)
                     
                     // Body Text
-                    VStack(spacing: 8) {
-                        Text("Are you sure want to start a new game? Past progress will be deleted!")
+                    VStack(spacing: 3) {
+                        Text("Are you sure want to start a new game?")
+                            .font(.custom("Sniglet-Regular", size: 18))
+                            .foregroundColor(.white)
+                        Text("Past progress will be deleted!")
                             .font(.custom("Sniglet-Regular", size: 18))
                             .foregroundColor(.white)
                     }

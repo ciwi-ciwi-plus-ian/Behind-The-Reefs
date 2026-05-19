@@ -10,7 +10,6 @@ struct PuzzleGameView: View {
 
     @StateObject private var viewModel = PuzzleViewModel()
     
-    // Fetch GameProgress dari SwiftData
         @Query private var progressList: [GameProgress]
         private var progress: GameProgress? { progressList.first }
 
@@ -90,7 +89,7 @@ struct PuzzleGameView: View {
                     Image("homeIcon")
                         .resizable()
                         .scaledToFit()
-                        .frame(width: 52, height: 52)
+                        .frame(width: 46, height: 46)
                 }
                 .padding(.leading, 16)
 
@@ -102,7 +101,7 @@ struct PuzzleGameView: View {
                     Image("treasureChestIcon")
                         .resizable()
                         .scaledToFit()
-                        .frame(width: 52, height: 52)
+                        .frame(width: 46, height: 46)
                 }
                 .padding(.trailing, 16)
             }
