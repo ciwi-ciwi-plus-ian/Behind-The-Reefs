@@ -1,6 +1,7 @@
 import SwiftUI
 import SpriteKit
 import SwiftData
+import AVFoundation
 
 struct PuzzleGameView: View {
     
@@ -10,11 +11,13 @@ struct PuzzleGameView: View {
 
     @StateObject private var viewModel = PuzzleViewModel()
     
-        @Query private var progressList: [GameProgress]
-        private var progress: GameProgress? { progressList.first }
+    
+    @Query private var progressList: [GameProgress]
+    private var progress: GameProgress? { progressList.first }
 
-        @State private var showCollection = false
-        @State private var showLoading = true
+    @State private var showCollection = false
+    @State private var showLoading = true
+    @State private var buttonSoundPlayer: AVAudioPlayer?
 
     var body: some View {
         ZStack {
@@ -84,6 +87,7 @@ struct PuzzleGameView: View {
         VStack {
             HStack {
                 Button {
+                    playButtonSound()
                     router.goToMainMenu()
                 } label: {
                     Image("homeIcon")
@@ -96,6 +100,7 @@ struct PuzzleGameView: View {
                 Spacer()
 
                 Button {
+                    playButtonSound()
                     showCollection = true
                 } label: {
                     Image("treasureChestIcon")
@@ -148,6 +153,15 @@ struct PuzzleGameView: View {
                 .clipShape(Capsule())
                 .overlay(Capsule().stroke(Color.white.opacity(0.4), lineWidth: 1.5))
         }
+    }
+    
+    private func playButtonSound() {
+        guard let url = Bundle.main.url(
+            forResource: "buttonSound",
+            withExtension: "mp3"
+        ) else { return }
+        buttonSoundPlayer = try? AVAudioPlayer(contentsOf: url)
+        buttonSoundPlayer?.play()
     }
 }
 
