@@ -20,7 +20,7 @@ struct CollectionView: View {
 
     private let keySize:    CGFloat = 120
     private let keySpacing: CGFloat = 14
-    private let chestWidth: CGFloat = 875
+    private let chestWidth: CGFloat = 850
 
     private let overlayOpacity: CGFloat = 0.5
 
@@ -39,7 +39,7 @@ struct CollectionView: View {
                             .resizable()
                             .scaledToFit()
                             .frame(width: chestWidth)
-                            .offset(y: -50)
+                            .offset(y: 30)
                         Spacer()
                     }
                 }
