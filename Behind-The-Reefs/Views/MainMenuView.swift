@@ -6,32 +6,44 @@
 
 import SwiftUI
 import SwiftData
+import AVFoundation
 
 struct MainMenuView: View {
-    
+
     @Environment(NavigationRouter.self) private var router
     @Environment(\.modelContext) private var context
     @Query private var progressList: [GameProgress]
-    
+
     @State private var showNewGameAlert = false
     @State private var showCredits = false
+    @State private var audioPlayer: AVAudioPlayer?
+    @State private var buttonSoundPlayer: AVAudioPlayer? 
 
-    
     private var progress: GameProgress? { progressList.first }
     private var canContinue: Bool {
         guard let progress = progress else { return false }
         return !progress.completedPatterns.isEmpty && !progress.isAllCompleted
     }
-    
+
+    private func playButtonSound() {
+        guard let url = Bundle.main.url(
+            forResource: "buttonSound",
+            withExtension: "mp3"
+        ) else { return }
+        // ← simpan ke @State agar tidak langsung di-deallocate
+        buttonSoundPlayer = try? AVAudioPlayer(contentsOf: url)
+        buttonSoundPlayer?.play()
+    }
+
     var body: some View {
-        
+
         ZStack {
-            
+
             Image("mainMenuBackground")
                 .resizable()
                 .scaledToFill()
                 .ignoresSafeArea()
-            
+
             VStack {
                 Image("title")
                     .resizable()
@@ -40,11 +52,12 @@ struct MainMenuView: View {
                     .padding(.top, 50)
                 Spacer()
             }
-            
+
             VStack {
                 Spacer()
                 VStack(spacing: 10) {
                     Button {
+                        playButtonSound()
                         if canContinue {
                             router.navigate(to: .puzzle)
                         }
@@ -56,7 +69,9 @@ struct MainMenuView: View {
                     }
                     .disabled(!canContinue)
                     .opacity(canContinue ? 1 : 0.5)
+
                     Button {
+                        playButtonSound()
                         showNewGameAlert = true
                     } label: {
                         Image("newGameButton")
@@ -64,7 +79,9 @@ struct MainMenuView: View {
                             .scaledToFit()
                             .frame(height: 40)
                     }
+
                     Button {
+                        playButtonSound()
                         showCredits = true
                     } label: {
                         Image("creditsButton")
@@ -76,6 +93,7 @@ struct MainMenuView: View {
                 .offset(y: 100)
                 Spacer()
             }
+
             if showNewGameAlert {
                 NewGameAlertView(
                     onDismiss: {
@@ -88,17 +106,37 @@ struct MainMenuView: View {
                     }
                 )
             }
+
             if showCredits {
                 Color.black.opacity(0.7)
                     .ignoresSafeArea()
-                
+
                 CreditsView(onDismiss: {
                     showCredits = false
                 })
             }
         }
+        .onAppear {
+            playBGM()
+        }
+        .onDisappear {
+            audioPlayer?.stop()
+            audioPlayer = nil
+        }
     }
-    
+
+    private func playBGM() {
+        guard let url = Bundle.main.url(
+            forResource: "mainMenuSound",
+            withExtension: "mp3"
+        ) else { return }
+
+        audioPlayer = try? AVAudioPlayer(contentsOf: url)
+        audioPlayer?.numberOfLoops = -1
+        audioPlayer?.volume = 0.7
+        audioPlayer?.play()
+    }
+
     private func resetProgressForNewGame() {
         for progress in progressList {
             context.delete(progress)
@@ -107,4 +145,9 @@ struct MainMenuView: View {
         context.insert(newProgress)
         try? context.save()
     }
+}
+
+#Preview(traits: .landscapeRight) {
+    MainMenuView()
+        .environment(NavigationRouter())
 }

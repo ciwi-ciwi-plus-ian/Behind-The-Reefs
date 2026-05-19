@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import AVFoundation
 
 struct KeyResultView: View {
 
@@ -16,6 +17,9 @@ struct KeyResultView: View {
     var isAllCompleted: Bool = false
     var hideButtons: Bool = false
     var onDismiss: (() -> Void)? = nil
+    var showKeyAlert: Bool = true
+
+    @State private var buttonSoundPlayer: AVAudioPlayer?
 
     private let keyAssetNames = [
         "keyOne",
@@ -125,6 +129,7 @@ struct KeyResultView: View {
                 if !hideButtons {
                     if isAllCompleted {
                         Button {
+                            playButtonSound()  // ← tambahkan
                             onContinue?()
                             router.navigate(to: .chestOpening)
                         } label: {
@@ -136,6 +141,7 @@ struct KeyResultView: View {
                     } else {
                         HStack(spacing: 15) {
                             Button {
+                                playButtonSound()
                                 onContinue?()
                                 router.goToMainMenu()
                             } label: {
@@ -146,6 +152,7 @@ struct KeyResultView: View {
                             }
 
                             Button {
+                                playButtonSound()
                                 onContinue?()
                             } label: {
                                 Image("continueAlertButton")
@@ -164,6 +171,10 @@ struct KeyResultView: View {
                     HStack {
                         Spacer()
                         Button {
+                            playButtonSound()
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                                    onDismiss?()
+                                }
                             onDismiss?()
                         } label: {
                             Image("exitButton")
@@ -179,6 +190,30 @@ struct KeyResultView: View {
             }
         }
         .navigationBarHidden(true)
+        .onAppear {
+            if showKeyAlert {
+                playKeyAlertSound()
+            }
+        }
+    }
+
+    // MARK: - Sound
+    private func playButtonSound() {
+        guard let url = Bundle.main.url(
+            forResource: "buttonSound",
+            withExtension: "mp3"
+        ) else { return }
+        buttonSoundPlayer = try? AVAudioPlayer(contentsOf: url)
+        buttonSoundPlayer?.play()
+    }
+    
+    private func playKeyAlertSound() {
+        guard let url = Bundle.main.url(
+            forResource: "keyAlertSound",
+            withExtension: "mp3"
+        ) else { return }
+        buttonSoundPlayer = try? AVAudioPlayer(contentsOf: url)
+        buttonSoundPlayer?.play()
     }
 }
 

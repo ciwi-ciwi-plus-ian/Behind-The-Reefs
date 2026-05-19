@@ -175,7 +175,7 @@ struct ChestOpeningView: View {
                 playSFX(name: "chestopen", player: &chestOpenPlayer)
             }
             
-            DispatchQueue.main.asyncAfter(deadline: .now() + 10.0) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 7.0) {
                     router.navigate(to: .end)
                 }
         }
