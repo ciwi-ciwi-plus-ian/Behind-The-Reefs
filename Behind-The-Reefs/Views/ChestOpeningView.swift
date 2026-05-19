@@ -75,12 +75,11 @@ struct ChestOpeningView: View {
                         )
 
                     VStack {
-                        // Chest image
                         Image(chestOpened ? "chestOpened" : "chestClosed")
                             .resizable()
                             .scaledToFit()
-                            .frame(width: chestOpened ? 1000 : 875)
-                            .offset(y: chestOpened ? 10 : -50)
+                            .frame(width: chestOpened ? 600 : 550)
+                            .offset(y: chestOpened ? 45 : 50)
                         Spacer()
                     }
 
