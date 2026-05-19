@@ -226,7 +226,7 @@ final class PuzzleScene: SKScene {
         bgmPlayer?.play()
     }
 
-    private func stopBGM() {
+    func stopBGM() {
         bgmPlayer?.stop()
         bgmPlayer = nil
     }
@@ -405,5 +405,11 @@ final class PuzzleScene: SKScene {
         container.addChild(label)
 
         return (container, CGSize(width: bubbleW, height: bubbleH))
+    }
+    
+    override func willMove(from view: SKView) {
+        stopBGM()
+        removeAllActions()
+        removeAllChildren()
     }
 }

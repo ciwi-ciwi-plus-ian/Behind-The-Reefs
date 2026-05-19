@@ -72,11 +72,23 @@ struct EndView: View {
             }
         }
         .navigationBarHidden(true)
+        .onAppear {
+            playEndingSound()
+        }
     }
     
     private func playSound() {
         guard let url = Bundle.main.url(
             forResource: "buttonSound",
+            withExtension: "mp3"
+        ) else { return }
+        buttonSoundPlayer = try? AVAudioPlayer(contentsOf: url)
+        buttonSoundPlayer?.play()
+    }
+    
+    private func playEndingSound() {
+        guard let url = Bundle.main.url(
+            forResource: "endingSound",
             withExtension: "mp3"
         ) else { return }
         buttonSoundPlayer = try? AVAudioPlayer(contentsOf: url)
