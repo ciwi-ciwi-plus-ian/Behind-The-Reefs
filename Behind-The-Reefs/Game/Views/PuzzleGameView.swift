@@ -69,6 +69,10 @@ struct PuzzleGameView: View {
                 }
             }
         }
+        
+        .onDisappear {
+                viewModel.scene.stopBGM()  // ← stop BGM saat view hilang
+            }
     }
 
     private var background: some View {
