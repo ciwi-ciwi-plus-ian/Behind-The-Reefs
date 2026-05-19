@@ -20,6 +20,15 @@ struct MainMenuView: View {
 
     private var progress: GameProgress? { progressList.first }
     private var canContinue: Bool { progress?.completedPatterns.isEmpty == false }
+    
+    private func playButtonSound() {
+        guard let url = Bundle.main.url(
+            forResource: "buttonSound",
+            withExtension: "mp3"
+        ) else { return }
+        let player = try? AVAudioPlayer(contentsOf: url)
+        player?.play()
+    }
 
     var body: some View {
 
@@ -43,6 +52,7 @@ struct MainMenuView: View {
                 Spacer()
                 VStack(spacing: 10) {
                     Button {
+                        playButtonSound()
                         if canContinue {
                             router.navigate(to: .puzzle)
                         }
@@ -56,6 +66,7 @@ struct MainMenuView: View {
                     .opacity(canContinue ? 1 : 0.5)
 
                     Button {
+                        playButtonSound()
                         showNewGameAlert = true
                     } label: {
                         Image("newGameButton")
@@ -65,6 +76,7 @@ struct MainMenuView: View {
                     }
 
                     Button {
+                        playButtonSound()
                         showCredits = true
                     } label: {
                         Image("creditsButton")
