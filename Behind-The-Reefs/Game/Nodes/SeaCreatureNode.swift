@@ -2,7 +2,7 @@ import SpriteKit
 
 final class PieceNode: SKSpriteNode {
 
-    private static let scaleFactor: CGFloat = 0.06
+    private static let scaleFactor: CGFloat = 0.15
 
     let item: PuzzleItem
     let homePosition: CGPoint
