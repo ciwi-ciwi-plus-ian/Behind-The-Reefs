@@ -22,6 +22,8 @@ final class PuzzleScene: SKScene {
     private var dragOffset:       CGPoint = .zero
     private var dragSourceColumn: Int?    = nil
 
+    private var starFishNode: SKSpriteNode?
+
     private var bgmPlayer: AVAudioPlayer?
     private let snapHaptic = UIImpactFeedbackGenerator(style: .light)
 
@@ -32,6 +34,7 @@ final class PuzzleScene: SKScene {
         anchorPoint     = CGPoint(x: 0.5, y: 0.5)
         setupSlots()
         setupPieces()
+        setupStarFish()
         startHintTimer()
         startBGM()
         snapHaptic.prepare()
@@ -222,6 +225,36 @@ final class PuzzleScene: SKScene {
         bgmPlayer = nil
     }
 
+    // MARK: - Starfish character
+
+    private func setupStarFish() {
+        // Starfish character — peeks above the rock
+        let sf = SKSpriteNode(imageNamed: "starFish")
+        sf.setScale(0.13)
+        sf.zPosition = 5
+        sf.name = "starFishCharacter"
+
+//        stone
+        let stone = SKSpriteNode(imageNamed: "stoneStarFish")
+        stone.setScale(0.15)
+        stone.anchorPoint = CGPoint(x: 1, y: 0)
+        stone.zPosition = 6
+        stone.position = CGPoint(
+            x: size.width / 2,
+            y: -size.height / 2)
+        addChild(stone)
+
+//        starfish
+        sf.setScale(0.2)
+        sf.anchorPoint = stone.anchorPoint
+        sf.position = CGPoint(
+            x: stone.position.x + 25,
+            y: stone.position.y - 50
+        )
+        addChild(sf)
+        starFishNode = sf
+    }
+
     // MARK: - Hint timer
 
     private func startHintTimer() {
@@ -233,26 +266,37 @@ final class PuzzleScene: SKScene {
         run(.repeatForever(seq), withKey: "hintTimer")
     }
 
+    // MARK: - Hint text content
+
+    private static let hintMessages: [String] = [
+        "I don't think this is right...",
+        "Something feels off here...",
+    ]
+
+    // MARK: - Hint display
+
     private func showHintIfNeeded() {
         guard columnPieces.count == Layout.columnCount else { return }
         let order = (0..<Layout.columnCount).compactMap { columnPieces[$0]?.item }
         guard !PuzzlePatternData.correctSequences.contains(order) else { return }
-        guard let piece = columnPieces.values.randomElement() else { return }
-        showHintBubble(near: piece)
+        let text = Self.hintMessages.randomElement() ?? Self.hintMessages[0]
+        showHintBubble(text: text)
     }
 
-    private func showHintBubble(near piece: PieceNode) {
+    private func showHintBubble(text: String) {
         childNode(withName: "hintBubble")?.removeFromParent()
+        guard let sf = starFishNode else { return }
 
-        let bubble = makeBubbleNode()
+        let bubbleW:  CGFloat = 200
+        let bubbleH:  CGFloat = 100
+        let bubble = makeBubbleNode(text: text, width: bubbleW)
         bubble.name = "hintBubble"
 
-        let preferredY = piece.position.y + piece.size.height / 2 + 53
-        let bubbleHalfH: CGFloat = 45
-        let margin: CGFloat = 16
-        let clampedY = min(preferredY, size.height / 2 - bubbleHalfH - margin)
-
-        bubble.position = CGPoint(x: piece.position.x, y: clampedY)
+        // Bubble bottom sits just above the starfish top; tail points down-right to the face
+        bubble.position = CGPoint(
+            x: sf.position.x - sf.size.width - 50,
+            y: sf.position.y + sf.size.height / 2 + bubbleH / 2 + 8
+        )
         bubble.alpha = 0
         addChild(bubble)
 
@@ -264,36 +308,44 @@ final class PuzzleScene: SKScene {
         ]))
     }
 
-    private func makeBubbleNode() -> SKNode {
-        let container = SKNode()
+    // MARK: - Bubble visual builder
+
+    private func makeBubbleNode(text: String, width: CGFloat) -> SKNode {
+        let container     = SKNode()
         container.zPosition = 20
 
-        let line1 = SKLabelNode(text: "I don't think this")
-        line1.fontName                = "Sniglet-Regular"
-        line1.fontSize                = 16
-        line1.fontColor               = .white
-        line1.horizontalAlignmentMode = .center
-        line1.verticalAlignmentMode   = .center
-        line1.position = CGPoint(x: 0, y: 14)
-        container.addChild(line1)
+        let fontSize:     CGFloat = 14
+        let paddingH:     CGFloat = 16
+        let paddingV:     CGFloat = 12
+        let cornerRadius: CGFloat = 14
+        let bubbleH:      CGFloat = fontSize + paddingV * 2
 
-        let line2 = SKLabelNode(text: "is quite right...")
-        line2.fontName                = "Sniglet-Regular"
-        line2.fontSize                = 16
-        line2.fontColor               = .white
-        line2.horizontalAlignmentMode = .center
-        line2.verticalAlignmentMode   = .center
-        line2.position = CGPoint(x: 0, y: -6)
-        container.addChild(line2)
+        let rect = CGRect(x: -width / 2, y: -bubbleH / 2, width: width, height: bubbleH)
+        let background = SKShapeNode(rect: rect, cornerRadius: cornerRadius)
+        background.fillColor   = .white
+        background.strokeColor = .clear
+        container.addChild(background)
 
-        let tail = SKLabelNode(text: "/")
-        tail.fontName                = "Sniglet-Regular"
-        tail.fontSize                = 20
-        tail.fontColor               = .white
-        tail.horizontalAlignmentMode = .center
-        tail.verticalAlignmentMode   = .top
-        tail.position = CGPoint(x: 0, y: -20)
+        // Tail shape derived from SVG design — polygon at lower-right, tip extends outside
+        let tailPath = UIBezierPath()
+        tailPath.move(to:    CGPoint(x: width / 2 - 34, y: -bubbleH / 2 + 8))   // base left
+        tailPath.addLine(to: CGPoint(x: width / 2 +  2, y: -bubbleH / 2 - 6))   // tip
+        tailPath.addLine(to: CGPoint(x: width / 2 - 10, y: -bubbleH / 2 + 11))  // base right
+        tailPath.close()
+        let tail = SKShapeNode(path: tailPath.cgPath)
+        tail.fillColor   = .white
+        tail.strokeColor = .clear
         container.addChild(tail)
+
+        let label = SKLabelNode(text: text)
+        label.fontName                = "Sniglet-Regular"
+        label.fontSize                = fontSize
+        label.fontColor               = UIColor(red: 0.15, green: 0.15, blue: 0.25, alpha: 1)
+        label.horizontalAlignmentMode = .center
+        label.verticalAlignmentMode   = .center
+        label.preferredMaxLayoutWidth = width - paddingH * 2
+        label.position                = .zero
+        container.addChild(label)
 
         return container
     }
