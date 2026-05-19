@@ -24,7 +24,6 @@ struct ChestOpeningView: View {
     @State private var glowOpacity: CGFloat = 0.3
     @State private var glowRadius:  CGFloat = 50
 
-    // MARK: - Key Asset Names
     private let keyAssetNames = [
         "keyOne",
         "keyTwo",
@@ -37,15 +36,12 @@ struct ChestOpeningView: View {
 
         ZStack {
 
-            // MARK: - Background
             ZStack {
-                // Background 1 — ZoomOut (chest tertutup)
                 Image("chestBackgroundZoomOut")
                     .resizable()
                     .scaledToFill()
                     .ignoresSafeArea()
 
-                // Background 2 — ZoomIn (chest terbuka)
                 Image("chestBackgroundZoomIn")
                     .resizable()
                     .scaledToFill()
@@ -57,9 +53,7 @@ struct ChestOpeningView: View {
 
             VStack {
 
-                // MARK: - Chest Layer
                 ZStack {
-                    // Glow chest
                     Circle()
                         .fill(
                             RadialGradient(
@@ -79,11 +73,10 @@ struct ChestOpeningView: View {
                             .resizable()
                             .scaledToFit()
                             .frame(width: chestOpened ? 600 : 550)
-                            .offset(y: chestOpened ? 45 : 50)
+                            .offset(x: 10, y: chestOpened ? 45 : 50)
                         Spacer()
                     }
 
-                    // Dark Overlay
                     if showDarkOverlay {
                         Color.black
                             .opacity(0.45)
@@ -91,7 +84,6 @@ struct ChestOpeningView: View {
                             .transition(.opacity)
                     }
 
-                    // Keys
                     VStack {
                         Spacer()
 
@@ -138,7 +130,6 @@ struct ChestOpeningView: View {
         }
         .onAppear {
 
-            // Mulai animasi glow pulse
             withAnimation(
                 .easeInOut(duration: 1.5)
                 .repeatForever(autoreverses: true)
@@ -147,14 +138,12 @@ struct ChestOpeningView: View {
                 glowRadius  = 80
             }
 
-            // SHOW overlay
             DispatchQueue.main.asyncAfter(deadline: .now()) {
                 withAnimation(.easeInOut(duration: 0.25)) {
                     showDarkOverlay = true
                 }
             }
 
-            // Rotate one by one
             for index in 0..<5 {
                 DispatchQueue.main.asyncAfter(
                     deadline: (.now() + 1) + 0.5 + Double(index) * 0.15
@@ -163,14 +152,12 @@ struct ChestOpeningView: View {
                 }
             }
 
-            // HIDE overlay
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
                 withAnimation(.easeInOut(duration: 0.2)) {
                     showDarkOverlay = false
                 }
             }
 
-            // Translasi
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
                 playSFX(name: "unlocking", player: &unlockingPlayer)
             }
@@ -179,12 +166,10 @@ struct ChestOpeningView: View {
                 translateKeys = true
             }
 
-            // Fade semua kunci
             DispatchQueue.main.asyncAfter(deadline: .now() + 3.5) {
                 fadeKeys = true
             }
 
-            // Open chest — background ikut fade ke ZoomIn
             DispatchQueue.main.asyncAfter(deadline: .now() + 4.0) {
                 chestOpened = true
                 playSFX(name: "chestopen", player: &chestOpenPlayer)
