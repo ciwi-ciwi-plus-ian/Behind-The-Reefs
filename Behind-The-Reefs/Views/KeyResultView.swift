@@ -130,6 +130,7 @@ struct KeyResultView: View {
 
                     // Pola 5 — navigate ke ChestOpening
                     Button {
+                        onContinue?()
                         router.navigate(to: .chestOpening)
                     } label: {
                         Image("finishButton")

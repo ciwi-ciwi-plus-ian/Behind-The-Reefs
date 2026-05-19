@@ -177,7 +177,7 @@ struct TutorialView: View {
                     .position(x: sortRect.midX, y: sortRect.midY)
                     .blendMode(.destinationOut)
                 if tutorialStep == 3 {
-                    Text("Drag and drop\nyour items here")
+                    Text("Drag and drop\nyour creatures here")
                         .font(.snigletTitle)
                         .foregroundColor(.white)
                         .multilineTextAlignment(.center)
