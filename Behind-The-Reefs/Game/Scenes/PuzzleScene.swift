@@ -159,6 +159,7 @@ final class PuzzleScene: SKScene {
         piece.run(SKAction.scale(to: 1.0, duration: 0.1))
         piece.zPosition = 1
         slots.values.forEach { $0.setHighlighted(false) }
+        piece.restartIdleAnimation()
 
         guard !cancelled, let targetCol = targetColumn(for: piece.position.x) else { return }
 

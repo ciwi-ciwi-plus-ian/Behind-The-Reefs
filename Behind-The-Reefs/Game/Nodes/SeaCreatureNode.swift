@@ -53,7 +53,7 @@ final class PieceNode: SKSpriteNode {
 
         physicsBody = body
 
-        startIdleSwap()
+        startIdleAnimation()
     }
 
     required init?(coder: NSCoder) {
@@ -90,29 +90,25 @@ final class PieceNode: SKSpriteNode {
 
     // MARK: - Idle Animation
 
-    private func startIdleSwap() {
+    func restartIdleAnimation() {
+        removeAction(forKey: idleActionKey)
+        startIdleAnimation()
+    }
+
+    private func startIdleAnimation() {
 
         let randomDelay = Double.random(in: 0...1.5)
 
         let sequence = SKAction.sequence([
-
             .wait(forDuration: 2.5 + randomDelay),
-
             .setTexture(idleTexture),
-
             .wait(forDuration: 0.5),
-
             .setTexture(defaultTexture)
         ])
 
         let forever = SKAction.repeatForever(sequence)
 
         run(forever, withKey: idleActionKey)
-    }
-
-    func stopIdleSwap() {
-        removeAction(forKey: idleActionKey)
-        texture = defaultTexture
     }
 
     deinit {
