@@ -17,20 +17,22 @@ struct MainMenuView: View {
     @State private var showNewGameAlert = false
     @State private var showCredits = false
     @State private var audioPlayer: AVAudioPlayer?
+    @State private var buttonSoundPlayer: AVAudioPlayer? 
 
     private var progress: GameProgress? { progressList.first }
     private var canContinue: Bool {
         guard let progress = progress else { return false }
         return !progress.completedPatterns.isEmpty && !progress.isAllCompleted
     }
-    
+
     private func playButtonSound() {
         guard let url = Bundle.main.url(
             forResource: "buttonSound",
             withExtension: "mp3"
         ) else { return }
-        let player = try? AVAudioPlayer(contentsOf: url)
-        player?.play()
+        // ← simpan ke @State agar tidak langsung di-deallocate
+        buttonSoundPlayer = try? AVAudioPlayer(contentsOf: url)
+        buttonSoundPlayer?.play()
     }
 
     var body: some View {
@@ -130,7 +132,7 @@ struct MainMenuView: View {
         ) else { return }
 
         audioPlayer = try? AVAudioPlayer(contentsOf: url)
-        audioPlayer?.numberOfLoops = -1  // loop selamanya
+        audioPlayer?.numberOfLoops = -1
         audioPlayer?.volume = 0.7
         audioPlayer?.play()
     }
