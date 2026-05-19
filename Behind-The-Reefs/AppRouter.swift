@@ -16,7 +16,7 @@ enum AppRoute: Hashable {
     case keyResult(patternIndex: Int)
     case chestOpening
     case end
-//    case credits
+    case credits
 }
 
 // MARK: - NavigationRouter

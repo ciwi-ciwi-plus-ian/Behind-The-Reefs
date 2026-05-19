@@ -14,7 +14,6 @@ struct TutorialView: View {
     @State private var tutorialStep: Int = 1
     @State private var tutorialScene = TutorialScene()
     @State private var tutorialStep3Completed = false
-    @State private var showCollection = false
     @Binding var isPresented: Bool
      
     private static let sortAreaWidth: CGFloat = 520
@@ -52,9 +51,6 @@ struct TutorialView: View {
             if newStep == 3 { configureTutorialScene() }
         }
         .navigationBarBackButtonHidden(true)
-        .fullScreenCover(isPresented: $showCollection) {
-            CollectionView()
-        }
     }
     
     private func backgroundImage(size: CGSize) -> some View {
@@ -69,7 +65,7 @@ struct TutorialView: View {
     private var navigationBar: some View {
         VStack {
             HStack(alignment: .center) {
-                Button { router.goToMainMenu() } label: {
+                Button { } label: {
                     Image("homeIcon")
                         .resizable()
                         .scaledToFit()
@@ -96,7 +92,7 @@ struct TutorialView: View {
                         .padding(.trailing, 8)
                 }
                 
-                Button { showCollection = true } label: {
+                Button { } label: {
                     Image("treasureChestIcon")
                         .resizable()
                         .scaledToFit()
@@ -230,7 +226,6 @@ struct TutorialView: View {
                 DispatchQueue.main.async {
                     tutorialScene.isDragEnabled = false
                     tutorialStep3Completed = true
-                    tutorialStep = 4
                     withAnimation(.easeInOut(duration: 0.4)) { tutorialStep = 4 }
                 }
             }
