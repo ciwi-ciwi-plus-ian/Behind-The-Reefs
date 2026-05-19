@@ -19,7 +19,10 @@ struct MainMenuView: View {
     @State private var audioPlayer: AVAudioPlayer?
 
     private var progress: GameProgress? { progressList.first }
-    private var canContinue: Bool { progress?.completedPatterns.isEmpty == false }
+    private var canContinue: Bool {
+        guard let progress = progress else { return false }
+        return !progress.completedPatterns.isEmpty && !progress.isAllCompleted
+    }
     
     private func playButtonSound() {
         guard let url = Bundle.main.url(

@@ -14,8 +14,9 @@ struct KeyResultView: View {
     var patternIndex: Int
     var onContinue: (() -> Void)?
     var isAllCompleted: Bool = false
+    var hideButtons: Bool = false
+    var onDismiss: (() -> Void)? = nil
 
-    // MARK: - Asset Names
     private let keyAssetNames = [
         "keyOne",
         "keyTwo",
@@ -46,11 +47,6 @@ struct KeyResultView: View {
         return sortDescriptions[patternIndex]
     }
 
-    private var isLastPattern: Bool {
-        patternIndex == 4
-    }
-
-    // MARK: - Animation State
     @State private var keyScale:    CGFloat = 0.3
     @State private var keyOpacity:  CGFloat = 0.0
     @State private var glowOpacity: CGFloat = 0.3
@@ -126,45 +122,61 @@ struct KeyResultView: View {
                 }
                 .padding(.bottom, 32)
 
-                if isAllCompleted {
-
-                    // Pola 5 — navigate ke ChestOpening
-                    Button {
-                        router.navigate(to: .chestOpening)
-                    } label: {
-                        Image("finishButton")
-                            .resizable()
-                            .scaledToFit()
-                            .frame(height: 45)
-                    }
-
-                } else {
-
-                    // Pola 1–4 — Home atau Continue
-                    HStack(spacing: 15) {
-
+                if !hideButtons {
+                    if isAllCompleted {
                         Button {
                             onContinue?()
-                            router.goToMainMenu()
+                            router.navigate(to: .chestOpening)
                         } label: {
-                            Image("homeButton")
+                            Image("finishButton")
                                 .resizable()
                                 .scaledToFit()
                                 .frame(height: 45)
                         }
+                    } else {
+                        HStack(spacing: 15) {
+                            Button {
+                                onContinue?()
+                                router.goToMainMenu()
+                            } label: {
+                                Image("homeButton")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(height: 45)
+                            }
 
-                        Button {
-                            onContinue?()
-                        } label: {
-                            Image("continueAlertButton")
-                                .resizable()
-                                .scaledToFit()
-                                .frame(height: 45)
+                            Button {
+                                onContinue?()
+                            } label: {
+                                Image("continueAlertButton")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(height: 45)
+                            }
                         }
                     }
                 }
             }
             .padding(.horizontal, 40)
+
+            if hideButtons {
+                VStack {
+                    HStack {
+                        Spacer()
+                        Button {
+                            onDismiss?()
+                        } label: {
+                            Image("exitButton")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 35, height: 35)
+                                .padding(40)
+                                .padding(.trailing, 10)
+                        }
+                    }
+                    Spacer()
+                }
+            }
         }
         .navigationBarHidden(true)
     }
