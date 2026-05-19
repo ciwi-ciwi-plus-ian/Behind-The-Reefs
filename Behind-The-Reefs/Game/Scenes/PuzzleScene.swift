@@ -298,7 +298,7 @@ final class PuzzleScene: SKScene {
 
     private func showIntroMessage() {
         showStarFish(duration: 1.0) { [weak self] in
-            self?.showHintBubble(text: "Every creature's details have a purpose…", bubbleDuration: 8.0)
+            self?.showHintBubble(text: "Every detail of each creature serves a purpose…", bubbleDuration: 8.0)
             self?.hideStarFish(delay: 10.0)
         }
     }
