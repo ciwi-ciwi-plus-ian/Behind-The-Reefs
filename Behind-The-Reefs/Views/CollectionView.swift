@@ -9,19 +9,19 @@ import SwiftUI
 import SwiftData
 
 struct CollectionView: View {
-    
+
     @Environment(NavigationRouter.self) private var router
     @Environment(\.dismiss) private var dismiss
-    
+
     @Query private var progressList: [GameProgress]
-        private var progress: GameProgress? { progressList.first }
+    private var progress: GameProgress? { progressList.first }
 
     @State private var viewModel = CollectionViewModel()
+    @State private var selectedKeyIndex: Int? = nil
 
-    private let keySize:    CGFloat = 120
-    private let keySpacing: CGFloat = 14
-    private let chestWidth: CGFloat = 550
-
+    private let keySize:        CGFloat = 120
+    private let keySpacing:     CGFloat = 14
+    private let chestWidth:     CGFloat = 550
     private let overlayOpacity: CGFloat = 0.5
 
     var body: some View {
@@ -48,7 +48,7 @@ struct CollectionView: View {
             Color.black
                 .opacity(overlayOpacity)
                 .ignoresSafeArea()
-            
+
             VStack {
                 ZStack {
                     VStack {
@@ -81,6 +81,17 @@ struct CollectionView: View {
                 }
                 Spacer()
             }
+
+            if let index = selectedKeyIndex {
+                KeyResultView(
+                    patternIndex: index,
+                    hideButtons: true,
+                    onDismiss: {
+                        selectedKeyIndex = nil
+                    }
+                )
+                .zIndex(10)
+            }
         }
         .navigationBarHidden(true)
         .onAppear {
@@ -90,21 +101,22 @@ struct CollectionView: View {
             viewModel.loadKeyStatus(from: newProgress)
         }
     }
-
+    
     @ViewBuilder
     private func keySlot(for index: Int) -> some View {
         if let assetName = viewModel.assetName(for: index) {
 
-            // Kunci sudah didapat — gambar asli berwarna
             Image(assetName)
                 .resizable()
                 .scaledToFit()
                 .rotationEffect(.degrees(30))
                 .shadow(color: .black.opacity(0.8), radius: 6, x: 4, y: 6)
+                .onTapGesture {
+                    selectedKeyIndex = index
+                }
 
         } else {
 
-            // Kunci belum didapat — siluet hitam
             Image(viewModel.keyAssetNames[index])
                 .resizable()
                 .scaledToFit()
