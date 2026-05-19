@@ -7,6 +7,7 @@
 
 import SwiftUI
 import SwiftData
+import AVFoundation
 
 struct CollectionView: View {
 
@@ -19,6 +20,7 @@ struct CollectionView: View {
     @State private var viewModel = CollectionViewModel()
     @State private var selectedKeyIndex: Int? = nil
     @State private var keyOffsets: [CGFloat] = Array(repeating: -50, count: 5)
+    @State private var buttonSoundPlayer: AVAudioPlayer?
 
     private let keySize:        CGFloat = 120
     private let keySpacing:     CGFloat = 14
@@ -70,6 +72,7 @@ struct CollectionView: View {
                 HStack {
                     Spacer()
                     Button {
+                        playButtonSound()
                         dismiss()
                     } label: {
                         Image("exitButton")
@@ -153,6 +156,15 @@ struct CollectionView: View {
                 .rotationEffect(.degrees(30))
                 .shadow(color: .black.opacity(0.8), radius: 6, x: 4, y: 6)
         }
+    }
+    
+    private func playButtonSound() {
+        guard let url = Bundle.main.url(
+            forResource: "exitSound",
+            withExtension: "mp3"
+        ) else { return }
+        buttonSoundPlayer = try? AVAudioPlayer(contentsOf: url)
+        buttonSoundPlayer?.play()
     }
 }
 
