@@ -44,9 +44,6 @@ struct TutorialView: View {
             .frame(width: proxy.size.width, height: proxy.size.height)
         }
         .ignoresSafeArea()
-        .onTapGesture {
-            if tutorialStep != 3 { advance() }
-        }
         .onChange(of: tutorialStep) { _, newStep in
             if newStep == 3 { configureTutorialScene() }
         }
