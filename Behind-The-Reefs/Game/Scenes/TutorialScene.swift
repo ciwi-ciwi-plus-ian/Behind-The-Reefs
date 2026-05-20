@@ -95,7 +95,7 @@ final class TutorialScene: SKScene {
         piece.removeAllActions()
         piece.zPosition = 100
         piece.run(SKAction.scale(to: 1.12, duration: 0.1))
-        HapticService.impact(.soft, intensity: 0.6)
+        HapticService.tap()
     }
 
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -143,12 +143,12 @@ final class TutorialScene: SKScene {
         if isInsideTarget(piece.position) {
             let adjustedPosition = clampToTarget(piece.position, piece: piece)
             piece.run(SKAction.move(to: adjustedPosition, duration: 0.18))
-            HapticService.impact(.soft, intensity: 0.8)
+            HapticService.tap()
             checkCompletion()
         } else {
             piece.returnToHome()
             targetNode.strokeColor = SKColor.white.withAlphaComponent(0.85)
-            HapticService.impact(.soft, intensity: 0.6)
+            HapticService.tap()
         }
     }
 
@@ -168,7 +168,7 @@ final class TutorialScene: SKScene {
         if pieces.allSatisfy({ isInsideTarget($0.position) }) {
             completed = true
             targetNode.strokeColor = SKColor.green
-            HapticService.notification(.success)
+            HapticService.tap()
             onTutorialCompleted?(true)
         }
     }
