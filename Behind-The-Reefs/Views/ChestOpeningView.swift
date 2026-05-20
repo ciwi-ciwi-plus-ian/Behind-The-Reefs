@@ -149,6 +149,7 @@ struct ChestOpeningView: View {
                     deadline: (.now() + 1) + 0.5 + Double(index) * 0.15
                 ) {
                     rotatedKeys[index] = true
+                    HapticService.impact(.soft, intensity: 0.75)
                 }
             }
 
@@ -164,6 +165,7 @@ struct ChestOpeningView: View {
 
             DispatchQueue.main.asyncAfter(deadline: .now() + 2.75) {
                 translateKeys = true
+                HapticService.impact(.soft, intensity: 0.6)
             }
 
             DispatchQueue.main.asyncAfter(deadline: .now() + 3.5) {
@@ -173,6 +175,7 @@ struct ChestOpeningView: View {
             DispatchQueue.main.asyncAfter(deadline: .now() + 4.0) {
                 chestOpened = true
                 playSFX(name: "chestopen", player: &chestOpenPlayer)
+                HapticService.impact(.soft)
             }
             
             DispatchQueue.main.asyncAfter(deadline: .now() + 7.0) {

@@ -29,9 +29,8 @@ final class PuzzleScene: SKScene {
     private var isStarFishShowing = false
 
     private var bgmPlayer: AVAudioPlayer?
-    private let snapHaptic = UIImpactFeedbackGenerator(style: .light)
-
     var onAnswerChecked: ((Int) -> Void)?
+    var onWrongAnswer: (() -> Void)?
 
     override func didMove(to view: SKView) {
         backgroundColor = .clear
@@ -42,7 +41,6 @@ final class PuzzleScene: SKScene {
         showIntroMessage()
         startHintTimer()
         startBGM()
-        snapHaptic.prepare()
     }
 
     private func columnCenterX(at index: Int) -> CGFloat {
@@ -124,6 +122,7 @@ final class PuzzleScene: SKScene {
         piece.removeAllActions()
         piece.zPosition = 10
         piece.run(SKAction.scale(to: 1.12, duration: 0.1))
+        HapticService.impact(.soft, intensity: 0.6)
     }
 
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -172,9 +171,13 @@ final class PuzzleScene: SKScene {
             columnPieces.removeValue(forKey: targetCol)
 
             if let sourceCol = dragSourceColumn {
+                // slot-to-slot swap
+                HapticService.impact(.soft, intensity: 0.7)
                 columnPieces[sourceCol] = occupant
                 occupant.snapToColumn(sourceCol, at: CGPoint(x: columnCenterX(at: sourceCol), y: occupant.position.y))
             } else {
+                // piece from pool displaces occupant to outer pool
+                HapticService.impact(.soft, intensity: 0.7)
                 occupant.columnIndex = nil
                 let pushX = columnCenterX(at: targetCol) < 0 ? leftPoolX : rightPoolX
                 let move = SKAction.move(to: CGPoint(x: pushX, y: occupant.position.y), duration: 0.18)
@@ -187,7 +190,9 @@ final class PuzzleScene: SKScene {
 
         columnPieces[targetCol] = piece
         piece.snapToColumn(targetCol, at: CGPoint(x: columnCenterX(at: targetCol), y: piece.position.y))
-        snapHaptic.impactOccurred(intensity: 0.5)
+        if dragSourceColumn != targetCol {
+            HapticService.impact(.soft, intensity: 0.5)
+        }
 
         if columnPieces.count == Layout.columnCount {
             checkAnswer()
@@ -198,13 +203,15 @@ final class PuzzleScene: SKScene {
         let order = (0..<Layout.columnCount).compactMap { columnPieces[$0]?.item }
         guard order.count == Layout.columnCount else { return }
 
-        // Cari index pattern mana yang cocok
         guard let matchedIndex = PuzzlePatternData.all.firstIndex(where: {
             $0.correctOrder == order
-        }) else { return }
+        }) else {
+            HapticService.notification(.error)
+            return
+        }
 
-        // Kirim patternIndex ke ViewModel
-        onAnswerChecked?(matchedIndex)  // ← kirim index, bukan true/false
+        HapticService.notification(.success)
+        onAnswerChecked?(matchedIndex)
     }
 
    func snapAllToMidY() {

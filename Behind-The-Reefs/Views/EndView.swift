@@ -74,6 +74,7 @@ struct EndView: View {
         .navigationBarHidden(true)
         .onAppear {
             playEndingSound()
+            HapticService.notification(.success)
         }
     }
     
