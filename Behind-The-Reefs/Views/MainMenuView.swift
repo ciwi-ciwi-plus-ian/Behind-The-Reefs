@@ -54,7 +54,12 @@ struct MainMenuView: View {
                     .disabled(!canContinue)
                     .opacity(canContinue ? 1 : 0.5)
                     Button {
-                        showNewGameAlert = true
+                        if canContinue {
+                            showNewGameAlert = true
+                        } else {
+                            resetProgressForNewGame()
+                            router.navigate(to: .letter)
+                        }
                     } label: {
                         Image("newGameButton")
                             .resizable()
