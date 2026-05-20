@@ -6,10 +6,12 @@
 //
 
 import SwiftUI
+import AVFoundation
 
 struct EndView: View {
     
     @Environment(NavigationRouter.self) private var router
+    @State private var buttonSoundPlayer: AVAudioPlayer?
 
     private let frameWidth:       CGFloat = 500
     private let frameHeight:      CGFloat = 300
@@ -57,6 +59,7 @@ struct EndView: View {
                     .multilineTextAlignment(.center)
 
                     Button {
+                        playSound()
                         router.goToMainMenu()
                     } label: {
                         Image("homeButton")
@@ -69,6 +72,27 @@ struct EndView: View {
             }
         }
         .navigationBarHidden(true)
+        .onAppear {
+            playEndingSound()
+        }
+    }
+    
+    private func playSound() {
+        guard let url = Bundle.main.url(
+            forResource: "buttonSound",
+            withExtension: "mp3"
+        ) else { return }
+        buttonSoundPlayer = try? AVAudioPlayer(contentsOf: url)
+        buttonSoundPlayer?.play()
+    }
+    
+    private func playEndingSound() {
+        guard let url = Bundle.main.url(
+            forResource: "endingSound",
+            withExtension: "mp3"
+        ) else { return }
+        buttonSoundPlayer = try? AVAudioPlayer(contentsOf: url)
+        buttonSoundPlayer?.play()
     }
 }
 

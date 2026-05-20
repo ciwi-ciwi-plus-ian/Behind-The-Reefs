@@ -1,5 +1,6 @@
 import SwiftUI
 import SpriteKit
+import AVFoundation
 
 private extension Font {
     static let snigletBody  = Font.custom("Sniglet-Regular", size: 15)
@@ -14,6 +15,7 @@ struct TutorialView: View {
     @State private var tutorialStep: Int = 1
     @State private var tutorialScene = TutorialScene()
     @State private var tutorialStep3Completed = false
+    @State private var buttonSoundPlayer: AVAudioPlayer?
     @Binding var isPresented: Bool
      
     private static let sortAreaWidth: CGFloat = 520
@@ -44,9 +46,6 @@ struct TutorialView: View {
             .frame(width: proxy.size.width, height: proxy.size.height)
         }
         .ignoresSafeArea()
-        .onTapGesture {
-            if tutorialStep != 3 { advance() }
-        }
         .onChange(of: tutorialStep) { _, newStep in
             if newStep == 3 { configureTutorialScene() }
         }
@@ -136,6 +135,7 @@ struct TutorialView: View {
             HStack {
                 Spacer()
                 Button {
+                    playButtonSound()
                     router.navigate(to: .puzzle)
                 } label: {
                     Text("➜  Skip Tutorial")
@@ -180,7 +180,7 @@ struct TutorialView: View {
                     .position(x: sortRect.midX, y: sortRect.midY)
                     .blendMode(.destinationOut)
                 if tutorialStep == 3 {
-                    Text("Drag and drop\nyour items here")
+                    Text("Drag and drop\nyour creatures here")
                         .font(.snigletTitle)
                         .foregroundColor(.white)
                         .multilineTextAlignment(.center)
@@ -243,12 +243,22 @@ struct TutorialView: View {
     }
     
     private func advance() {
+        playButtonSound()
         if tutorialStep == 3 && !tutorialStep3Completed { return }
         if tutorialStep < 4 {
             withAnimation(.easeInOut(duration: 0.4)) { tutorialStep += 1 }
         } else {
             router.navigate(to: .puzzle)
         }
+    }
+    
+    private func playButtonSound() {
+        guard let url = Bundle.main.url(
+            forResource: "buttonSound",
+            withExtension: "mp3"
+        ) else { return }
+        buttonSoundPlayer = try? AVAudioPlayer(contentsOf: url)
+        buttonSoundPlayer?.play()
     }
 }
 
