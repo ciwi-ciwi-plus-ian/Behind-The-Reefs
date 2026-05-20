@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import AVFoundation
 
 struct KeyResultView: View {
 
@@ -14,8 +15,12 @@ struct KeyResultView: View {
     var patternIndex: Int
     var onContinue: (() -> Void)?
     var isAllCompleted: Bool = false
+    var hideButtons: Bool = false
+    var onDismiss: (() -> Void)? = nil
+    var showKeyAlert: Bool = true
 
-    // MARK: - Asset Names
+    @State private var buttonSoundPlayer: AVAudioPlayer?
+
     private let keyAssetNames = [
         "keyOne",
         "keyTwo",
@@ -46,11 +51,6 @@ struct KeyResultView: View {
         return sortDescriptions[patternIndex]
     }
 
-    private var isLastPattern: Bool {
-        patternIndex == 4
-    }
-
-    // MARK: - Animation State
     @State private var keyScale:    CGFloat = 0.3
     @State private var keyOpacity:  CGFloat = 0.0
     @State private var glowOpacity: CGFloat = 0.3
@@ -114,6 +114,7 @@ struct KeyResultView: View {
                                 keyScale   = 1.0
                                 keyOpacity = 1.0
                             }
+                            HapticService.impact(.soft, intensity: 0.9)
                             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                                 withAnimation(
                                     .easeInOut(duration: 1.8)
@@ -126,46 +127,94 @@ struct KeyResultView: View {
                 }
                 .padding(.bottom, 32)
 
-                if isAllCompleted {
-
-                    // Pola 5 — navigate ke ChestOpening
-                    Button {
-                        router.navigate(to: .chestOpening)
-                    } label: {
-                        Image("finishButton")
-                            .resizable()
-                            .scaledToFit()
-                            .frame(height: 45)
-                    }
-
-                } else {
-
-                    // Pola 1–4 — Home atau Continue
-                    HStack(spacing: 15) {
-
+                if !hideButtons {
+                    if isAllCompleted {
                         Button {
-                            router.goToMainMenu()
+                            playButtonSound()  // ← tambahkan
+                            onContinue?()
+                            router.navigate(to: .chestOpening)
                         } label: {
-                            Image("homeButton")
+                            Image("finishButton")
                                 .resizable()
                                 .scaledToFit()
                                 .frame(height: 45)
                         }
+                    } else {
+                        HStack(spacing: 15) {
+                            Button {
+                                playButtonSound()
+                                onContinue?()
+                                router.goToMainMenu()
+                            } label: {
+                                Image("homeButton")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(height: 45)
+                            }
 
-                        Button {
-                            onContinue?()
-                        } label: {
-                            Image("continueAlertButton")
-                                .resizable()
-                                .scaledToFit()
-                                .frame(height: 45)
+                            Button {
+                                playButtonSound()
+                                onContinue?()
+                            } label: {
+                                Image("continueAlertButton")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(height: 45)
+                            }
                         }
                     }
                 }
             }
             .padding(.horizontal, 40)
+
+            if hideButtons {
+                VStack {
+                    HStack {
+                        Spacer()
+                        Button {
+                            playButtonSound()
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                                    onDismiss?()
+                                }
+                            onDismiss?()
+                        } label: {
+                            Image("exitButton")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 35, height: 35)
+                                .padding(40)
+                                .padding(.trailing, 10)
+                        }
+                    }
+                    Spacer()
+                }
+            }
         }
         .navigationBarHidden(true)
+        .onAppear {
+            if showKeyAlert {
+                playKeyAlertSound()
+            }
+        }
+    }
+
+    // MARK: - Sound
+    private func playButtonSound() {
+        guard let url = Bundle.main.url(
+            forResource: "buttonSound",
+            withExtension: "mp3"
+        ) else { return }
+        buttonSoundPlayer = try? AVAudioPlayer(contentsOf: url)
+        buttonSoundPlayer?.play()
+    }
+    
+    private func playKeyAlertSound() {
+        guard let url = Bundle.main.url(
+            forResource: "keyAlertSound",
+            withExtension: "mp3"
+        ) else { return }
+        buttonSoundPlayer = try? AVAudioPlayer(contentsOf: url)
+        buttonSoundPlayer?.play()
     }
 }
 

@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import AVFoundation
 
 struct ChestOpeningView: View {
     
@@ -17,11 +18,12 @@ struct ChestOpeningView: View {
     @State private var showDarkOverlay = false
 
     @State private var rotatedKeys: [Bool] = Array(repeating: false, count: 5)
+    @State private var unlockingPlayer: AVAudioPlayer?
+    @State private var chestOpenPlayer: AVAudioPlayer?
 
     @State private var glowOpacity: CGFloat = 0.3
     @State private var glowRadius:  CGFloat = 50
 
-    // MARK: - Key Asset Names
     private let keyAssetNames = [
         "keyOne",
         "keyTwo",
@@ -34,18 +36,12 @@ struct ChestOpeningView: View {
 
         ZStack {
 
-            // MARK: - Background
-            // Pakai ZStack dua layer agar transisi smooth tanpa flash putih
-            // Kedua aset di-load sejak awal, hanya opacity yang berubah
             ZStack {
-                // Background 1 — ZoomOut (chest tertutup)
                 Image("chestBackgroundZoomOut")
                     .resizable()
                     .scaledToFill()
                     .ignoresSafeArea()
 
-                // Background 2 — ZoomIn (chest terbuka)
-                // Fade in saat chestOpened = true
                 Image("chestBackgroundZoomIn")
                     .resizable()
                     .scaledToFill()
@@ -57,9 +53,7 @@ struct ChestOpeningView: View {
 
             VStack {
 
-                // MARK: - Chest Layer
                 ZStack {
-                    // Glow chest
                     Circle()
                         .fill(
                             RadialGradient(
@@ -75,16 +69,14 @@ struct ChestOpeningView: View {
                         )
 
                     VStack {
-                        // Chest image
                         Image(chestOpened ? "chestOpened" : "chestClosed")
                             .resizable()
                             .scaledToFit()
-                            .frame(width: chestOpened ? 1000 : 875)
-                            .offset(y: chestOpened ? 10 : -50)
+                            .frame(width: chestOpened ? 600 : 550)
+                            .offset(x: 10, y: chestOpened ? 45 : 50)
                         Spacer()
                     }
 
-                    // Dark Overlay
                     if showDarkOverlay {
                         Color.black
                             .opacity(0.45)
@@ -92,7 +84,6 @@ struct ChestOpeningView: View {
                             .transition(.opacity)
                     }
 
-                    // Keys
                     VStack {
                         Spacer()
 
@@ -139,7 +130,6 @@ struct ChestOpeningView: View {
         }
         .onAppear {
 
-            // Mulai animasi glow pulse
             withAnimation(
                 .easeInOut(duration: 1.5)
                 .repeatForever(autoreverses: true)
@@ -148,48 +138,57 @@ struct ChestOpeningView: View {
                 glowRadius  = 80
             }
 
-            // SHOW overlay
             DispatchQueue.main.asyncAfter(deadline: .now()) {
                 withAnimation(.easeInOut(duration: 0.25)) {
                     showDarkOverlay = true
                 }
             }
 
-            // Rotate one by one
             for index in 0..<5 {
                 DispatchQueue.main.asyncAfter(
                     deadline: (.now() + 1) + 0.5 + Double(index) * 0.15
                 ) {
                     rotatedKeys[index] = true
+                    HapticService.impact(.soft, intensity: 0.75)
                 }
             }
 
-            // HIDE overlay
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
                 withAnimation(.easeInOut(duration: 0.2)) {
                     showDarkOverlay = false
                 }
             }
 
-            // Translasi
-            DispatchQueue.main.asyncAfter(deadline: .now() + 2.75) {
-                translateKeys = true
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                playSFX(name: "unlocking", player: &unlockingPlayer)
             }
 
-            // Fade semua kunci
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2.75) {
+                translateKeys = true
+                HapticService.impact(.soft, intensity: 0.6)
+            }
+
             DispatchQueue.main.asyncAfter(deadline: .now() + 3.5) {
                 fadeKeys = true
             }
 
-            // Open chest — background ikut fade ke ZoomIn
             DispatchQueue.main.asyncAfter(deadline: .now() + 4.0) {
                 chestOpened = true
+                playSFX(name: "chestopen", player: &chestOpenPlayer)
+                HapticService.impact(.soft)
             }
             
-            DispatchQueue.main.asyncAfter(deadline: .now() + 10.0) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 7.0) {
                     router.navigate(to: .end)
                 }
         }
+    }
+
+    private func playSFX(name: String, player: inout AVAudioPlayer?) {
+        guard let url = Bundle.main.url(forResource: name, withExtension: "mp3") else { return }
+        player = try? AVAudioPlayer(contentsOf: url)
+        player?.prepareToPlay()
+        player?.play()
     }
 }
 
