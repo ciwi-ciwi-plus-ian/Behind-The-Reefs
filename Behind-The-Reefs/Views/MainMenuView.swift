@@ -54,6 +54,7 @@ struct MainMenuView: View {
                     .disabled(!canContinue)
                     .opacity(canContinue ? 1 : 0.5)
                     Button {
+                        playButtonSound()
                         if canContinue {
                             showNewGameAlert = true
                         } else {
