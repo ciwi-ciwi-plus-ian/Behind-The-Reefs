@@ -9,9 +9,10 @@ import SwiftUI
 import AVFoundation
 
 struct EndView: View {
-    
+
     @Environment(NavigationRouter.self) private var router
     @State private var buttonSoundPlayer: AVAudioPlayer?
+    @State private var bgmPlayer: AVAudioPlayer?
 
     private let frameWidth:       CGFloat = 500
     private let frameHeight:      CGFloat = 300
@@ -21,7 +22,6 @@ struct EndView: View {
     var body: some View {
         ZStack {
 
-            // MARK: - Background
             Image("mainMenuBackground")
                 .resizable()
                 .scaledToFill()
@@ -39,17 +39,17 @@ struct EndView: View {
                 VStack(spacing: 2) {
 
                     VStack(spacing: 1) {
-                        
+
                         Text("Every reef has a story,")
                             .font(.custom("Sniglet", size: 20))
                             .foregroundStyle(.white)
                             .shadow(color: .black.opacity(0.4), radius: 2, x: 1, y: 2)
-                        
+
                         Text("and now you've finished yours.")
                             .font(.custom("Sniglet", size: 20))
                             .foregroundStyle(.white)
                             .shadow(color: .black.opacity(0.4), radius: 2, x: 1, y: 2)
-                        
+
                         Text("Thank you for playing with us!")
                             .font(.custom("Sniglet", size: 20))
                             .foregroundStyle(.white)
@@ -76,8 +76,12 @@ struct EndView: View {
             playEndingSound()
             HapticService.notification(.success)
         }
+        .onDisappear {
+            bgmPlayer?.stop()
+            bgmPlayer = nil
+        }
     }
-    
+
     private func playSound() {
         guard let url = Bundle.main.url(
             forResource: "buttonSound",
@@ -86,17 +90,18 @@ struct EndView: View {
         buttonSoundPlayer = try? AVAudioPlayer(contentsOf: url)
         buttonSoundPlayer?.play()
     }
-    
+
     private func playEndingSound() {
         guard let url = Bundle.main.url(
             forResource: "endingSound",
             withExtension: "mp3"
         ) else { return }
-        buttonSoundPlayer = try? AVAudioPlayer(contentsOf: url)
-        buttonSoundPlayer?.play()
+        bgmPlayer = try? AVAudioPlayer(contentsOf: url)
+        bgmPlayer?.numberOfLoops = -1 
+        bgmPlayer?.volume = 0.7
+        bgmPlayer?.play()
     }
 }
-
 
 #Preview(traits: .landscapeRight) {
     EndView()

@@ -40,7 +40,6 @@ final class PuzzleScene: SKScene {
         setupStarFish()
         showIntroMessage()
         startHintTimer()
-        startBGM()
     }
 
     private func columnCenterX(at index: Int) -> CGFloat {
