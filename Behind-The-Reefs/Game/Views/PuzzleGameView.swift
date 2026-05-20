@@ -61,6 +61,9 @@ struct PuzzleGameView: View {
 
             if let progress = progress {
                 viewModel.completedPatterns = Set(progress.completedPatterns)
+                if let lastSolvedIndex = progress.lastSolvedPatternIndex {
+                    viewModel.previousPatternIndex = lastSolvedIndex
+                }
             }
 
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.3) {

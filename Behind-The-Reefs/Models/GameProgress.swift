@@ -13,6 +13,7 @@ import SwiftData
 class GameProgress {
     var currentPatternIndex: Int
     var completedPatterns: [Int]
+    var lastSolvedPatternIndex: Int?
  
     @Relationship(deleteRule: .cascade) var keys: [GameKey]
  
@@ -33,7 +34,6 @@ class GameProgress {
     }
  
     // MARK: - Methods
- 
     // Panggil ini saat player berhasil selesaikan satu pola
     func completePattern(_ index: Int) {
         guard !completedPatterns.contains(index) else { return }
@@ -41,6 +41,7 @@ class GameProgress {
         key(for: index)?.unlock()
         if index + 1 < 5 {
             currentPatternIndex = index + 1
+            lastSolvedPatternIndex = index
         }
     }
  
