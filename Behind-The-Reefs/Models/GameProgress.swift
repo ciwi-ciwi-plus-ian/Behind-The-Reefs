@@ -41,9 +41,9 @@ class GameProgress {
         guard !completedPatterns.contains(index) else { return }
         completedPatterns.append(index)
         key(for: index)?.unlock()
+        lastSolvedPatternIndex = index
         if index + 1 < 5 {
             currentPatternIndex = index + 1
-            lastSolvedPatternIndex = index
         }
     }
  
