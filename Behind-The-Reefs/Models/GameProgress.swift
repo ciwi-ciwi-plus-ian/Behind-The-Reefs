@@ -14,6 +14,7 @@ class GameProgress {
     var currentPatternIndex: Int
     var completedPatterns: [Int]
     var lastSolvedPatternIndex: Int?
+    var hasStarted: Bool
  
     @Relationship(deleteRule: .cascade) var keys: [GameKey]
  
@@ -21,6 +22,7 @@ class GameProgress {
         self.currentPatternIndex = 0
         self.completedPatterns = []
         self.keys = (0..<5).map { GameKey(patternIndex: $0) }
+        self.hasStarted = false
     }
  
     // MARK: - Computed

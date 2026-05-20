@@ -53,17 +53,20 @@ struct PuzzleGameView: View {
                         .environment(router)
                 }
         .onAppear {
-            if progressList.isEmpty {
-                let newProgress = GameProgress()
-                context.insert(newProgress)
-                try? context.save()
-            }
-
             if let progress = progress {
+                if !progress.hasStarted {
+                    progress.hasStarted = true
+                    try? context.save()
+                }
                 viewModel.completedPatterns = Set(progress.completedPatterns)
                 if let lastSolvedIndex = progress.lastSolvedPatternIndex {
                     viewModel.previousPatternIndex = lastSolvedIndex
                 }
+            } else {
+                let newProgress = GameProgress()
+                newProgress.hasStarted = true
+                context.insert(newProgress)
+                try? context.save()
             }
 
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.3) {
