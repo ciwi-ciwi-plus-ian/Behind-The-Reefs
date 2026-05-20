@@ -60,6 +60,7 @@ struct LetterView: View {
             .opacity(showContent ? 1.0 : 0.0)
             .animation(.easeInOut(duration: 0.6), value: showContent)
         }
+        .navigationBarHidden(!showContent)
         .onAppear {
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
                 isOpened = true
