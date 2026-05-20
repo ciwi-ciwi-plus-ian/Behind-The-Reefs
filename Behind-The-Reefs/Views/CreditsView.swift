@@ -17,7 +17,6 @@ struct CreditsView: View {
     var body: some View {
 
         ZStack {
-
             VStack {
                 HStack {
                     Spacer()
@@ -40,12 +39,12 @@ struct CreditsView: View {
 
                 Text("Made with dedication by Behind the Reefs team")
                     .font(Font.custom("Sniglet-Regular", size: 9))
-                    .foregroundColor(Color(red: 64/255, green: 64/255, blue: 64/255))
+                    .foregroundColor(Color(red: 211/255, green: 211/255, blue: 211/255))
 
                 Text("© 2026 Behind the Reefs. All rights reserved.")
                     .font(Font.custom("Sniglet-Regular", size: 9))
-                    .padding(.bottom, -15)
-                    .foregroundColor(Color(red: 64/255, green: 64/255, blue: 64/255))
+                    .padding(.bottom, 5)
+                    .foregroundColor(Color(red: 211/255, green: 211/255, blue: 211/255))
             }
 
             ZStack {
@@ -57,7 +56,7 @@ struct CreditsView: View {
                             Image("frame")
                                 .resizable()
                                 .scaledToFit()
-                                .padding(.top, 25)
+                                .padding(.top,-20)
                         )
                 }
                 ZStack {
@@ -66,7 +65,7 @@ struct CreditsView: View {
                             .font(Font.custom("Sniglet-Regular", size: 30))
                             .foregroundColor(Color.white)
                             .padding(.bottom, -10)
-                            .padding(.top, 15)
+                            .padding(.top, 6)
 
                         Text("CREDITS")
                             .font(Font.custom("Sniglet-Regular", size: 15))

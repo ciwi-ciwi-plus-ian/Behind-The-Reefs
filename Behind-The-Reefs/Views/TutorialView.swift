@@ -50,6 +50,9 @@ struct TutorialView: View {
             if newStep == 3 { configureTutorialScene() }
         }
         .navigationBarBackButtonHidden(true)
+        .onAppear{
+            AudioManager.shared.playBGM(named: "magicSolo")
+        }
     }
     
     private func backgroundImage(size: CGSize) -> some View {
@@ -210,7 +213,7 @@ struct TutorialView: View {
                 ) {
                     animateTriangles.toggle()
                 }
-            }
+            }            
         } else {
             Color.black.opacity(0.75)
                 .ignoresSafeArea()

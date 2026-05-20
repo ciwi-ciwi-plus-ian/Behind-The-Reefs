@@ -77,8 +77,9 @@ struct PuzzleGameView: View {
         }
         
         .onDisappear {
-                viewModel.scene.stopBGM()  // ← stop BGM saat view hilang
-            }
+            AudioManager.shared.stopBGM()
+            viewModel.scene.stopBGM()
+        }
     }
 
     private var background: some View {
