@@ -13,6 +13,8 @@ import SwiftData
 class GameProgress {
     var currentPatternIndex: Int
     var completedPatterns: [Int]
+    var lastSolvedPatternIndex: Int?
+    var hasStarted: Bool
  
     @Relationship(deleteRule: .cascade) var keys: [GameKey]
  
@@ -20,6 +22,7 @@ class GameProgress {
         self.currentPatternIndex = 0
         self.completedPatterns = []
         self.keys = (0..<5).map { GameKey(patternIndex: $0) }
+        self.hasStarted = false
     }
  
     // MARK: - Computed
@@ -33,12 +36,12 @@ class GameProgress {
     }
  
     // MARK: - Methods
- 
     // Panggil ini saat player berhasil selesaikan satu pola
     func completePattern(_ index: Int) {
         guard !completedPatterns.contains(index) else { return }
         completedPatterns.append(index)
         key(for: index)?.unlock()
+        lastSolvedPatternIndex = index
         if index + 1 < 5 {
             currentPatternIndex = index + 1
         }

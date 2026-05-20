@@ -31,12 +31,17 @@ final class PuzzleScene: SKScene {
     private var bgmPlayer: AVAudioPlayer?
     var onAnswerChecked: ((Int) -> Void)?
     var onWrongAnswer: (() -> Void)?
+    
+    var previousPatternIndex: Int?
 
     override func didMove(to view: SKView) {
         backgroundColor = .clear
         anchorPoint     = CGPoint(x: 0.5, y: 0.5)
         setupSlots()
         setupPieces()
+        if let patternIndex = previousPatternIndex {
+            setupPrePlacedPieces(for: patternIndex)
+        }
         setupStarFish()
         showIntroMessage()
         startHintTimer()
@@ -85,6 +90,20 @@ final class PuzzleScene: SKScene {
         let pairs = colorPairs.randomElement()!
         return zip(pairs, positions).flatMap { (pair, pos) in
             [(pair.0, pos.0), (pair.1, pos.1)]
+        }
+    }
+
+    private func setupPrePlacedPieces(for patternIndex: Int) {
+        guard let pattern = PuzzlePatternData.pattern(at: patternIndex) else { return }
+        
+        let correctOrder = pattern.correctOrder
+        for (columnIndex, item) in correctOrder.enumerated() {
+            guard let piece = allPieces.first(where: { $0.item == item }) else { continue }
+            
+            let targetPosition = CGPoint(x: columnCenterX(at: columnIndex), y: 0)
+            piece.position = targetPosition
+            piece.snapToColumn(columnIndex, at: targetPosition)
+            columnPieces[columnIndex] = piece
         }
     }
 
