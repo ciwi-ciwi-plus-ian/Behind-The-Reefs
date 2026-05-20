@@ -72,7 +72,12 @@ struct MainMenuView: View {
 
                     Button {
                         playButtonSound()
-                        showNewGameAlert = true
+                        if canContinue {
+                            showNewGameAlert = true
+                        } else {
+                            resetProgressForNewGame()
+                            router.navigate(to: .letter)
+                        }
                     } label: {
                         Image("newGameButton")
                             .resizable()
