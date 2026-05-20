@@ -114,6 +114,7 @@ struct KeyResultView: View {
                                 keyScale   = 1.0
                                 keyOpacity = 1.0
                             }
+                            HapticService.impact(.soft, intensity: 0.9)
                             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                                 withAnimation(
                                     .easeInOut(duration: 1.8)
