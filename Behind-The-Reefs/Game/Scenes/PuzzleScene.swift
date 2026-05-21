@@ -29,20 +29,22 @@ final class PuzzleScene: SKScene {
     private var isStarFishShowing = false
 
     private var bgmPlayer: AVAudioPlayer?
-    private let snapHaptic = UIImpactFeedbackGenerator(style: .light)
-
     var onAnswerChecked: ((Int) -> Void)?
+    var onWrongAnswer: (() -> Void)?
+    
+    var previousPatternIndex: Int?
 
     override func didMove(to view: SKView) {
         backgroundColor = .clear
         anchorPoint     = CGPoint(x: 0.5, y: 0.5)
         setupSlots()
         setupPieces()
+        if let patternIndex = previousPatternIndex {
+            setupPrePlacedPieces(for: patternIndex)
+        }
         setupStarFish()
         showIntroMessage()
         startHintTimer()
-        startBGM()
-        snapHaptic.prepare()
     }
 
     private func columnCenterX(at index: Int) -> CGFloat {
@@ -91,6 +93,20 @@ final class PuzzleScene: SKScene {
         }
     }
 
+    private func setupPrePlacedPieces(for patternIndex: Int) {
+        guard let pattern = PuzzlePatternData.pattern(at: patternIndex) else { return }
+        
+        let correctOrder = pattern.correctOrder
+        for (columnIndex, item) in correctOrder.enumerated() {
+            guard let piece = allPieces.first(where: { $0.item == item }) else { continue }
+            
+            let targetPosition = CGPoint(x: columnCenterX(at: columnIndex), y: 0)
+            piece.position = targetPosition
+            piece.snapToColumn(columnIndex, at: targetPosition)
+            columnPieces[columnIndex] = piece
+        }
+    }
+
     private func targetColumn(for x: CGFloat) -> Int? {
         let half = Layout.sortingWidth / 2
         guard x >= -half, x <= half else { return nil }
@@ -124,6 +140,7 @@ final class PuzzleScene: SKScene {
         piece.removeAllActions()
         piece.zPosition = 10
         piece.run(SKAction.scale(to: 1.12, duration: 0.1))
+        HapticService.tap()
     }
 
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -172,9 +189,13 @@ final class PuzzleScene: SKScene {
             columnPieces.removeValue(forKey: targetCol)
 
             if let sourceCol = dragSourceColumn {
+                // slot-to-slot swap
+                HapticService.tap()
                 columnPieces[sourceCol] = occupant
                 occupant.snapToColumn(sourceCol, at: CGPoint(x: columnCenterX(at: sourceCol), y: occupant.position.y))
             } else {
+                // piece from pool displaces occupant to outer pool
+                HapticService.tap()
                 occupant.columnIndex = nil
                 let pushX = columnCenterX(at: targetCol) < 0 ? leftPoolX : rightPoolX
                 let move = SKAction.move(to: CGPoint(x: pushX, y: occupant.position.y), duration: 0.18)
@@ -187,7 +208,9 @@ final class PuzzleScene: SKScene {
 
         columnPieces[targetCol] = piece
         piece.snapToColumn(targetCol, at: CGPoint(x: columnCenterX(at: targetCol), y: piece.position.y))
-        snapHaptic.impactOccurred(intensity: 0.5)
+        if dragSourceColumn != targetCol {
+            HapticService.tap()
+        }
 
         if columnPieces.count == Layout.columnCount {
             checkAnswer()
@@ -212,6 +235,7 @@ final class PuzzleScene: SKScene {
             return
         }
 
+        HapticService.notification(.success)
         onAnswerChecked?(matchedIndex)
     }
 
@@ -234,7 +258,7 @@ final class PuzzleScene: SKScene {
         bgmPlayer?.play()
     }
 
-    private func stopBGM() {
+    func stopBGM() {
         bgmPlayer?.stop()
         bgmPlayer = nil
     }
@@ -306,7 +330,7 @@ final class PuzzleScene: SKScene {
 
     private func showIntroMessage() {
         showStarFish(duration: 1.0) { [weak self] in
-            self?.showHintBubble(text: "Every creature's details have a purpose…", bubbleDuration: 8.0)
+            self?.showHintBubble(text: "Every detail of each creature serves a purpose…", bubbleDuration: 8.0)
             self?.hideStarFish(delay: 10.0)
         }
     }
@@ -444,5 +468,11 @@ final class PuzzleScene: SKScene {
         container.addChild(label)
 
         return (container, CGSize(width: bubbleW, height: bubbleH))
+    }
+    
+    override func willMove(from view: SKView) {
+        stopBGM()
+        removeAllActions()
+        removeAllChildren()
     }
 }

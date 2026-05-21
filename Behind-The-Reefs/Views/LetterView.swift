@@ -1,4 +1,5 @@
 import SwiftUI
+import AVFoundation
 
 struct LetterView: View {
     
@@ -7,6 +8,7 @@ struct LetterView: View {
     @State private var isOpened = false
     @State private var showOverlay = false
     @State private var showContent = false
+    @State private var buttonSoundPlayer: AVAudioPlayer?
 
     private let snigletFont: Font = .custom("Sniglet-Regular", size: 16)
     private let textColor: Color = .white
@@ -43,7 +45,10 @@ struct LetterView: View {
                         .multilineTextAlignment(.leading)
                 }
 
-                Button(action: {router.navigate(to: .tutorial)}) {
+                Button {
+                    playSound()
+                    router.navigate(to: .tutorial)
+                } label: {
                     Text("Begin!")
                         .font(snigletFont)
                         .padding(.horizontal, 32)
@@ -60,7 +65,9 @@ struct LetterView: View {
             .opacity(showContent ? 1.0 : 0.0)
             .animation(.easeInOut(duration: 0.6), value: showContent)
         }
+        .navigationBarHidden(!showContent)
         .onAppear {
+            playletterSound()
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
                 isOpened = true
             }
@@ -76,6 +83,25 @@ struct LetterView: View {
             }
         }
     }
+    
+    private func playletterSound() {
+        guard let url = Bundle.main.url(
+            forResource: "letterSound",
+            withExtension: "mp3"
+        ) else { return }
+        buttonSoundPlayer = try? AVAudioPlayer(contentsOf: url)
+        buttonSoundPlayer?.play()
+    }
+    
+    private func playSound() {
+        guard let url = Bundle.main.url(
+            forResource: "buttonSound",
+            withExtension: "mp3"
+        ) else { return }
+        buttonSoundPlayer = try? AVAudioPlayer(contentsOf: url)
+        buttonSoundPlayer?.play()
+    }
+    
 }
 
 #Preview(traits: .landscapeRight) {

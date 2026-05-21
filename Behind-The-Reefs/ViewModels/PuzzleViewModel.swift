@@ -16,6 +16,12 @@ final class PuzzleViewModel: ObservableObject {
         s.scaleMode = .resizeFill
         return s
     }()
+    
+    var previousPatternIndex: Int? {
+        didSet {
+            scene.previousPatternIndex = previousPatternIndex
+        }
+    }
 
     init() {
         scene.onAnswerChecked = { [weak self] patternIndex in

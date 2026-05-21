@@ -1,6 +1,7 @@
 import SwiftUI
 import SpriteKit
 import SwiftData
+import AVFoundation
 
 struct PuzzleGameView: View {
     
@@ -10,12 +11,13 @@ struct PuzzleGameView: View {
 
     @StateObject private var viewModel = PuzzleViewModel()
     
-    // Fetch GameProgress dari SwiftData
-        @Query private var progressList: [GameProgress]
-        private var progress: GameProgress? { progressList.first }
+    
+    @Query private var progressList: [GameProgress]
+    private var progress: GameProgress? { progressList.first }
 
-        @State private var showCollection = false
-        @State private var showLoading = true
+    @State private var showCollection = false
+    @State private var showLoading = true
+    @State private var buttonSoundPlayer: AVAudioPlayer?
 
     var body: some View {
         ZStack {
@@ -54,14 +56,22 @@ struct PuzzleGameView: View {
                         .environment(router)
                 }
         .onAppear {
-            if progressList.isEmpty {
+            AudioManager.shared.playBGM(named: "magicSolo")
+            
+            if let progress = progress {
+                if !progress.hasStarted {
+                    progress.hasStarted = true
+                    try? context.save()
+                }
+                viewModel.completedPatterns = Set(progress.completedPatterns)
+                if let lastSolvedIndex = progress.lastSolvedPatternIndex {
+                    viewModel.previousPatternIndex = lastSolvedIndex
+                }
+            } else {
                 let newProgress = GameProgress()
+                newProgress.hasStarted = true
                 context.insert(newProgress)
                 try? context.save()
-            }
-
-            if let progress = progress {
-                viewModel.completedPatterns = Set(progress.completedPatterns)
             }
 
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.3) {
@@ -69,6 +79,11 @@ struct PuzzleGameView: View {
                     showLoading = false
                 }
             }
+        }
+        
+        .onDisappear {
+            AudioManager.shared.stopBGM()
+            viewModel.scene.stopBGM()
         }
     }
 
@@ -88,24 +103,26 @@ struct PuzzleGameView: View {
         VStack {
             HStack {
                 Button {
+                    playButtonSound()
                     router.goToMainMenu()
                 } label: {
                     Image("homeIcon")
                         .resizable()
                         .scaledToFit()
-                        .frame(width: 52, height: 52)
+                        .frame(width: 46, height: 46)
                 }
                 .padding(.leading, 16)
 
                 Spacer()
 
                 Button {
+                    playButtonSound()
                     showCollection = true
                 } label: {
                     Image("treasureChestIcon")
                         .resizable()
                         .scaledToFit()
-                        .frame(width: 52, height: 52)
+                        .frame(width: 46, height: 46)
                 }
                 .padding(.trailing, 16)
             }
@@ -152,6 +169,15 @@ struct PuzzleGameView: View {
                 .clipShape(Capsule())
                 .overlay(Capsule().stroke(Color.white.opacity(0.4), lineWidth: 1.5))
         }
+    }
+    
+    private func playButtonSound() {
+        guard let url = Bundle.main.url(
+            forResource: "buttonSound",
+            withExtension: "mp3"
+        ) else { return }
+        buttonSoundPlayer = try? AVAudioPlayer(contentsOf: url)
+        buttonSoundPlayer?.play()
     }
 }
 

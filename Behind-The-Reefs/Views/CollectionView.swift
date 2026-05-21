@@ -7,21 +7,25 @@
 
 import SwiftUI
 import SwiftData
+import AVFoundation
 
 struct CollectionView: View {
-    
+
     @Environment(NavigationRouter.self) private var router
     @Environment(\.dismiss) private var dismiss
-    
+
     @Query private var progressList: [GameProgress]
-        private var progress: GameProgress? { progressList.first }
+    private var progress: GameProgress? { progressList.first }
 
     @State private var viewModel = CollectionViewModel()
+    @State private var selectedKeyIndex: Int? = nil
+    @State private var keyOffsets: [CGFloat] = Array(repeating: -50, count: 5)
+    @State private var buttonSoundPlayer: AVAudioPlayer?
+    @State private var tapKeySoundPlayer: AVAudioPlayer?  // ← tambahkan ini
 
-    private let keySize:    CGFloat = 120
-    private let keySpacing: CGFloat = 14
-    private let chestWidth: CGFloat = 850
-
+    private let keySize:        CGFloat = 120
+    private let keySpacing:     CGFloat = 14
+    private let chestWidth:     CGFloat = 550
     private let overlayOpacity: CGFloat = 0.5
 
     var body: some View {
@@ -39,7 +43,7 @@ struct CollectionView: View {
                             .resizable()
                             .scaledToFit()
                             .frame(width: chestWidth)
-                            .offset(y: 30)
+                            .offset(x: 10, y: 50)
                         Spacer()
                     }
                 }
@@ -48,7 +52,7 @@ struct CollectionView: View {
             Color.black
                 .opacity(overlayOpacity)
                 .ignoresSafeArea()
-            
+
             VStack {
                 ZStack {
                     VStack {
@@ -69,6 +73,7 @@ struct CollectionView: View {
                 HStack {
                     Spacer()
                     Button {
+                        playButtonSound()
                         dismiss()
                     } label: {
                         Image("exitButton")
@@ -81,6 +86,18 @@ struct CollectionView: View {
                 }
                 Spacer()
             }
+
+            if let index = selectedKeyIndex {
+                KeyResultView(
+                    patternIndex: index,
+                    hideButtons: true,
+                    onDismiss: {
+                        selectedKeyIndex = nil
+                    },
+                    showKeyAlert: false
+                )
+                .zIndex(10)
+            }
         }
         .navigationBarHidden(true)
         .onAppear {
@@ -89,22 +106,50 @@ struct CollectionView: View {
         .onChange(of: progress) { _, newProgress in
             viewModel.loadKeyStatus(from: newProgress)
         }
+        .onChange(of: viewModel.keyUnlockStatus) { _, _ in
+            triggerAnimation()
+        }
+        .task {
+            viewModel.loadKeyStatus(from: progress)
+            try? await Task.sleep(nanoseconds: 100_000_000)
+            triggerAnimation()
+        }
     }
+
+    private func triggerAnimation() {
+        for i in 0..<5 {
+            keyOffsets[i] = 0
+            withAnimation(
+                .easeInOut(duration: 1.5)
+                .repeatForever(autoreverses: true)
+                .delay(Double(i) * 0.2)
+            ) {
+                keyOffsets[i] = -10
+            }
+        }
+    }
+
+    // MARK: - Key Slot
 
     @ViewBuilder
     private func keySlot(for index: Int) -> some View {
         if let assetName = viewModel.assetName(for: index) {
 
-            // Kunci sudah didapat — gambar asli berwarna
+            // Kunci sudah didapat — animasi + bisa diklik
             Image(assetName)
                 .resizable()
                 .scaledToFit()
                 .rotationEffect(.degrees(30))
                 .shadow(color: .black.opacity(0.8), radius: 6, x: 4, y: 6)
+                .offset(y: keyOffsets[index])
+                .onTapGesture {
+                    playTapKeySound()  // ← tambahkan ini
+                    selectedKeyIndex = index
+                }
 
         } else {
 
-            // Kunci belum didapat — siluet hitam
+            // Kunci belum didapat — siluet, tidak bisa diklik
             Image(viewModel.keyAssetNames[index])
                 .resizable()
                 .scaledToFit()
@@ -113,6 +158,26 @@ struct CollectionView: View {
                 .rotationEffect(.degrees(30))
                 .shadow(color: .black.opacity(0.8), radius: 6, x: 4, y: 6)
         }
+    }
+
+    // MARK: - Sound
+
+    private func playButtonSound() {
+        guard let url = Bundle.main.url(
+            forResource: "exitSound",
+            withExtension: "mp3"
+        ) else { return }
+        buttonSoundPlayer = try? AVAudioPlayer(contentsOf: url)
+        buttonSoundPlayer?.play()
+    }
+
+    private func playTapKeySound() {  // ← tambahkan fungsi ini
+        guard let url = Bundle.main.url(
+            forResource: "tapKeySound",
+            withExtension: "mp3"
+        ) else { return }
+        tapKeySoundPlayer = try? AVAudioPlayer(contentsOf: url)
+        tapKeySoundPlayer?.play()
     }
 }
 
