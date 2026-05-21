@@ -32,6 +32,9 @@ struct PuzzleGameView: View {
                         try? context.save()
                         viewModel.dismissResult()
                     },
+                    onResumePuzzle: {
+                        viewModel.scene.showContinueMessage()
+                    },
                     isAllCompleted: viewModel.isAllPatternsCompleted
                 )
                 .transition(.opacity.animation(.easeIn(duration: 0.3)))
@@ -53,6 +56,8 @@ struct PuzzleGameView: View {
                         .environment(router)
                 }
         .onAppear {
+            AudioManager.shared.playBGM(named: "magicSolo")
+            
             if let progress = progress {
                 if !progress.hasStarted {
                     progress.hasStarted = true
