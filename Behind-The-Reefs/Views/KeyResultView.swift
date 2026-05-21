@@ -14,6 +14,7 @@ struct KeyResultView: View {
 
     var patternIndex: Int
     var onContinue: (() -> Void)?
+    var onResumePuzzle: (() -> Void)? = nil
     var isAllCompleted: Bool = false
     var hideButtons: Bool = false
     var onDismiss: (() -> Void)? = nil
