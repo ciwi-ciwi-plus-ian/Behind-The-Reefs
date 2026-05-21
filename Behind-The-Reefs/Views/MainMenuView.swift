@@ -64,7 +64,6 @@ struct MainMenuView: View {
                         width: 90 * config.size,
                         height: 90 * config.size
                     )
-                    .opacity(showBubbles ? 1 : 0)
                     .offset(
                         x: config.xOffset,
                         y: showBubbles ? -950 : 950
