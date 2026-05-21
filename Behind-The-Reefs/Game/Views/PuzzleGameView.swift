@@ -57,7 +57,7 @@ struct PuzzleGameView: View {
                 }
         .onAppear {
             AudioManager.shared.playBGM(named: "magicSolo")
-            
+            HapticService.prolonged(duration: 1, intensity: 1.0, sharpness: 0.3)
             if let progress = progress {
                 if !progress.hasStarted {
                     progress.hasStarted = true
