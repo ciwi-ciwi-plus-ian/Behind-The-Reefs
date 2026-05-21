@@ -53,6 +53,8 @@ struct PuzzleGameView: View {
                         .environment(router)
                 }
         .onAppear {
+            AudioManager.shared.playBGM(named: "magicSolo")
+            
             if let progress = progress {
                 if !progress.hasStarted {
                     progress.hasStarted = true
