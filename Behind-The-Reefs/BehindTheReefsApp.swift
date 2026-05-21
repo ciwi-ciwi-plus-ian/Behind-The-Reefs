@@ -42,10 +42,8 @@ struct BehindTheReefsApp: App {
             .environment(router)
         }
         .modelContainer(for: [
-            PlayerData.self,
             GameProgress.self,
             GameKey.self,
-            AudioSettings.self
         ])
     }
 }
