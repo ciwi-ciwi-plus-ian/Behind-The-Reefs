@@ -17,7 +17,19 @@ struct MainMenuView: View {
     @State private var showNewGameAlert = false
     @State private var showCredits = false
     @State private var audioPlayer: AVAudioPlayer?
-    @State private var buttonSoundPlayer: AVAudioPlayer? 
+    @State private var buttonSoundPlayer: AVAudioPlayer?
+    @State private var showBubbles = false
+
+    private let bubbleConfigs: [Bubble] = [
+        .init(id: 0, xOffset: -160, size: 0.40, delay: 0.0, duration: 9.0),
+        .init(id: 1, xOffset: -90, size: 0.55, delay: 0.7, duration: 8.0),
+        .init(id: 2, xOffset: -20, size: 0.70, delay: 0.4, duration: 10.0),
+        .init(id: 3, xOffset: 40, size: 0.50, delay: 1.1, duration: 7.2),
+        .init(id: 4, xOffset: 105, size: 0.65, delay: 0.6, duration: 8.5),
+        .init(id: 5, xOffset: 170, size: 0.45, delay: 1.3, duration: 7.8),
+        .init(id: 6, xOffset: -125, size: 0.65, delay: 2.6, duration: 8.5),
+        .init(id: 7, xOffset: 140, size: 0.45, delay: 2.3, duration: 7.8)
+    ]
 
     private var progress: GameProgress? { progressList.first }
     private var canContinue: Bool {
@@ -43,6 +55,26 @@ struct MainMenuView: View {
                 .resizable()
                 .scaledToFill()
                 .ignoresSafeArea()
+
+            ForEach(bubbleConfigs) { config in
+                Image("bubbleParticle")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(
+                        width: 90 * config.size,
+                        height: 90 * config.size
+                    )
+                    .offset(
+                        x: config.xOffset,
+                        y: showBubbles ? -950 : 950
+                    )
+                    .animation(
+                        Animation.linear(duration: config.duration)
+                            .delay(config.delay)
+                            .repeatForever(autoreverses: false),
+                        value: showBubbles
+                    )
+            }
 
             VStack {
                 Image("title")
@@ -122,6 +154,7 @@ struct MainMenuView: View {
             }
         }
         .onAppear {
+            showBubbles = true
             playBGM()
         }
         .onDisappear {
