@@ -38,7 +38,7 @@ enum HapticService {
                 player = nil
             }
             if let existingEngine = engine {
-                try existingEngine.stop()
+                existingEngine.stop()
                 engine = nil
             }
 
