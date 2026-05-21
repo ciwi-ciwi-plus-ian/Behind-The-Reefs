@@ -30,6 +30,9 @@ struct PuzzleGameView: View {
                         try? context.save()
                         viewModel.dismissResult()
                     },
+                    onResumePuzzle: {
+                        viewModel.scene.showContinueMessage()
+                    },
                     isAllCompleted: viewModel.isAllPatternsCompleted
                 )
                 .transition(.opacity.animation(.easeIn(duration: 0.3)))

@@ -198,13 +198,21 @@ final class PuzzleScene: SKScene {
         let order = (0..<Layout.columnCount).compactMap { columnPieces[$0]?.item }
         guard order.count == Layout.columnCount else { return }
 
-        // Cari index pattern mana yang cocok
         guard let matchedIndex = PuzzlePatternData.all.firstIndex(where: {
             $0.correctOrder == order
-        }) else { return }
+        }) else {
+            let reversed = Array(order.reversed())
+            if PuzzlePatternData.all.contains(where: { $0.correctOrder == reversed }) {
+                let text = Self.reversedMessages.randomElement() ?? Self.reversedMessages[0]
+                showStarFish(duration: 1.0) { [weak self] in
+                    self?.showHintBubble(text: text, bubbleDuration: 5.0)
+                    self?.hideStarFish(delay: 6.0)
+                }
+            }
+            return
+        }
 
-        // Kirim patternIndex ke ViewModel
-        onAnswerChecked?(matchedIndex)  // ← kirim index, bukan true/false
+        onAnswerChecked?(matchedIndex)
     }
 
    func snapAllToMidY() {
@@ -325,12 +333,32 @@ final class PuzzleScene: SKScene {
         "There's more to this than it seems…",
     ]
 
+    private static let continueMessages: [String] = [
+        "Keep sorting and follow the clues.",
+        "Keep sorting to uncover what's hidden.",
+        "The journey isn't over yet..",
+    ]
+
+    private static let reversedMessages: [String] = [
+        "The waves don't always flow in one direction…",
+        "Not every pattern flows the same way…",
+    ]
+
     // MARK: - Hint display
 
     private func showHintIfNeeded() {
         if columnPieces.count == Layout.columnCount {
             let order = (0..<Layout.columnCount).compactMap { columnPieces[$0]?.item }
             if PuzzlePatternData.correctSequences.contains(order) { return }
+            let reversed = Array(order.reversed())
+            if PuzzlePatternData.all.contains(where: { $0.correctOrder == reversed }) {
+                let text = Self.reversedMessages.randomElement() ?? Self.reversedMessages[0]
+                showStarFish(duration: 3.0) { [weak self] in
+                    self?.showHintBubble(text: text, bubbleDuration: 4.0)
+                    self?.hideStarFish(delay: 5.0)
+                }
+                return
+            }
         }
         let text = Self.hintMessages.randomElement() ?? Self.hintMessages[0]
         showStarFish(duration: 3.0) { [weak self] in
@@ -359,6 +387,17 @@ final class PuzzleScene: SKScene {
             .fadeOut(withDuration: 0.4),
             .removeFromParent()
         ]))
+    }
+
+    func showContinueMessage() {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
+            guard let self else { return }
+            let text = Self.continueMessages.randomElement() ?? Self.continueMessages[0]
+            self.showStarFish(duration: 1.0) { [weak self] in
+                self?.showHintBubble(text: text, bubbleDuration: 5.0)
+                self?.hideStarFish(delay: 6.0)
+            }
+        }
     }
 
     // MARK: - Bubble visual builder

@@ -13,6 +13,7 @@ struct KeyResultView: View {
 
     var patternIndex: Int
     var onContinue: (() -> Void)?
+    var onResumePuzzle: (() -> Void)? = nil
     var isAllCompleted: Bool = false
 
     // MARK: - Asset Names
@@ -156,6 +157,7 @@ struct KeyResultView: View {
 
                         Button {
                             onContinue?()
+                            onResumePuzzle?()
                         } label: {
                             Image("continueAlertButton")
                                 .resizable()
