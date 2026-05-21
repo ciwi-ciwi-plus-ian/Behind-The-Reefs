@@ -33,12 +33,21 @@ enum HapticService {
         guard CHHapticEngine.capabilitiesForHardware().supportsHaptics else { return }
 
         do {
+            if let existingPlayer = player {
+                try existingPlayer.stop(atTime: CHHapticTimeImmediate)
+                player = nil
+            }
+            if let existingEngine = engine {
+                existingEngine.stop()
+                engine = nil
+            }
+
             let eng = try CHHapticEngine()
             engine = eng
             try eng.start()
 
             eng.stoppedHandler = { _ in engine = nil; player = nil }
-            eng.resetHandler   = { engine = nil; player = nil }
+            eng.resetHandler = { engine = nil; player = nil }
 
             let intensityParam = CHHapticEventParameter(parameterID: .hapticIntensity, value: intensity)
             let sharpnessParam = CHHapticEventParameter(parameterID: .hapticSharpness, value: sharpness)
