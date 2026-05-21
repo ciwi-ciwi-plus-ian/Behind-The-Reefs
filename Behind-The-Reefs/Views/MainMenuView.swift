@@ -138,7 +138,7 @@ struct MainMenuView: View {
 
         audioPlayer = try? AVAudioPlayer(contentsOf: url)
         audioPlayer?.numberOfLoops = -1
-        audioPlayer?.volume = 0.7
+        audioPlayer?.volume = 1.8
         audioPlayer?.play()
     }
 

@@ -91,6 +91,7 @@ struct LetterView: View {
         ) else { return }
         buttonSoundPlayer = try? AVAudioPlayer(contentsOf: url)
         buttonSoundPlayer?.play()
+        buttonSoundPlayer?.volume = 1.5
     }
     
     private func playSound() {
