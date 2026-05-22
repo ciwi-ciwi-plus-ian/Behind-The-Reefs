@@ -28,9 +28,11 @@ final class PuzzleViewModel: ObservableObject {
             guard let self = self else { return }
 
             guard !self.completedPatterns.contains(patternIndex) else {
+                HapticService.tap()
                 return
             }
 
+            HapticService.notification(.success)
             // Pattern baru — snap
             self.scene.snapAllToMidY()
 
