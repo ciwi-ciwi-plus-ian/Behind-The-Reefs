@@ -235,7 +235,6 @@ final class PuzzleScene: SKScene {
             return
         }
 
-        HapticService.notification(.success)
         onAnswerChecked?(matchedIndex)
     }
 
