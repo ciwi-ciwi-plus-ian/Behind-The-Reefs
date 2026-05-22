@@ -414,13 +414,13 @@ final class PuzzleScene: SKScene {
     }
 
     func showContinueMessage() {
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
-            guard let self else { return }
-            let text = Self.continueMessages.randomElement() ?? Self.continueMessages[0]
-            self.showStarFish(duration: 1.0) { [weak self] in
-                self?.showHintBubble(text: text, bubbleDuration: 5.0)
-                self?.hideStarFish(delay: 6.0)
-            }
+        let text = Self.continueMessages.randomElement() ?? Self.continueMessages[0]
+        isStarFishShowing = false
+        starFishNode?.removeAction(forKey: "hideStarFish")
+        stoneNode?.removeAction(forKey: "hideStone")
+        showStarFish(duration: 1.0) { [weak self] in
+            self?.showHintBubble(text: text, bubbleDuration: 5.0)
+            self?.hideStarFish(delay: 6.0)
         }
     }
 

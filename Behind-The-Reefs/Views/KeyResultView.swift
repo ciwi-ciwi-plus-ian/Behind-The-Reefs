@@ -156,6 +156,7 @@ struct KeyResultView: View {
                             Button {
                                 playButtonSound()
                                 onContinue?()
+                                onResumePuzzle?()
                             } label: {
                                 Image("continueAlertButton")
                                     .resizable()
