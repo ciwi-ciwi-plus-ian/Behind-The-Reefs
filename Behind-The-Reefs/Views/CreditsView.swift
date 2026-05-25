@@ -81,57 +81,51 @@ struct CreditsView: View {
                             Text("Project Manager")
                                 .font(Font.custom("Sniglet-Regular", size: 17))
                                 .foregroundColor(Color.white)
-                                .padding(.trailing, 135)
+                                .padding(.trailing,15)
                             Text("Ivana Grasielda")
                                 .font(Font.custom("Sniglet-Regular", size: 17))
                                 .foregroundColor(Color.white)
                         }
                         .padding(.top, -5)
+                        .padding(.bottom, 2)
 
                         HStack {
-                            Text("Programmer 1")
+                            Text("iOS Developer")
                                 .font(Font.custom("Sniglet-Regular", size: 17))
                                 .foregroundColor(Color.white)
-                                .padding(.trailing, 163)
+                                .padding(.leading,5)
                             Text("Bryan Samuel")
                                 .font(Font.custom("Sniglet-Regular", size: 17))
                                 .foregroundColor(Color.white)
+                                .padding(.leading,17)
                         }
 
                         HStack {
-                            Text("Programmer 2")
-                                .font(Font.custom("Sniglet-Regular", size: 17))
-                                .foregroundColor(Color.white)
-                                .padding(.trailing, 168)
                             Text("Ivone Liwang")
                                 .font(Font.custom("Sniglet-Regular", size: 17))
                                 .foregroundColor(Color.white)
+                                .padding(.leading,128)
                         }
 
                         HStack {
-                            Text("Programmer 3")
-                                .font(Font.custom("Sniglet-Regular", size: 17))
-                                .foregroundColor(Color.white)
-                                .padding(.trailing, 155)
-                                .padding(.leading, -10)
                             Text("Hana Azizah N.")
                                 .font(Font.custom("Sniglet-Regular", size: 17))
                                 .foregroundColor(Color.white)
-                                .padding(.trailing, -10)
+                                .padding(.leading,140)
                         }
+                        .padding(.bottom, 2)
 
                         HStack {
                             Text("Art & Design")
                                 .font(Font.custom("Sniglet-Regular", size: 17))
                                 .foregroundColor(Color.white)
-                                .padding(.trailing, 145)
-                                .padding(.leading, -7)
+                                .padding(.leading,50)
                             Text("Angely Georgina J.")
                                 .font(Font.custom("Sniglet-Regular", size: 17))
                                 .foregroundColor(Color.white)
-                                .padding(.trailing, -10)
+                                .padding(.leading,20)
                         }
-                        .padding(.bottom, 10)
+                        .padding(.bottom, 15)
 
                         Text("Special Thanks to Our Mentor")
                             .font(Font.custom("Sniglet-Regular", size: 15))
